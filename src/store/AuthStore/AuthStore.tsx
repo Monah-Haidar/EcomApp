@@ -1,8 +1,11 @@
 
 import { createContext, ReactNode, useContext, useState } from 'react';
-import { AuthContextType } from './AuthStore.type';
 
-
+export interface AuthContextType {
+  isSignedIn: boolean;
+  login: () => void;
+  logout: () => void;
+}
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
