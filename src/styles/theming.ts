@@ -11,7 +11,7 @@ export const themes = {
     darkTheme: {
         text: '#363939',
         border: '#c4c4c4',
-        background: '#000',
+        background: '#000000',
         buttonText: '',
         cardBackground: '',
     }

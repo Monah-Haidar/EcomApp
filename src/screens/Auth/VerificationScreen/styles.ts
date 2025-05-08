@@ -5,8 +5,9 @@ export const verificationStyles = (theme: any) => StyleSheet.create({
       flex: 1,
       // alignItems: 'center',
       // backgroundColor: theme.background,
-      marginTop: 60,
+      paddingTop: 60,
       padding: 20,
+      // backgroundColor: theme.background
     },
     heading: {
       fontSize: 24,
