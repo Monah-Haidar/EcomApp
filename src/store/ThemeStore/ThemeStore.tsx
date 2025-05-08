@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { themes } from '../../styles/theming';
 
 type ThemeName = keyof typeof themes;
@@ -12,9 +12,16 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider = ({children}: {children: ReactNode}) => {
+export const ThemeProvider = ({children, systemTheme}: {children: ReactNode; systemTheme?: 'light' | 'dark';}) => {
 
-  const [themeName, setThemeName] = useState<ThemeName>('lightTheme');
+  const [themeName, setThemeName] = useState<ThemeName>(systemTheme === 'dark' ? 'darkTheme' : 'lightTheme');
+
+  useEffect(() => {
+    if (systemTheme) {
+      setThemeName(systemTheme === 'dark' ? 'darkTheme' : 'lightTheme');
+    }
+  }, [systemTheme]);
+
   const theme = themes[themeName];
 
   return (
