@@ -5,11 +5,13 @@ import {VerificationScreen} from '../../screens/Auth/VerificationScreen';
 import {ProductListScreen} from '../../screens/Product/ProductListScreen';
 import {ProductDetailsScreen} from '../../screens/Product/ProductDetailsScreen';
 import { useAuth } from '../../store/AuthStore/AuthStore';
+// import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   const auth = useAuth();
+  // const insets = useSafeAreaInsets();
   return (
     <Stack.Navigator>
       {auth?.isSignedIn ? (
@@ -19,7 +21,9 @@ const AppNavigator = () => {
         </>
       ) : (
         <>
-          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} options={{
+            headerShown: false,
+          }}/>
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen name="Verification" component={VerificationScreen} />
         </>
