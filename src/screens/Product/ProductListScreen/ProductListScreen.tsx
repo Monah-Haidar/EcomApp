@@ -1,19 +1,22 @@
 import {
   FlatList,
   Image,
+  Pressable,
   StyleSheet,
   Text,
   useWindowDimensions,
-  View
+  View,
 } from 'react-native';
 import data from '../../../../Products.json';
-import { productListStyles } from './styles';
-import { useTheme } from '../../../store/ThemeStore/ThemeStore';
-
+import {productListStyles} from './styles';
+import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import {ProductCard} from '../../../components/molecules/ProductCard';
+import { useNavigation } from '@react-navigation/native';
 
 const ProductListScreen = () => {
   const {width, height} = useWindowDimensions();
-  const {theme } = useTheme();
+  const {theme} = useTheme();
+  const navigation = useNavigation();
   const isLandscape = width > height;
   const numColumns = isLandscape ? 2 : 1;
   const styles = productListStyles(theme);
@@ -21,25 +24,29 @@ const ProductListScreen = () => {
   const itemWidth = width / numColumns - 20;
 
   return (
-    <View>
-      <FlatList
-        contentContainerStyle={styles.container}
-        data={data.data}
-        numColumns={numColumns}
-        key={numColumns}
-        keyExtractor={item => item._id}
-        renderItem={({item}) => (
-          <View style={[styles.card, {width: itemWidth}]}>
-            <Image source={{uri: item.images[0].url}} style={styles.image} />
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.price}>${item.price}</Text>
-            <Text style={styles.description}>{item.description}</Text>
-          </View>
-        )}
-      />
-    </View>
+    <FlatList
+      contentContainerStyle={styles.container}
+      data={data.data}
+      numColumns={numColumns}
+      key={numColumns}
+      keyExtractor={item => item._id}
+      renderItem={({item}) => (
+        <Pressable
+          onPress={() => navigation.navigate('ProductDetails', {product: item})}
+          style={({pressed}) => [
+            {
+              opacity: pressed ? 0.6 : 1,
+            },
+          ]}>
+          <ProductCard
+            item={item}
+            itemWidth={itemWidth}
+            source={{uri: item.images[0].url}}
+          />
+        </Pressable>
+      )}
+    />
   );
 };
 
 export default ProductListScreen;
-
