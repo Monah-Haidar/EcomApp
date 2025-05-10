@@ -1,5 +1,6 @@
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Controller, useForm} from 'react-hook-form';
 import {
   KeyboardAvoidingView,
@@ -49,8 +50,14 @@ const SignUpSchema = z.object({
 
 type FormData = z.infer<typeof SignUpSchema>;
 
+
+type RootStackParamList = {
+  Login: undefined;
+  Verification: undefined;
+};
+
 const SignUpScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   const {theme} = useTheme();
   const styles = formStyles(theme);

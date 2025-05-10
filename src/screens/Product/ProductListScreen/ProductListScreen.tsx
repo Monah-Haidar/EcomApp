@@ -1,25 +1,39 @@
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
-  Button,
   FlatList,
-  Image,
   Pressable,
-  StyleSheet,
-  Text,
   useWindowDimensions,
-  View,
+  View
 } from 'react-native';
 import data from '../../../../Products.json';
-import {productListStyles} from './styles';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {ProductCard} from '../../../components/molecules/ProductCard';
-import {useNavigation} from '@react-navigation/native';
-import {useAuth} from '../../../store/AuthStore/AuthStore';
+import { ProductCard } from '../../../components/molecules/ProductCard';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { productListStyles } from './styles';
+
+
+type ProductType = {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  images: Array<{
+    url: string;
+    _id: string;
+  }>;
+};
+
+
+type RootStackParamList = {
+  ProductDetails: {
+    product: ProductType;
+  };
+};
 
 const ProductListScreen = () => {
-  // const auth = useAuth();
   const {width, height} = useWindowDimensions();
   const {theme} = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isLandscape = width > height;
   const numColumns = isLandscape ? 3 : 2;
   const styles = productListStyles(theme);
@@ -28,8 +42,6 @@ const ProductListScreen = () => {
 
   return (
     <View>
-      {/* <Button title="log out" onPress={() => auth?.logout()} /> */}
-
       <FlatList
         contentContainerStyle={styles.container}
         data={data.data}

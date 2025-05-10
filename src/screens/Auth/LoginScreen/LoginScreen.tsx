@@ -1,5 +1,6 @@
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {
@@ -36,9 +37,12 @@ const LoginSchema = z.object({
 });
 
 type FormData = z.infer<typeof LoginSchema>;
+type RootStackParamList = {
+  SignUp: undefined;
+};
 
 const LoginScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const auth = useAuth();
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();

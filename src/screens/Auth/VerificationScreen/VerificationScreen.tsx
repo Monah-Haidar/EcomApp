@@ -14,10 +14,17 @@ import {
 } from 'react-native';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { verificationStyles } from './styles';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+
+
+type RootStackParamList = {
+  Login: undefined;
+};
 
 const VerificationScreen = () => {
   const {theme} = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const numberOfInputs = 4;
   const [code, setCode] = useState(Array(numberOfInputs).fill(''));
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +39,7 @@ const VerificationScreen = () => {
     newCode[index] = text;
     setCode(newCode);
 
-    // Move to next input
+    
     if (text && index < numberOfInputs - 1) {
       inputRefs.current[index + 1]?.focus();
     }
