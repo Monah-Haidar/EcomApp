@@ -3,7 +3,9 @@ import {Pressable, Text, View} from 'react-native';
 import {ProductListScreen} from '../../../screens/Product/ProductListScreen';
 import {ProductDetailsScreen} from '../../../screens/Product/ProductDetailsScreen';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import { FONT_FAMILY, FONT_SIZE } from '../../../constants/font';
+import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
+
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,23 +29,31 @@ const AuthStack = ({auth}: {auth: any}) => {
           headerRight: () => (
             <View style={{flexDirection: 'row', gap: 8}}>
               <Pressable onPress={() => toggleTheme()}>
-                <Text>Theme</Text>
+                {themeName === 'lightTheme' ? (
+                  <Text>Dark</Text>
+                ) : (
+                  <Text>Light</Text>
+                )}
               </Pressable>
               <Pressable onPress={() => auth?.logout()}>
-                <Text>Logout</Text>
+                <MaterialCommunityIcons
+                  name="logout"
+                  size={30}
+                  color="#4F8EF7"
+                />
               </Pressable>
             </View>
           ),
         }}
       />
-      <Stack.Screen 
-        name="ProductDetails" 
-        component={ProductDetailsScreen}  
+      <Stack.Screen
+        name="ProductDetails"
+        component={ProductDetailsScreen}
         options={{
-           headerTitleStyle: {
+          headerTitleStyle: {
             fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
             fontSize: FONT_SIZE.XL,
-          }
+          },
         }}
       />
     </Stack.Navigator>

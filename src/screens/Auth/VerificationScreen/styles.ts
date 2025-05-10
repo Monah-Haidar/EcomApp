@@ -1,6 +1,8 @@
 import {StyleSheet} from 'react-native';
 import {themes} from '../../../styles/theming';
 import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
+import { moderateScale, scale, verticalScale } from '../../../utils/responsive';
+import { normalizeFont } from '../../../utils/normalizeFont';
 
 export const verificationStyles = (
   theme: typeof themes.lightTheme | typeof themes.darkTheme,
@@ -10,30 +12,29 @@ export const verificationStyles = (
       backgroundColor: theme.background,
       flex: 1,
       alignItems: 'center',
-      // paddingTop: 60,
-      padding: 24,
+      padding: moderateScale(24),
     },
     title: {
       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
-      fontSize: FONT_SIZE.XXXL,
+      fontSize: normalizeFont(FONT_SIZE.XXXL),
       color: theme.text,
       textAlign: 'center',
     },
     subHeading: {
       fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-      fontSize: FONT_SIZE.SM,
+      fontSize: normalizeFont(FONT_SIZE.SM),
       color: theme.subheadingText,
       textAlign: 'center',
-      marginBottom: 60,
+      marginBottom: verticalScale(60),
     },
     label: {
       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
-      fontSize: FONT_SIZE.XL,
+      fontSize: normalizeFont(FONT_SIZE.XL),
       color: theme.text,
-      marginBottom: 12,
+      marginBottom: verticalScale(12),
     },
     inputContainer: {
-      marginBottom: 40,
+      marginBottom: verticalScale(40),
     },
     inputRow: {
       flexDirection: 'row',
@@ -42,42 +43,42 @@ export const verificationStyles = (
     },
     input: {
       fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-      fontSize: FONT_SIZE.LG,
+      fontSize: normalizeFont(FONT_SIZE.LG),
       backgroundColor: theme.background,
       borderColor: theme.border,
-      width: 50,
-      height: 50,
+      width: moderateScale(50),
+      height: verticalScale(50),
       borderWidth: 1,
       textAlign: 'center',
-      borderRadius: 10,
+      borderRadius: scale(10),
     },
 
     submitButton: {
       backgroundColor: theme.primary,
       paddingVertical: 14,
-      borderRadius: 30,
+      borderRadius: scale(30),
       alignItems: 'center',
-      marginBottom: 30,
+      marginBottom: verticalScale(30),
       width: '70%',
     },
     submitButtonText: {
       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
-      fontSize: FONT_SIZE.LG,
+      fontSize: normalizeFont(FONT_SIZE.LG),
       color: theme.buttonText,
     },
     generalError: {
       backgroundColor: theme.errorTextContainer,
       color: theme.errorText,
-      padding: 12,
-      borderRadius: 6,
-      marginBottom: 20,
+      padding: moderateScale(12),
+      borderRadius: scale(6),
+      marginBottom: verticalScale(20),
       width: '80%',
       textAlign: 'center',
     },
     errorText: {
       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
-      fontSize: FONT_SIZE.XS,
+      fontSize: normalizeFont(FONT_SIZE.XS),
       color: theme.errorText,
-      marginTop: 6,
+      marginTop: verticalScale(6),
     },
   });

@@ -3,11 +3,9 @@ import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
-  Button,
   Pressable,
   Text,
   TextInput,
-  TouchableOpacity,
   View
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,7 +13,6 @@ import { z } from 'zod';
 import { useAuth } from '../../../store/AuthStore/AuthStore';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { formStyles } from '../../../styles/formStyles';
-
 
 const LoginSchema = z.object({
   email: z
@@ -43,9 +40,6 @@ const LoginScreen = () => {
   const auth = useAuth();
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
-
-  const styles = formStyles(theme);
-
   const [error, setError] = useState<string | null>(null);
   const {
     control,
@@ -59,6 +53,10 @@ const LoginScreen = () => {
     },
     mode: 'onBlur',
   });
+
+  const styles = formStyles(theme);
+
+
 
   const onSubmit = (data: FormData) => {
     console.log('Form Data:', data);
@@ -86,9 +84,7 @@ const LoginScreen = () => {
           marginRight: insets.right,
         },
       ]}>
-      
-
-      <Text style={styles.title}>Login</Text>
+      <Text style={[styles.title, {marginTop: 64}]}>Login</Text>
 
       {/* <View style={styles.body}> */}
       {error && <Text style={styles.generalError}>{error}</Text>}
@@ -135,7 +131,6 @@ const LoginScreen = () => {
         )}
       </View>
 
-      
       <Pressable style={styles.submitButton} onPress={handleSubmit(onSubmit)}>
         <Text style={styles.submitButtonText}>Login</Text>
       </Pressable>

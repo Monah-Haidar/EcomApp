@@ -2,16 +2,17 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {useNavigation} from '@react-navigation/native';
 import {Controller, useForm} from 'react-hook-form';
 import {
-  Button,
-  Text,
-  TextInput,
-  View,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
+  Pressable,
+  Text,
+  TextInput,
   TouchableWithoutFeedback,
-  Keyboard,
+  View,
 } from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import Entypo from 'react-native-vector-icons/Entypo';
 import {z} from 'zod';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {formStyles} from '../../../styles/formStyles';
@@ -51,6 +52,7 @@ type FormData = z.infer<typeof SignUpSchema>;
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const {theme} = useTheme();
   const styles = formStyles(theme);
   const {
@@ -75,14 +77,30 @@ const SignUpScreen = () => {
 
   return (
     <KeyboardAvoidingView
-      style={{flex: 1}}
+      style={{
+        flex: 1,
+        marginTop: insets.top,
+        marginBottom: insets.bottom,
+        marginLeft: insets.left,
+        marginRight: insets.right,
+      }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // adjust if needed
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         {/* <ScrollView contentContainerStyle={styles.container}> */}
-          <View style={styles.container}>
-          <Text style={styles.title}>Sign Up</Text>
+
+        <View style={styles.container}>
+          <Pressable
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}>
+              <Entypo
+                name="chevron-with-circle-left"
+                size={30}
+                color="#4F8EF7"
+              />
+            </Pressable>
+            <Text style={styles.title}>Sign Up</Text>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Name</Text>
@@ -167,19 +185,22 @@ const SignUpScreen = () => {
             )}
           </View>
 
-          <Button title="Sign Up" onPress={handleSubmit(onSubmit)} />
+          <Pressable
+            style={styles.submitButton}
+            onPress={handleSubmit(onSubmit)}>
+            <Text style={styles.submitButtonText}>Sign Up</Text>
+          </Pressable>
 
-          <Text style={styles.signUpText}>
+          <Text style={styles.footerText}>
             Already have an account?{' '}
             <Text
-              style={styles.signUpLink}
+              style={styles.footerLink}
               onPress={() => navigation.navigate('Login')}>
               Login
             </Text>
           </Text>
+        </View>
 
-          
-          </View>
         {/* </ScrollView> */}
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

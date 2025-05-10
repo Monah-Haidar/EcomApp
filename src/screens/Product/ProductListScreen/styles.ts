@@ -1,6 +1,8 @@
 import {StyleSheet} from 'react-native';
 import { themes } from '../../../styles/theming';
 import { FONT_FAMILY, FONT_SIZE } from '../../../constants/font';
+import { moderateScale, scale, verticalScale } from '../../../utils/responsive';
+import { normalizeFont } from '../../../utils/normalizeFont';
 
 export const productListStyles = (theme: typeof themes.lightTheme | typeof themes.darkTheme,) =>
   StyleSheet.create({
@@ -8,29 +10,29 @@ export const productListStyles = (theme: typeof themes.lightTheme | typeof theme
       backgroundColor: theme.background,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 16,
+      padding: moderateScale(16),
     },
     card: {
       backgroundColor: theme.cardBackground,
-      borderRadius: 10,
-      padding: 12,
+      borderRadius: scale(10),
+      padding: moderateScale(12),
       elevation: 2,
-      margin: 8,
+      margin: moderateScale(8),
     },
     image: {
       width: '100%',
-      height: 160,
-      borderRadius: 8,
-      marginBottom: 10,
+      height: verticalScale(160),
+      borderRadius: scale(8),
+      marginBottom: verticalScale(10),
     },
     title: {
       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
-      fontSize: FONT_SIZE.SM,
+      fontSize: normalizeFont(FONT_SIZE.SM),
       color: theme.text,
     },
     price: {
       fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
-      fontSize: FONT_SIZE.XS,
+      fontSize: normalizeFont(FONT_SIZE.XS),
       color: '#2e7d32',
     },
   });

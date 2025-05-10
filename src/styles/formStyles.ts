@@ -1,6 +1,8 @@
 import {StyleSheet} from 'react-native';
 import {themes} from './theming';
 import {FONT_FAMILY, FONT_SIZE} from '../constants/font';
+import { moderateScale, scale, verticalScale } from '../utils/responsive';
+import { normalizeFont } from '../utils/normalizeFont';
 
 export const formStyles = (
   theme: typeof themes.lightTheme | typeof themes.darkTheme,
@@ -11,63 +13,62 @@ export const formStyles = (
       flex: 1,
       alignItems: 'center',
     },
-    header: {
-      flexDirection: 'row',
-      justifyContent: 'space-evenly',
-      // marginTop: 100,
-    },
     title: {
       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
-      fontSize: FONT_SIZE.XXXL,
+      fontSize: normalizeFont(FONT_SIZE.XXXL),
       color: theme.text,
       alignSelf: 'center',
-      marginBottom: 40,
+      marginBottom: verticalScale(40),
     },
     inputContainer: {
-      marginBottom: 20,
+      marginBottom: verticalScale(20),
       width: '80%',
     },
     label: {
       fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-      fontSize: FONT_SIZE.SM,
+      fontSize: normalizeFont(FONT_SIZE.SM),
       color: theme.inputLabel,
-      marginBottom: 6,
+      marginBottom: verticalScale(6),
     },
     input: {
       fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-      fontSize: FONT_SIZE.MD,
+      fontSize: normalizeFont(FONT_SIZE.MD),
       backgroundColor: theme.inputFieldBackground,
       borderColor: theme.border,
       borderWidth: 1,
-      borderRadius: 6,
-      padding: 12,
+      borderRadius: scale(6),
+      padding: moderateScale(12),
       width: '100%',
     },
 
     submitButton: {
       backgroundColor: theme.primary,
-      paddingVertical: 14,
-      borderRadius: 30,
+      paddingVertical: verticalScale(14),
+      borderRadius: scale(30),
       alignItems: 'center',
-      marginBottom: 30,
+      marginBottom: verticalScale(30),
       width: '50%',
     },
     submitButtonText: {
       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
-      fontSize: FONT_SIZE.LG,
+      fontSize: normalizeFont(FONT_SIZE.LG),
       color: theme.buttonText,
     },
     footerText: {
       fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-      fontSize: FONT_SIZE.SM,
+      fontSize: normalizeFont(FONT_SIZE.SM),
       color: theme.text,
       textAlign: 'center',
     },
     footerLink: {
       fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-      fontSize: FONT_SIZE.SM,
+      fontSize: normalizeFont(FONT_SIZE.SM),
       color: theme.primary,
-      fontWeight: '500',
+    },
+    backButton: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: moderateScale(32),
+      paddingTop: verticalScale(24),
     },
 
     // backButton: {
@@ -85,19 +86,19 @@ export const formStyles = (
 
     generalError: {
       fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-      fontSize: FONT_SIZE.SM,
+      fontSize: normalizeFont(FONT_SIZE.SM),
       backgroundColor: theme.errorTextContainer,
       color: theme.errorText,
-      padding: 12,
-      borderRadius: 6,
-      marginBottom: 20,
+      padding: moderateScale(12),
+      borderRadius: scale(6),
+      marginBottom: verticalScale(20),
       width: '80%',
       textAlign: 'center',
     },
     errorText: {
       fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-      fontSize: FONT_SIZE.XS,
+      fontSize: normalizeFont(FONT_SIZE.XS),
       color: theme.errorText,
-      marginTop: 6,
+      marginTop: verticalScale(6),
     },
   });
