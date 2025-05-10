@@ -1,50 +1,30 @@
-
-
-// export const themes = {
-//     lightTheme: {
-//         text: '#000000',
-//         border: '#c4c4c4',
-//         background: '#f9f9f9',
-//         buttonText: '#f9f9f9',
-//         buttonPrimary: '',
-//         buttonSecondary: '',
-//         cardBackground: '#f9f9f9',
-//     },
-//     darkTheme: {
-//         text: '#f9f9f9',
-//         border: '#c4c4c4',
-//         background: '#000000',
-//         buttonText: '#f9f9f9',
-//         buttonPrimary: '',
-//         buttonSecondary: '',
-//         cardBackground: '#000000',
-//     }
-// }
-
 export const themes = {
-    lightTheme: {
-        text: '#000000',
-        border: '#c4c4c4',
-        background: '#f9f9f9',
-        buttonText: '#ffffff',
-        primary: '#1E88E5',      
-        secondary: '#CFE9FE',   
-        cardBackground: '#ffffff',
-        inputContainerBackground: 'red',
-        errorText: '#d32f2f',
-        errorTextContainer: '#ffebee',
-    },
-    darkTheme: {
-        text: '#f9f9f9',
-        border: '#444444',
-        background: '#121212',
-        buttonText: '#ffffff',
-        primary: '#1565C0',     
-        secondary: '#444444',    
-        cardBackground: '#1e1e1e',
-        inputContainerBackground: 'white',
-        errorText: '#d32f2f',
-        errorTextContainer: '#ffebee'
-
-    }
+  lightTheme: {
+    text: '#363939',
+    subheadingText: '#797A7B',
+    inputLabel: '#363939',
+    inputFieldBackground: '#f0f0f0',
+    border: '#c4c4c4',
+    background: '#f9f9f9',
+    buttonText: '#ffffff',
+    primary: '#1E88E5',
+    secondary: '#797A7B',
+    cardBackground: '#ffffff',
+    errorText: '#d32f2f',
+    errorTextContainer: '#ffebee',
+  },
+  darkTheme: {
+    text: '#ffffff',
+    subheadingText: '#dddddd',
+    inputLabel: '#bbbbbb',
+    inputFieldBackground: '#2a2a2a',
+    border: '#444444',
+    background: '#121212',
+    buttonText: '#ffffff',
+    primary: '#1565C0',
+    secondary: '#444444',
+    cardBackground: '#1e1e1e',
+    errorText: '#f28b82',
+    errorTextContainer: '#3c1c1c',
+  }
 }

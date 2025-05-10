@@ -1,11 +1,15 @@
 import {StyleSheet} from 'react-native';
-import { themes } from '../../../styles/theming';
+import {themes} from '../../../styles/theming';
+import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
 
-export const productDetailsStyles = (width: number, theme: typeof themes.lightTheme | typeof themes.darkTheme,) =>
+export const productDetailsStyles = (
+  width: number,
+  theme: typeof themes.lightTheme | typeof themes.darkTheme,
+) =>
   StyleSheet.create({
     container: {
-      padding: 16,
       backgroundColor: theme.background,
+      padding: 16,
     },
     image: {
       width: '100%',
@@ -14,22 +18,21 @@ export const productDetailsStyles = (width: number, theme: typeof themes.lightTh
       marginBottom: 16,
     },
     title: {
-      fontSize: 24,
-      fontWeight: '600',
-      marginBottom: 8,
+      fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
+      fontSize: FONT_SIZE.XL,
       color: theme.text,
     },
     price: {
-      fontSize: 20,
-      fontWeight: '500',
-      color: '#4CAF50',
+      fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
+      fontSize: FONT_SIZE.LG,
       marginBottom: 12,
+      color: '#4CAF50',
     },
     description: {
-      fontSize: 16,
+      fontFamily: FONT_FAMILY.POPPINS_REGULAR,
+      fontSize: FONT_SIZE.MD,
       color: theme.text,
       marginBottom: 24,
-      lineHeight: 22,
     },
     buttonRow: {
       flexDirection: 'row',
@@ -47,8 +50,8 @@ export const productDetailsStyles = (width: number, theme: typeof themes.lightTh
       backgroundColor: theme.primary,
     },
     buttonText: {
-      color: theme.text,
-      fontWeight: '600',
-      fontSize: 16,
+      fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
+      fontSize: FONT_SIZE.MD,
+      color: theme.buttonText,
     },
   });

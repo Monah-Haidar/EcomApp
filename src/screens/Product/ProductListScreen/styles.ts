@@ -1,19 +1,21 @@
 import {StyleSheet} from 'react-native';
 import { themes } from '../../../styles/theming';
+import { FONT_FAMILY, FONT_SIZE } from '../../../constants/font';
 
 export const productListStyles = (theme: typeof themes.lightTheme | typeof themes.darkTheme,) =>
   StyleSheet.create({
     container: {
-      padding: 10,
+      backgroundColor: theme.background,
       justifyContent: 'center',
       alignItems: 'center',
+      padding: 16,
     },
     card: {
       backgroundColor: theme.cardBackground,
-      margin: 8,
       borderRadius: 10,
       padding: 12,
       elevation: 2,
+      margin: 8,
     },
     image: {
       width: '100%',
@@ -22,12 +24,13 @@ export const productListStyles = (theme: typeof themes.lightTheme | typeof theme
       marginBottom: 10,
     },
     title: {
+      fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
+      fontSize: FONT_SIZE.SM,
       color: theme.text,
-      fontSize: 16,
-      fontWeight: 'bold',
     },
     price: {
+      fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
+      fontSize: FONT_SIZE.XS,
       color: '#2e7d32',
-      fontSize: 14,
     },
   });

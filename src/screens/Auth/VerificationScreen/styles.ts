@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {themes} from '../../../styles/theming';
+import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
 
 export const verificationStyles = (
   theme: typeof themes.lightTheme | typeof themes.darkTheme,
@@ -9,59 +10,60 @@ export const verificationStyles = (
       backgroundColor: theme.background,
       flex: 1,
       alignItems: 'center',
-      paddingTop: 60,
+      // paddingTop: 60,
       padding: 24,
     },
     title: {
+      fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
+      fontSize: FONT_SIZE.XXXL,
       color: theme.text,
-      fontSize: 24,
-      marginBottom: 8,
-      alignSelf: 'flex-start',
+      textAlign: 'center',
     },
     subHeading: {
-      color: theme.text,
-      fontSize: 14,
+      fontFamily: FONT_FAMILY.POPPINS_REGULAR,
+      fontSize: FONT_SIZE.SM,
+      color: theme.subheadingText,
+      textAlign: 'center',
       marginBottom: 60,
-      alignSelf: 'flex-start',
     },
-
     label: {
+      fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
+      fontSize: FONT_SIZE.XL,
       color: theme.text,
-      fontSize: 20,
-      fontWeight: 'bold',
-      marginBottom: 20,
+      marginBottom: 12,
+    },
+    inputContainer: {
+      marginBottom: 40,
     },
     inputRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       width: '85%',
     },
-    inputContainer: {
-      marginBottom: 40,
-    },
     input: {
-      backgroundColor: theme.text,
+      fontFamily: FONT_FAMILY.POPPINS_REGULAR,
+      fontSize: FONT_SIZE.LG,
+      backgroundColor: theme.background,
       borderColor: theme.border,
       width: 50,
       height: 50,
       borderWidth: 1,
       textAlign: 'center',
-      fontSize: 20,
       borderRadius: 10,
     },
+
     submitButton: {
       backgroundColor: theme.primary,
       paddingVertical: 14,
-      paddingHorizontal: 32,
       borderRadius: 30,
       alignItems: 'center',
       marginBottom: 30,
       width: '70%',
     },
     submitButtonText: {
-      color: theme.text,
-      fontSize: 16,
-      fontWeight: '600',
+      fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
+      fontSize: FONT_SIZE.LG,
+      color: theme.buttonText,
     },
     generalError: {
       backgroundColor: theme.errorTextContainer,
@@ -73,8 +75,9 @@ export const verificationStyles = (
       textAlign: 'center',
     },
     errorText: {
+      fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
+      fontSize: FONT_SIZE.XS,
       color: theme.errorText,
       marginTop: 6,
-      fontSize: 13,
     },
   });

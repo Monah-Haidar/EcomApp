@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Button,
+  Pressable,
   Text,
   TextInput,
   TouchableOpacity,
@@ -85,9 +86,7 @@ const LoginScreen = () => {
           marginRight: insets.right,
         },
       ]}>
-      <TouchableOpacity style={styles.backButton}>
-        <Text style={styles.backButtonText}>{'<'}</Text>
-      </TouchableOpacity>
+      
 
       <Text style={styles.title}>Login</Text>
 
@@ -136,12 +135,15 @@ const LoginScreen = () => {
         )}
       </View>
 
-      <Button title="Login" onPress={handleSubmit(onSubmit)} />
+      
+      <Pressable style={styles.submitButton} onPress={handleSubmit(onSubmit)}>
+        <Text style={styles.submitButtonText}>Login</Text>
+      </Pressable>
 
-      <Text style={styles.signUpText}>
+      <Text style={styles.footerText}>
         Don't have an account?{' '}
         <Text
-          style={styles.signUpLink}
+          style={styles.footerLink}
           onPress={() => navigation.navigate('SignUp')}>
           Sign Up
         </Text>

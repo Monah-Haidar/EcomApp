@@ -69,10 +69,11 @@ const VerificationScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Please verify your email address</Text>
       <Text style={styles.subHeading}>
-        We've sent an email to XXX, please enter the code below.
+        We've sent you an email, please enter the code below.
       </Text>
 
-  {error && <Text style={styles.generalError}>{error}</Text>}
+      {error && <Text style={styles.generalError}>{error}</Text>}
+      
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Enter Code</Text>
         <View style={styles.inputRow}>
