@@ -12,6 +12,8 @@ export const formStyles = (
       backgroundColor: theme.background,
       flex: 1,
       alignItems: 'center',
+      justifyContent: 'center',
+      paddingBottom: 100,
     },
     title: {
       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
@@ -35,6 +37,7 @@ export const formStyles = (
       fontSize: normalizeFont(FONT_SIZE.MD),
       backgroundColor: theme.inputFieldBackground,
       borderColor: theme.border,
+      color: theme.text,
       borderWidth: 1,
       borderRadius: scale(6),
       padding: moderateScale(12),
@@ -68,7 +71,7 @@ export const formStyles = (
     backButton: {
       alignSelf: 'flex-start',
       paddingHorizontal: moderateScale(32),
-      paddingTop: verticalScale(24),
+      // paddingTop: verticalScale(24),
     },
 
     // backButton: {

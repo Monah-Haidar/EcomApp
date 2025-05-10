@@ -1,18 +1,21 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {useNavigation} from '@react-navigation/native';
+import {useState} from 'react';
+import {Controller, useForm} from 'react-hook-form';
 import {
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
-  View
+  View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { z } from 'zod';
-import { useAuth } from '../../../store/AuthStore/AuthStore';
-import { useTheme } from '../../../store/ThemeStore/ThemeStore';
-import { formStyles } from '../../../styles/formStyles';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {z} from 'zod';
+import {useAuth} from '../../../store/AuthStore/AuthStore';
+import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import {formStyles} from '../../../styles/formStyles';
 
 const LoginSchema = z.object({
   email: z
@@ -56,8 +59,6 @@ const LoginScreen = () => {
 
   const styles = formStyles(theme);
 
-
-
   const onSubmit = (data: FormData) => {
     console.log('Form Data:', data);
 
@@ -74,77 +75,95 @@ const LoginScreen = () => {
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          marginTop: insets.top,
-          marginBottom: insets.bottom,
-          marginLeft: insets.left,
-          marginRight: insets.right,
-        },
-      ]}>
-      <Text style={[styles.title, {marginTop: 64}]}>Login</Text>
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+    >
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'center',
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+        }}
+        keyboardShouldPersistTaps="handled">
+        <View
+          style={[
+            styles.container,
+            // {
+            //   marginTop: insets.top,
+            //   marginBottom: insets.bottom,
+            //   marginLeft: insets.left,
+            //   marginRight: insets.right,
+            // },
+          ]}>
+          <Text style={[styles.title, {marginTop: 64}]}>Login</Text>
 
-      {/* <View style={styles.body}> */}
-      {error && <Text style={styles.generalError}>{error}</Text>}
+          {/* <View style={styles.body}> */}
+          {error && <Text style={styles.generalError}>{error}</Text>}
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Email</Text>
-        <Controller
-          control={control}
-          name="email"
-          render={({field: {onChange, onBlur, value}}) => (
-            <TextInput
-              style={styles.input}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
-              placeholder="Enter your email"
-              keyboardType="email-address"
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
+            <Controller
+              control={control}
+              name="email"
+              render={({field: {onChange, onBlur, value}}) => (
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                  placeholder="Enter your email"
+                  keyboardType="email-address"
+                />
+              )}
             />
-          )}
-        />
-        {errors.email && (
-          <Text style={styles.errorText}>{errors.email.message}</Text>
-        )}
-      </View>
+            {errors.email && (
+              <Text style={styles.errorText}>{errors.email.message}</Text>
+            )}
+          </View>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Password</Text>
-        <Controller
-          control={control}
-          name="password"
-          render={({field: {onChange, onBlur, value}}) => (
-            <TextInput
-              style={styles.input}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
-              placeholder="Enter your password"
-              secureTextEntry
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Password</Text>
+            <Controller
+              control={control}
+              name="password"
+              render={({field: {onChange, onBlur, value}}) => (
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                  placeholder="Enter your password"
+                  secureTextEntry
+                />
+              )}
             />
-          )}
-        />
-        {errors.password && (
-          <Text style={styles.errorText}>{errors.password.message}</Text>
-        )}
-      </View>
+            {errors.password && (
+              <Text style={styles.errorText}>{errors.password.message}</Text>
+            )}
+          </View>
 
-      <Pressable style={styles.submitButton} onPress={handleSubmit(onSubmit)}>
-        <Text style={styles.submitButtonText}>Login</Text>
-      </Pressable>
+          <Pressable
+            style={styles.submitButton}
+            onPress={handleSubmit(onSubmit)}>
+            <Text style={styles.submitButtonText}>Login</Text>
+          </Pressable>
 
-      <Text style={styles.footerText}>
-        Don't have an account?{' '}
-        <Text
-          style={styles.footerLink}
-          onPress={() => navigation.navigate('SignUp')}>
-          Sign Up
-        </Text>
-      </Text>
-    </View>
-    // </View>
+          <Text style={styles.footerText}>
+            Don't have an account?{' '}
+            <Text
+              style={styles.footerLink}
+              onPress={() => navigation.navigate('SignUp')}>
+              Sign Up
+            </Text>
+          </Text>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

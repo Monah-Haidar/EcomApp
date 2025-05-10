@@ -2,7 +2,10 @@ import {useRef, useState} from 'react';
 import {
   Alert,
   Button,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -23,7 +26,7 @@ const VerificationScreen = () => {
   const styles = verificationStyles(theme);
 
   const handleChange = (text, index) => {
-    if (!/^\d?$/.test(text)) return; // only allow digits
+    if (!/^\d?$/.test(text)) return;
 
     const newCode = [...code];
     newCode[index] = text;
@@ -34,11 +37,7 @@ const VerificationScreen = () => {
       inputRefs.current[index + 1]?.focus();
     }
 
-    // If all inputs are filled, you can use the code
     const fullCode = newCode.join('');
-    // if (fullCode.length === numberOfInputs && !newCode.includes('')) {
-    //   Alert.alert('Code Entered', fullCode);
-    // }
   };
 
   const handleBackspace = (e, index) => {
@@ -51,8 +50,6 @@ const VerificationScreen = () => {
     const fullCode = code.join('');
 
     if (fullCode.length < numberOfInputs || code.includes('')) {
-      // Alert.alert('Incomplete Code', 'Please enter all digits');
-      // return;
       return setError('Please enter all digits');
     }
 
@@ -61,43 +58,52 @@ const VerificationScreen = () => {
       navigation.navigate('Login');
     } else {
       return setError('Invalid credentials');
-      // Alert.alert('Error', 'The code is incorrect');
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Please verify your email address</Text>
-      <Text style={styles.subHeading}>
-        We've sent you an email, please enter the code below.
-      </Text>
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'center',
+        }}
+        keyboardShouldPersistTaps="handled">
+        <View style={styles.container}>
+          <Text style={styles.title}>Please verify your email address</Text>
+          <Text style={styles.subHeading}>
+            We've sent you an email, please enter the code below.
+          </Text>
 
-      {error && <Text style={styles.generalError}>{error}</Text>}
-      
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Enter Code</Text>
-        <View style={styles.inputRow}>
-          {code.map((digit, index) => (
-            <TextInput
-              key={index}
-              ref={ref => (inputRefs.current[index] = ref)}
-              style={styles.input}
-              keyboardType="number-pad"
-              maxLength={1}
-              value={digit}
-              onChangeText={text => handleChange(text, index)}
-              onKeyPress={e => handleBackspace(e, index)}
-            />
-          ))}
+          {error && <Text style={styles.generalError}>{error}</Text>}
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Enter Code</Text>
+            <View style={styles.inputRow}>
+              {code.map((digit, index) => (
+                <TextInput
+                  key={index}
+                  ref={ref => (inputRefs.current[index] = ref)}
+                  style={styles.input}
+                  keyboardType="number-pad"
+                  maxLength={1}
+                  value={digit}
+                  onChangeText={text => handleChange(text, index)}
+                  onKeyPress={e => handleBackspace(e, index)}
+                />
+              ))}
+            </View>
+          </View>
+
+          <Pressable style={styles.submitButton} onPress={() => onSubmit()}>
+            <Text style={styles.submitButtonText}>Create Account</Text>
+          </Pressable>
         </View>
-      </View>
-
-      {/* <Button title="Create Account" onPress={() => onSubmit()} /> */}
-
-      <Pressable style={styles.submitButton} onPress={() => onSubmit()}>
-        <Text style={styles.submitButtonText}>Create Account</Text>
-      </Pressable>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

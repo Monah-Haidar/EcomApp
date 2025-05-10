@@ -46,6 +46,7 @@ export const verificationStyles = (
       fontSize: normalizeFont(FONT_SIZE.LG),
       backgroundColor: theme.background,
       borderColor: theme.border,
+      color: theme.text,
       width: moderateScale(50),
       height: verticalScale(50),
       borderWidth: 1,

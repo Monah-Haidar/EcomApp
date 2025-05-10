@@ -2,13 +2,12 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {useNavigation} from '@react-navigation/native';
 import {Controller, useForm} from 'react-hook-form';
 import {
-  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -77,30 +76,27 @@ const SignUpScreen = () => {
 
   return (
     <KeyboardAvoidingView
-      style={{
-        flex: 1,
-        marginTop: insets.top,
-        marginBottom: insets.bottom,
-        marginLeft: insets.left,
-        marginRight: insets.right,
-      }}
+      style={{flex: 1}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // adjust if needed
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        {/* <ScrollView contentContainerStyle={styles.container}> */}
-
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'center',
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+        }}
+        keyboardShouldPersistTaps="handled"
+        >
         <View style={styles.container}>
           <Pressable
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}>
-              <Entypo
-                name="chevron-with-circle-left"
-                size={30}
-                color="#4F8EF7"
-              />
-            </Pressable>
-            <Text style={styles.title}>Sign Up</Text>
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
+            <Entypo name="chevron-with-circle-left" size={30} color="#4F8EF7" />
+          </Pressable>
+          <Text style={styles.title}>Sign Up</Text>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Name</Text>
@@ -200,9 +196,7 @@ const SignUpScreen = () => {
             </Text>
           </Text>
         </View>
-
-        {/* </ScrollView> */}
-      </TouchableWithoutFeedback>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
