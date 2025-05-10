@@ -1,34 +1,22 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {LoginScreen} from '../../screens/Auth/LoginScreen';
-import {SignUpScreen} from '../../screens/Auth/SignUpScreen';
-import {VerificationScreen} from '../../screens/Auth/VerificationScreen';
-import {ProductListScreen} from '../../screens/Product/ProductListScreen';
-import {ProductDetailsScreen} from '../../screens/Product/ProductDetailsScreen';
+import {
+  DarkTheme,
+  DefaultTheme,
+  NavigationContainer,
+} from '@react-navigation/native';
 import { useAuth } from '../../store/AuthStore/AuthStore';
-// import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from '../../store/ThemeStore/ThemeStore';
+import { AuthStack } from '../stacks/AuthStack';
+import { GuestStack } from '../stacks/GuestStack';
 
-const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
+  const {themeName} = useTheme();
   const auth = useAuth();
-  // const insets = useSafeAreaInsets();
   return (
-    <Stack.Navigator>
-      {auth?.isSignedIn ? (
-        <>
-          <Stack.Screen name="ProductList" component={ProductListScreen} />
-          <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
-        </>
-      ) : (
-        <>
-          <Stack.Screen name="Login" component={LoginScreen} options={{
-            headerShown: false,
-          }}/>
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="Verification" component={VerificationScreen} />
-        </>
-      )}
-    </Stack.Navigator>
+    <NavigationContainer
+      theme={themeName === 'darkTheme' ? DarkTheme : DefaultTheme}>
+      {auth?.isSignedIn ? <AuthStack auth={auth} /> : <GuestStack />}
+    </NavigationContainer>
   );
 };
 

@@ -1,0 +1,53 @@
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {Pressable, Text, View} from 'react-native';
+import {ProductListScreen} from '../../../screens/Product/ProductListScreen';
+import {ProductDetailsScreen} from '../../../screens/Product/ProductDetailsScreen';
+import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import { FONT_FAMILY, FONT_SIZE } from '../../../constants/font';
+
+const Stack = createNativeStackNavigator();
+
+const AuthStack = ({auth}: {auth: any}) => {
+  const {themeName, setThemeName} = useTheme();
+
+  const toggleTheme = () => {
+    setThemeName(themeName === 'darkTheme' ? 'lightTheme' : 'darkTheme');
+  };
+
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="ProductList"
+        component={ProductListScreen}
+        options={{
+          headerTitleStyle: {
+            fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
+            fontSize: FONT_SIZE.XL,
+          },
+          headerRight: () => (
+            <View style={{flexDirection: 'row', gap: 8}}>
+              <Pressable onPress={() => toggleTheme()}>
+                <Text>Theme</Text>
+              </Pressable>
+              <Pressable onPress={() => auth?.logout()}>
+                <Text>Logout</Text>
+              </Pressable>
+            </View>
+          ),
+        }}
+      />
+      <Stack.Screen 
+        name="ProductDetails" 
+        component={ProductDetailsScreen}  
+        options={{
+           headerTitleStyle: {
+            fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
+            fontSize: FONT_SIZE.XL,
+          }
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+export default AuthStack;

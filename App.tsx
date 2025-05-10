@@ -1,13 +1,13 @@
 import React from 'react';
-import AppContent from './src/AppContent';
-import {AuthProvider} from './src/store/AuthStore/AuthStore';
-import {ThemeProvider} from './src/store/ThemeStore/ThemeStore';
+import { AppNavigator } from './src/navigation/navigator';
+import { AuthProvider } from './src/store/AuthStore/AuthStore';
+import { ThemeProvider } from './src/store/ThemeStore/ThemeStore';
 
 function App(): React.JSX.Element {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <AppContent />
+        <AppNavigator />
       </AuthProvider>
     </ThemeProvider>
   );
