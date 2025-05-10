@@ -2,17 +2,17 @@
 
 export const themes = {
     lightTheme: {
-        text: '',
+        text: '#000000',
         border: '#c4c4c4',
         background: '#f9f9f9',
-        buttonText: '',
-        cardBackground: '',
+        buttonText: '#f9f9f9',
+        cardBackground: '#f9f9f9',
     },
     darkTheme: {
-        text: '#363939',
+        text: '#f9f9f9',
         border: '#c4c4c4',
         background: '#000000',
-        buttonText: '',
-        cardBackground: '',
+        buttonText: '#f9f9f9',
+        cardBackground: '#000000',
     }
 }

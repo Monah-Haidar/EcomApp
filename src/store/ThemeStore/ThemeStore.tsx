@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { Appearance } from 'react-native';
 import { themes } from '../../styles/theming';
 
 type ThemeName = keyof typeof themes;
@@ -9,26 +10,28 @@ interface ThemeContextType {
   setThemeName: (name: ThemeName) => void;
 }
 
-
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider = ({children, systemTheme}: {children: ReactNode; systemTheme?: 'light' | 'dark';}) => {
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+  const colorScheme = Appearance.getColorScheme();
+  const initialTheme = colorScheme === 'dark' ? 'darkTheme' : 'lightTheme';
 
-  const [themeName, setThemeName] = useState<ThemeName>(systemTheme === 'dark' ? 'darkTheme' : 'lightTheme');
+  const [themeName, setThemeName] = useState<ThemeName>(initialTheme);
 
   useEffect(() => {
-    if (systemTheme) {
-      setThemeName(systemTheme === 'dark' ? 'darkTheme' : 'lightTheme');
-    }
-  }, [systemTheme]);
+    const subscription = Appearance.addChangeListener(({ colorScheme }) => {
+      setThemeName(colorScheme === 'dark' ? 'darkTheme' : 'lightTheme');
+    });
+    return () => subscription.remove();
+  }, []);
 
   const theme = themes[themeName];
 
   return (
-    <ThemeContext.Provider value={{theme, themeName, setThemeName}}>
-        {children}
+    <ThemeContext.Provider value={{ theme, themeName, setThemeName }}>
+      {children}
     </ThemeContext.Provider>
-  )
+  );
 };
 
 export const useTheme = () => {
@@ -37,5 +40,4 @@ export const useTheme = () => {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
-}
-
+};
