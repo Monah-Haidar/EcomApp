@@ -1,10 +1,11 @@
 import {StyleSheet} from 'react-native';
+import { themes } from '../../../styles/theming';
 
-export const productDetailsStyles = (width: number, theme: any) =>
+export const productDetailsStyles = (width: number, theme: typeof themes.lightTheme | typeof themes.darkTheme,) =>
   StyleSheet.create({
     container: {
       padding: 16,
-      backgroundColor: '#ffffff',
+      backgroundColor: theme.background,
     },
     image: {
       width: '100%',
@@ -16,7 +17,7 @@ export const productDetailsStyles = (width: number, theme: any) =>
       fontSize: 24,
       fontWeight: '600',
       marginBottom: 8,
-      color: '#333',
+      color: theme.text,
     },
     price: {
       fontSize: 20,
@@ -26,7 +27,7 @@ export const productDetailsStyles = (width: number, theme: any) =>
     },
     description: {
       fontSize: 16,
-      color: '#666',
+      color: theme.text,
       marginBottom: 24,
       lineHeight: 22,
     },
@@ -37,16 +38,16 @@ export const productDetailsStyles = (width: number, theme: any) =>
     },
     button: {
       flex: 1,
-      backgroundColor: '#333',
+      backgroundColor: theme.secondary,
       paddingVertical: 14,
       borderRadius: 8,
       alignItems: 'center',
     },
     addButton: {
-      backgroundColor: '#FF6B00',
+      backgroundColor: theme.primary,
     },
     buttonText: {
-      color: '#fff',
+      color: theme.text,
       fontWeight: '600',
       fontSize: 16,
     },

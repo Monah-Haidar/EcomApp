@@ -1,4 +1,5 @@
 import {
+  Button,
   FlatList,
   Image,
   Pressable,
@@ -11,41 +12,49 @@ import data from '../../../../Products.json';
 import {productListStyles} from './styles';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {ProductCard} from '../../../components/molecules/ProductCard';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import {useAuth} from '../../../store/AuthStore/AuthStore';
 
 const ProductListScreen = () => {
+  // const auth = useAuth();
   const {width, height} = useWindowDimensions();
   const {theme} = useTheme();
   const navigation = useNavigation();
   const isLandscape = width > height;
-  const numColumns = isLandscape ? 2 : 1;
+  const numColumns = isLandscape ? 3 : 2;
   const styles = productListStyles(theme);
 
   const itemWidth = width / numColumns - 20;
 
   return (
-    <FlatList
-      contentContainerStyle={styles.container}
-      data={data.data}
-      numColumns={numColumns}
-      key={numColumns}
-      keyExtractor={item => item._id}
-      renderItem={({item}) => (
-        <Pressable
-          onPress={() => navigation.navigate('ProductDetails', {product: item})}
-          style={({pressed}) => [
-            {
-              opacity: pressed ? 0.6 : 1,
-            },
-          ]}>
-          <ProductCard
-            item={item}
-            itemWidth={itemWidth}
-            source={{uri: item.images[0].url}}
-          />
-        </Pressable>
-      )}
-    />
+    <View>
+      {/* <Button title="log out" onPress={() => auth?.logout()} /> */}
+
+      <FlatList
+        contentContainerStyle={styles.container}
+        data={data.data}
+        numColumns={numColumns}
+        key={numColumns}
+        keyExtractor={item => item._id}
+        renderItem={({item}) => (
+          <Pressable
+            onPress={() =>
+              navigation.navigate('ProductDetails', {product: item})
+            }
+            style={({pressed}) => [
+              {
+                opacity: pressed ? 0.6 : 1,
+              },
+            ]}>
+            <ProductCard
+              item={item}
+              itemWidth={itemWidth}
+              source={{uri: item.images[0].url}}
+            />
+          </Pressable>
+        )}
+      />
+    </View>
   );
 };
 

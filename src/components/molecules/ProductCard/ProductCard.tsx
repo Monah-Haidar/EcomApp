@@ -18,7 +18,7 @@ const ProductCard = ({
       <Image source={source} style={styles.image} />
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.price}>${item.price}</Text>
-      <Text style={styles.description}>{item.description}</Text>
+      {/* <Text style={styles.description}>{item.description}</Text> */}
     </View>
   );
 };

@@ -1,16 +1,25 @@
 import {useRef, useState} from 'react';
-import {Alert, Button, StyleSheet, Text, TextInput, View} from 'react-native';
-import { useTheme } from '../../../store/ThemeStore/ThemeStore';
-import { useNavigation } from '@react-navigation/native';
-import { verificationStyles } from './styles';
+import {
+  Alert,
+  Button,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import {useNavigation} from '@react-navigation/native';
+import {verificationStyles} from './styles';
 
 const VerificationScreen = () => {
-  const { theme } = useTheme();
+  const {theme} = useTheme();
   const navigation = useNavigation();
   const numberOfInputs = 4;
   const [code, setCode] = useState(Array(numberOfInputs).fill(''));
+  const [error, setError] = useState<string | null>(null);
   const inputRefs = useRef([]);
-  const expectedCode = "1234";
+  const expectedCode = '1234';
   const styles = verificationStyles(theme);
 
   const handleChange = (text, index) => {
@@ -38,28 +47,32 @@ const VerificationScreen = () => {
     }
   };
 
-
   const onSubmit = () => {
     const fullCode = code.join('');
 
     if (fullCode.length < numberOfInputs || code.includes('')) {
-      Alert.alert('Incomplete Code', 'Please enter all digits');
-      return;
+      // Alert.alert('Incomplete Code', 'Please enter all digits');
+      // return;
+      return setError('Please enter all digits');
     }
 
     if (fullCode === expectedCode) {
       Alert.alert('Success', 'Verification successful');
       navigation.navigate('Login');
     } else {
-      Alert.alert('Error', 'The code is incorrect');
+      return setError('Invalid credentials');
+      // Alert.alert('Error', 'The code is incorrect');
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Please verify your email address</Text>
-      <Text style={styles.subHeading}>We've sent an email to XXX, please enter the code below.</Text>
+      <Text style={styles.title}>Please verify your email address</Text>
+      <Text style={styles.subHeading}>
+        We've sent an email to XXX, please enter the code below.
+      </Text>
 
+  {error && <Text style={styles.generalError}>{error}</Text>}
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Enter Code</Text>
         <View style={styles.inputRow}>
@@ -78,14 +91,13 @@ const VerificationScreen = () => {
         </View>
       </View>
 
-      <Button
-        title="Create Account"
-        onPress={() => onSubmit()}
-      />
+      {/* <Button title="Create Account" onPress={() => onSubmit()} /> */}
+
+      <Pressable style={styles.submitButton} onPress={() => onSubmit()}>
+        <Text style={styles.submitButtonText}>Create Account</Text>
+      </Pressable>
     </View>
   );
 };
 
 export default VerificationScreen;
-
-
