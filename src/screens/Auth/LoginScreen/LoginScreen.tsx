@@ -18,14 +18,13 @@ import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {formStyles} from '../../../styles/formStyles';
 
 const LoginSchema = z.object({
-  email: z
+  username: z
     .string({
-      required_error: 'Email is required',
-      invalid_type_error: 'Email must be a string',
+      required_error: 'Username is required',
+      invalid_type_error: 'Username must be a string',
     })
-    .email({
-      message: 'Invalid email address',
-    }),
+    .min(3, {message: 'Username must be at least 3 characters long'})
+    .max(50, {message: 'Username must be at most 50 characters long'}),
 
   password: z
     .string({
@@ -51,8 +50,8 @@ const LoginScreen = () => {
   } = useForm<FormData>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: 'eurisko@gmail.com',
-      password: 'academy2025',
+      username: '',
+      password: '',
     },
     mode: 'onBlur',
   });
@@ -63,7 +62,7 @@ const LoginScreen = () => {
     console.log('Form Data:', data);
 
     if (
-      !(data.email === 'eurisko@gmail.com' && data.password === 'academy2025')
+      !(data.username === 'eurisko' && data.password === 'academy2025')
     ) {
       console.log('invalid credentials');
       return setError('Invalid credentials');
@@ -91,38 +90,29 @@ const LoginScreen = () => {
         }}
         keyboardShouldPersistTaps="handled">
         <View
-          style={[
-            styles.container,
-            // {
-            //   marginTop: insets.top,
-            //   marginBottom: insets.bottom,
-            //   marginLeft: insets.left,
-            //   marginRight: insets.right,
-            // },
-          ]}>
+          style={styles.container}>
           <Text style={[styles.title, {marginTop: 64}]}>Login</Text>
 
-          {/* <View style={styles.body}> */}
           {error && <Text style={styles.generalError}>{error}</Text>}
 
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>Username</Text>
             <Controller
               control={control}
-              name="email"
+              name="username"
               render={({field: {onChange, onBlur, value}}) => (
                 <TextInput
                   style={styles.input}
                   onChangeText={onChange}
                   onBlur={onBlur}
                   value={value}
-                  placeholder="Enter your email"
-                  keyboardType="email-address"
+                  placeholder="Enter your username"
+                  // keyboardType="email-address"
                 />
               )}
             />
-            {errors.email && (
-              <Text style={styles.errorText}>{errors.email.message}</Text>
+            {errors.username && (
+              <Text style={styles.errorText}>{errors.username.message}</Text>
             )}
           </View>
 

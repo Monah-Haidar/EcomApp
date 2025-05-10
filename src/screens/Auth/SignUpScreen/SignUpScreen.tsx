@@ -61,10 +61,10 @@ const SignUpScreen = () => {
   } = useForm<FormData>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
-      name: 'john doe',
-      email: 'john@doe.com',
-      password: '12345678',
-      phoneNb: '0071143125',
+      name: '',
+      email: '',
+      password: '',
+      phoneNb: '',
     },
     mode: 'onBlur',
   });

@@ -1,19 +1,19 @@
-import {useRef, useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { useRef, useState } from 'react';
 import {
   Alert,
-  Button,
   KeyboardAvoidingView,
+  NativeSyntheticEvent,
   Platform,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
-  View,
+  TextInputKeyPressEventData,
+  View
 } from 'react-native';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {useNavigation} from '@react-navigation/native';
-import {verificationStyles} from './styles';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { verificationStyles } from './styles';
 
 const VerificationScreen = () => {
   const {theme} = useTheme();
@@ -21,11 +21,11 @@ const VerificationScreen = () => {
   const numberOfInputs = 4;
   const [code, setCode] = useState(Array(numberOfInputs).fill(''));
   const [error, setError] = useState<string | null>(null);
-  const inputRefs = useRef([]);
+  const inputRefs = useRef<(TextInput | null)[]>([]);
   const expectedCode = '1234';
   const styles = verificationStyles(theme);
 
-  const handleChange = (text, index) => {
+  const handleChange = (text: string, index: number) => {
     if (!/^\d?$/.test(text)) return;
 
     const newCode = [...code];
@@ -40,7 +40,7 @@ const VerificationScreen = () => {
     const fullCode = newCode.join('');
   };
 
-  const handleBackspace = (e, index) => {
+  const handleBackspace = (e: NativeSyntheticEvent<TextInputKeyPressEventData>, index: number) => {
     if (e.nativeEvent.key === 'Backspace' && code[index] === '' && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -86,7 +86,7 @@ const VerificationScreen = () => {
               {code.map((digit, index) => (
                 <TextInput
                   key={index}
-                  ref={ref => (inputRefs.current[index] = ref)}
+                  ref={(ref: TextInput | null) => {inputRefs.current[index] = ref}}
                   style={styles.input}
                   keyboardType="number-pad"
                   maxLength={1}

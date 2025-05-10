@@ -6,10 +6,18 @@ import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Feather from 'react-native-vector-icons/Feather';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const Stack = createNativeStackNavigator();
 
-const AuthStack = ({auth}: {auth: any}) => {
+const AuthStack = ({
+  auth,
+}: {
+  auth: {
+    logout: () => void;
+  };
+}) => {
   const {themeName, setThemeName} = useTheme();
 
   const toggleTheme = () => {
@@ -27,12 +35,12 @@ const AuthStack = ({auth}: {auth: any}) => {
             fontSize: FONT_SIZE.XL,
           },
           headerRight: () => (
-            <View style={{flexDirection: 'row', gap: 8}}>
+            <View style={{flexDirection: 'row', gap: 24, alignItems: 'center'}}>
               <Pressable onPress={() => toggleTheme()}>
                 {themeName === 'lightTheme' ? (
-                  <Text>Dark</Text>
+                  <Entypo name="moon" size={30} color="#4F8EF7" />
                 ) : (
-                  <Text>Light</Text>
+                  <Feather name="sun" size={30} color="#4F8EF7" />
                 )}
               </Pressable>
               <Pressable onPress={() => auth?.logout()}>
