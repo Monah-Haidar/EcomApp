@@ -1,5 +1,5 @@
-import { useNavigation } from '@react-navigation/native';
-import { useRef, useState } from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {useRef, useState} from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -10,13 +10,11 @@ import {
   Text,
   TextInput,
   TextInputKeyPressEventData,
-  View
+  View,
 } from 'react-native';
-import { useTheme } from '../../../store/ThemeStore/ThemeStore';
-import { verificationStyles } from './styles';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
-
+import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import {verificationStyles} from './styles';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 type RootStackParamList = {
   Login: undefined;
@@ -24,11 +22,12 @@ type RootStackParamList = {
 
 const VerificationScreen = () => {
   const {theme} = useTheme();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const numberOfInputs = 4;
-  const [code, setCode] = useState(Array(numberOfInputs).fill(''));
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [error, setError] = useState<string | null>(null);
   const inputRefs = useRef<(TextInput | null)[]>([]);
+  const numberOfInputs = 4;
+  const [code, setCode] = useState(Array(numberOfInputs).fill(''));
   const expectedCode = '1234';
   const styles = verificationStyles(theme);
 
@@ -39,7 +38,6 @@ const VerificationScreen = () => {
     newCode[index] = text;
     setCode(newCode);
 
-    
     if (text && index < numberOfInputs - 1) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -47,7 +45,10 @@ const VerificationScreen = () => {
     const fullCode = newCode.join('');
   };
 
-  const handleBackspace = (e: NativeSyntheticEvent<TextInputKeyPressEventData>, index: number) => {
+  const handleBackspace = (
+    e: NativeSyntheticEvent<TextInputKeyPressEventData>,
+    index: number,
+  ) => {
     if (e.nativeEvent.key === 'Backspace' && code[index] === '' && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -93,7 +94,9 @@ const VerificationScreen = () => {
               {code.map((digit, index) => (
                 <TextInput
                   key={index}
-                  ref={(ref: TextInput | null) => {inputRefs.current[index] = ref}}
+                  ref={(ref: TextInput | null) => {
+                    inputRefs.current[index] = ref;
+                  }}
                   style={styles.input}
                   keyboardType="number-pad"
                   maxLength={1}

@@ -60,7 +60,6 @@ const SignUpScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   const {theme} = useTheme();
-  const styles = formStyles(theme);
   const {
     control,
     handleSubmit,
@@ -75,6 +74,8 @@ const SignUpScreen = () => {
     },
     mode: 'onBlur',
   });
+
+  const styles = formStyles(theme);
 
   const onSubmit = (data: FormData) => {
     console.log('Form Data:', data);
