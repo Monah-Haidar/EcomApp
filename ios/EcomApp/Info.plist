@@ -67,6 +67,9 @@
 		<string>Poppins-SemiBoldItalic.ttf</string>
 		<string>Poppins-Thin.ttf</string>
 		<string>Poppins-ThinItalic.ttf</string>
+		<string>MaterialCommunityIcons.ttf</string>
+		<string>Feather.ttf</string>
+		<string>Entypo.ttf</string>
 	</array>
 </dict>
 </plist>
