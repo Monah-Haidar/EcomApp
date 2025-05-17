@@ -5,8 +5,8 @@ import {
 } from '@react-navigation/native';
 import { useAuth } from '../../store/AuthStore/AuthStore';
 import { useTheme } from '../../store/ThemeStore/ThemeStore';
+import { ProductStack } from '../stacks/ProductStack';
 import { AuthStack } from '../stacks/AuthStack';
-import { GuestStack } from '../stacks/GuestStack';
 
 
 const AppNavigator = () => {
@@ -15,7 +15,7 @@ const AppNavigator = () => {
   return (
     <NavigationContainer
       theme={themeName === 'darkTheme' ? DarkTheme : DefaultTheme}>
-      {auth?.isSignedIn ? <AuthStack auth={auth} /> : <GuestStack />}
+      {auth?.isSignedIn ? <ProductStack auth={auth} /> : <AuthStack />}
     </NavigationContainer>
   );
 };

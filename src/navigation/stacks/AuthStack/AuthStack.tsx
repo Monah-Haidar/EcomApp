@@ -1,69 +1,28 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {Pressable, Text, View} from 'react-native';
-import {ProductListScreen} from '../../../screens/Product/ProductListScreen';
-import {ProductDetailsScreen} from '../../../screens/Product/ProductDetailsScreen';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
-
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Feather from 'react-native-vector-icons/Feather';
-import Entypo from 'react-native-vector-icons/Entypo';
+import {LoginScreen} from '../../../screens/Auth/LoginScreen';
+import {SignUpScreen} from '../../../screens/Auth/SignUpScreen';
+import {VerificationScreen} from '../../../screens/Auth/VerificationScreen';
 
 const Stack = createNativeStackNavigator();
 
-const AuthStack = ({
-  auth,
-}: {
-  auth: {
-    logout: () => void;
-  };
-}) => {
-  const {themeName, setThemeName} = useTheme();
-
-  const toggleTheme = () => {
-    setThemeName(themeName === 'darkTheme' ? 'lightTheme' : 'darkTheme');
-  };
-
+const AuthStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="ProductList"
-        component={ProductListScreen}
+        name="Login"
+        component={LoginScreen}
         options={{
-          headerTitleStyle: {
-            fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
-            fontSize: FONT_SIZE.XL,
-          },
-          headerRight: () => (
-            <View style={{flexDirection: 'row', gap: 24, alignItems: 'center'}}>
-              <Pressable onPress={() => toggleTheme()}>
-                {themeName === 'lightTheme' ? (
-                  <Entypo name="moon" size={30} color="#4F8EF7" />
-                ) : (
-                  <Feather name="sun" size={30} color="#4F8EF7" />
-                )}
-              </Pressable>
-              <Pressable onPress={() => auth?.logout()}>
-                <MaterialCommunityIcons
-                  name="logout"
-                  size={30}
-                  color="#4F8EF7"
-                />
-              </Pressable>
-            </View>
-          ),
+          headerShown: false,
         }}
       />
       <Stack.Screen
-        name="ProductDetails"
-        component={ProductDetailsScreen}
+        name="SignUp"
+        component={SignUpScreen}
         options={{
-          headerTitleStyle: {
-            fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
-            fontSize: FONT_SIZE.XL,
-          },
+          headerShown: false,
         }}
       />
+      <Stack.Screen name="Verification" component={VerificationScreen} />
     </Stack.Navigator>
   );
 };
