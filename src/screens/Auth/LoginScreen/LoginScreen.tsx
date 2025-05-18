@@ -16,10 +16,11 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {z} from 'zod';
 import {useAuth} from '../../../store/AuthStore/AuthStore';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {formStyles} from '../../../styles/formStyles';
-import {FormInput} from '../../../components/molecules/FormInput';
+import {global} from '../../../styles/global';
+import {FormInputContainer} from '../../../components/molecules/FormInputContainer';
 import {SubmitButton} from '../../../components/atoms/SubmitButton';
 import FormFooterText from '../../../components/atoms/FormFooterText/FormFooterText';
+import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
 
 const LoginSchema = z.object({
   username: z
@@ -64,7 +65,7 @@ const LoginScreen = () => {
     mode: 'onBlur',
   });
 
-  const styles = formStyles(theme);
+  const styles = global(theme);
 
   const onSubmit = (data: FormData) => {
     console.log('Form Data:', data);
@@ -94,12 +95,14 @@ const LoginScreen = () => {
           paddingRight: insets.right,
         }}
         keyboardShouldPersistTaps="handled">
+        
+        
         <View style={styles.container}>
-          <Text style={[styles.title, {marginTop: 64}]}>Login</Text>
+          <Text style={[styles.heading, {marginVertical: 64}]}>Login</Text>
 
-          {error && <Text style={styles.generalError}>{error}</Text>}
+          {error && <FormErrorDisplay error={error} />}
 
-          <FormInput<FormData>
+          <FormInputContainer<FormData>
             label="Username"
             control={control}
             name="username"
@@ -108,7 +111,7 @@ const LoginScreen = () => {
             errors={errors}
           />
 
-          <FormInput<FormData>
+          <FormInputContainer<FormData>
             label="Password"
             control={control}
             name="password"

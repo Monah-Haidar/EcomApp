@@ -15,7 +15,10 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {z} from 'zod';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {formStyles} from '../../../styles/formStyles';
+import {global} from '../../../styles/global';
+import {SubmitButton} from '../../../components/atoms/SubmitButton';
+import FormFooterText from '../../../components/atoms/FormFooterText/FormFooterText';
+import {FormInputContainer} from '../../../components/molecules/FormInputContainer';
 
 const SignUpSchema = z.object({
   name: z
@@ -50,14 +53,14 @@ const SignUpSchema = z.object({
 
 type FormData = z.infer<typeof SignUpSchema>;
 
-
 type RootStackParamList = {
   Login: undefined;
   Verification: undefined;
 };
 
 const SignUpScreen = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   const {theme} = useTheme();
   const {
@@ -67,15 +70,15 @@ const SignUpScreen = () => {
   } = useForm<FormData>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      phoneNb: '',
+      name: 'dgagadg',
+      email: 'gdas@dgasg.com',
+      password: 'fdagf4aregadg',
+      phoneNb: '4234243242',
     },
     mode: 'onBlur',
   });
 
-  const styles = formStyles(theme);
+  const styles = global(theme);
 
   const onSubmit = (data: FormData) => {
     console.log('Form Data:', data);
@@ -96,113 +99,60 @@ const SignUpScreen = () => {
           paddingLeft: insets.left,
           paddingRight: insets.right,
         }}
-        keyboardShouldPersistTaps="handled"
-        >
+        keyboardShouldPersistTaps="handled">
+        
+        
         <View style={styles.container}>
+
+
           <Pressable
             style={styles.backButton}
             onPress={() => navigation.goBack()}>
             <Entypo name="chevron-with-circle-left" size={30} color="#4F8EF7" />
           </Pressable>
-          <Text style={styles.title}>Sign Up</Text>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Name</Text>
-            <Controller
-              control={control}
-              name="name"
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  value={value}
-                  placeholder="Enter your name"
-                />
-              )}
-            />
-            {errors.name && (
-              <Text style={styles.errorText}>{errors.name.message}</Text>
-            )}
-          </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
-            <Controller
-              control={control}
-              name="email"
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  value={value}
-                  placeholder="Enter your email"
-                  keyboardType="email-address"
-                />
-              )}
-            />
-            {errors.email && (
-              <Text style={styles.errorText}>{errors.email.message}</Text>
-            )}
-          </View>
+          <Text style={styles.heading}>Sign Up</Text>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
-            <Controller
-              control={control}
-              name="password"
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  value={value}
-                  placeholder="Enter your password"
-                  secureTextEntry
-                />
-              )}
-            />
-            {errors.password && (
-              <Text style={styles.errorText}>{errors.password.message}</Text>
-            )}
-          </View>
+          <FormInputContainer<FormData>
+            label="Name"
+            control={control}
+            name="name"
+            placeholder="Enter your name"
+            errors={errors}
+          />
+          <FormInputContainer<FormData>
+            label="Email"
+            control={control}
+            name="email"
+            placeholder="Enter your email"
+            keyboardType="email-address"
+            errors={errors}
+          />
+          <FormInputContainer<FormData>
+            label="Password"
+            control={control}
+            name="password"
+            placeholder="Enter your password"
+            secureTextEntry
+            errors={errors}
+          />
+          <FormInputContainer<FormData>
+            label="Phone Number"
+            control={control}
+            name="phoneNb"
+            placeholder="Enter your phone number"
+            keyboardType="phone-pad"
+            errors={errors}
+          />
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Phone Number</Text>
-            <Controller
-              control={control}
-              name="phoneNb"
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  value={value}
-                  placeholder="Enter your phone number"
-                  keyboardType="phone-pad"
-                />
-              )}
-            />
-            {errors.phoneNb && (
-              <Text style={styles.errorText}>{errors.phoneNb.message}</Text>
-            )}
-          </View>
+          <SubmitButton text="Sign Up" onPress={handleSubmit(onSubmit)} />
 
-          <Pressable
-            style={styles.submitButton}
-            onPress={handleSubmit(onSubmit)}>
-            <Text style={styles.submitButtonText}>Sign Up</Text>
-          </Pressable>
-
-          <Text style={styles.footerText}>
-            Already have an account?{' '}
-            <Text
-              style={styles.footerLink}
-              onPress={() => navigation.navigate('Login')}>
-              Login
-            </Text>
-          </Text>
+          <FormFooterText
+            text="Already have an account?"
+            linkText="Login"
+            onPress={() => navigation.navigate('Login')}
+          />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

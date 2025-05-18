@@ -6,7 +6,7 @@ import { formInputStyles } from './formInputStyles';
 
 
 
-interface FormInputProps<T extends FieldValues> {
+interface FormInputContainerProps<T extends FieldValues> {
   label: string;
   control: Control<T>;
   name: keyof T;
@@ -16,7 +16,7 @@ interface FormInputProps<T extends FieldValues> {
   errors: FieldErrors<T>;
 }
 
-const FormInput = <T extends FieldValues>({
+const FormInputContainer = <T extends FieldValues>({
   label,
   control,
   name,
@@ -24,7 +24,7 @@ const FormInput = <T extends FieldValues>({
   keyboardType= 'default',
   secureTextEntry = false,
   errors,
-}: FormInputProps<T>) => {
+}: FormInputContainerProps<T>) => {
   const {theme} = useTheme();
 
   const styles = formInputStyles(theme);
@@ -54,4 +54,4 @@ const FormInput = <T extends FieldValues>({
   );
 };
 
-export default FormInput;
+export default FormInputContainer;

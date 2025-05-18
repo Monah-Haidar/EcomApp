@@ -1,20 +1,22 @@
-import {useNavigation} from '@react-navigation/native';
-import {useRef, useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useRef, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
   NativeSyntheticEvent,
   Platform,
-  Pressable,
   ScrollView,
   Text,
   TextInput,
   TextInputKeyPressEventData,
-  View,
+  View
 } from 'react-native';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {verificationStyles} from './styles';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
+import { SubmitButton } from '../../../components/atoms/SubmitButton';
+import { VerificationCodeContainer } from '../../../components/molecules/VerificationCodeContainer';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { global } from '../../../styles/global';
 
 type RootStackParamList = {
   Login: undefined;
@@ -22,14 +24,21 @@ type RootStackParamList = {
 
 const VerificationScreen = () => {
   const {theme} = useTheme();
+
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   const [error, setError] = useState<string | null>(null);
+
   const inputRefs = useRef<(TextInput | null)[]>([]);
-  const numberOfInputs = 4;
+
+  const numberOfInputs = 6;
+
   const [code, setCode] = useState(Array(numberOfInputs).fill(''));
-  const expectedCode = '1234';
-  const styles = verificationStyles(theme);
+
+  const expectedCode = '123456';
+  
+  const globalStyles = global(theme);
 
   const handleChange = (text: string, index: number) => {
     if (!/^\d?$/.test(text)) return;
@@ -80,15 +89,26 @@ const VerificationScreen = () => {
           justifyContent: 'center',
         }}
         keyboardShouldPersistTaps="handled">
-        <View style={styles.container}>
-          <Text style={styles.title}>Please verify your email address</Text>
-          <Text style={styles.subHeading}>
-            We've sent you an email, please enter the code below.
-          </Text>
+        <View style={globalStyles.container}>
+          <View>
+            <Text style={globalStyles.heading}>
+              Please verify your email address
+            </Text>
+            <Text style={globalStyles.subHeading}>
+              We've sent you an email, please enter the code below.
+            </Text>
+          </View>
+          {error && <FormErrorDisplay error={error} />}
 
-          {error && <Text style={styles.generalError}>{error}</Text>}
+          <VerificationCodeContainer
+            label="Enter Code"
+            code={code}
+            handleChange={handleChange}
+            handleBackspace={handleBackspace}
+            inputRefs={inputRefs}
+          />
 
-          <View style={styles.inputContainer}>
+          {/* <View style={styles.inputContainer}>
             <Text style={styles.label}>Enter Code</Text>
             <View style={styles.inputRow}>
               {code.map((digit, index) => (
@@ -106,11 +126,9 @@ const VerificationScreen = () => {
                 />
               ))}
             </View>
-          </View>
+          </View> */}
 
-          <Pressable style={styles.submitButton} onPress={() => onSubmit()}>
-            <Text style={styles.submitButtonText}>Create Account</Text>
-          </Pressable>
+          <SubmitButton text="Create Account" onPress={onSubmit} />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
