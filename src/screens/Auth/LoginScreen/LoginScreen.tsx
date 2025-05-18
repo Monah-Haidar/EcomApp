@@ -19,6 +19,7 @@ import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {formStyles} from '../../../styles/formStyles';
 import {FormInput} from '../../../components/molecules/FormInput';
 import {SubmitButton} from '../../../components/atoms/SubmitButton';
+import FormFooterText from '../../../components/atoms/FormFooterText/FormFooterText';
 
 const LoginSchema = z.object({
   username: z
@@ -119,14 +120,11 @@ const LoginScreen = () => {
 
           <SubmitButton text="Login" onPress={handleSubmit(onSubmit)} />
 
-          <Text style={styles.footerText}>
-            Don't have an account?{' '}
-            <Text
-              style={styles.footerLink}
-              onPress={() => navigation.navigate('SignUp')}>
-              Sign Up
-            </Text>
-          </Text>
+          <FormFooterText
+            text="Don't have an account?"
+            linkText="Sign Up"
+            onPress={() => navigation.navigate('SignUp')}
+          />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
