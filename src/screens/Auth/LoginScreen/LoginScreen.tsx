@@ -17,6 +17,7 @@ import {z} from 'zod';
 import {useAuth} from '../../../store/AuthStore/AuthStore';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {formStyles} from '../../../styles/formStyles';
+import { FormInput } from '../../../components/molecules/FormInput';
 
 const LoginSchema = z.object({
   username: z
@@ -99,47 +100,26 @@ const LoginScreen = () => {
 
           {error && <Text style={styles.generalError}>{error}</Text>}
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Username</Text>
-            <Controller
-              control={control}
-              name="username"
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  value={value}
-                  placeholder="Enter your username"
-                  // keyboardType="email-address"
-                />
-              )}
-            />
-            {errors.username && (
-              <Text style={styles.errorText}>{errors.username.message}</Text>
-            )}
-          </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
-            <Controller
-              control={control}
-              name="password"
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  value={value}
-                  placeholder="Enter your password"
-                  secureTextEntry
-                />
-              )}
-            />
-            {errors.password && (
-              <Text style={styles.errorText}>{errors.password.message}</Text>
-            )}
-          </View>
+          <FormInput<FormData>
+            label="Username"
+            control={control}
+            name="username"
+            placeholder="Enter your username"
+            keyboardType="email-address"
+            errors={errors}
+          />
+
+          <FormInput<FormData>
+            label="Password"
+            control={control}
+            name="password"
+            placeholder="Enter your password"
+            keyboardType="default"
+            secureTextEntry={true}
+            errors={errors}
+          />
+
 
           <Pressable
             style={styles.submitButton}
