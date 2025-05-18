@@ -17,7 +17,8 @@ import {z} from 'zod';
 import {useAuth} from '../../../store/AuthStore/AuthStore';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {formStyles} from '../../../styles/formStyles';
-import { FormInput } from '../../../components/molecules/FormInput';
+import {FormInput} from '../../../components/molecules/FormInput';
+import {SubmitButton} from '../../../components/atoms/SubmitButton';
 
 const LoginSchema = z.object({
   username: z
@@ -43,7 +44,8 @@ type RootStackParamList = {
 };
 
 const LoginScreen = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const auth = useAuth();
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
@@ -66,9 +68,7 @@ const LoginScreen = () => {
   const onSubmit = (data: FormData) => {
     console.log('Form Data:', data);
 
-    if (
-      !(data.username === 'eurisko' && data.password === 'academy2025')
-    ) {
+    if (!(data.username === 'eurisko' && data.password === 'academy2025')) {
       console.log('invalid credentials');
       return setError('Invalid credentials');
     }
@@ -82,8 +82,7 @@ const LoginScreen = () => {
     <KeyboardAvoidingView
       style={{flex: 1}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
-    >
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
@@ -94,12 +93,10 @@ const LoginScreen = () => {
           paddingRight: insets.right,
         }}
         keyboardShouldPersistTaps="handled">
-        <View
-          style={styles.container}>
+        <View style={styles.container}>
           <Text style={[styles.title, {marginTop: 64}]}>Login</Text>
 
           {error && <Text style={styles.generalError}>{error}</Text>}
-
 
           <FormInput<FormData>
             label="Username"
@@ -120,12 +117,7 @@ const LoginScreen = () => {
             errors={errors}
           />
 
-
-          <Pressable
-            style={styles.submitButton}
-            onPress={handleSubmit(onSubmit)}>
-            <Text style={styles.submitButtonText}>Login</Text>
-          </Pressable>
+          <SubmitButton text="Login" onPress={handleSubmit(onSubmit)} />
 
           <Text style={styles.footerText}>
             Don't have an account?{' '}
