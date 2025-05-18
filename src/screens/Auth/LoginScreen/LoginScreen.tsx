@@ -20,7 +20,7 @@ import {global} from '../../../styles/global';
 import {FormInputContainer} from '../../../components/molecules/FormInputContainer';
 import {SubmitButton} from '../../../components/atoms/SubmitButton';
 import FormFooterText from '../../../components/atoms/FormFooterText/FormFooterText';
-import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
+import {FormErrorDisplay} from '../../../components/atoms/FormErrorDisplay';
 
 const LoginSchema = z.object({
   username: z
@@ -95,31 +95,35 @@ const LoginScreen = () => {
           paddingRight: insets.right,
         }}
         keyboardShouldPersistTaps="handled">
-        
-        
         <View style={styles.container}>
-          <Text style={[styles.heading, {marginVertical: 64}]}>Login</Text>
+          <View style={styles.headingContainer}>
+            <Text style={styles.heading}>Log in</Text>
+            <Text style={styles.subHeading}>
+              Enter you credentials to access your account
+            </Text>
+          </View>
 
           {error && <FormErrorDisplay error={error} />}
+          <View>
+            <FormInputContainer<FormData>
+              label="Username"
+              control={control}
+              name="username"
+              placeholder="Enter your username"
+              keyboardType="email-address"
+              errors={errors}
+            />
 
-          <FormInputContainer<FormData>
-            label="Username"
-            control={control}
-            name="username"
-            placeholder="Enter your username"
-            keyboardType="email-address"
-            errors={errors}
-          />
-
-          <FormInputContainer<FormData>
-            label="Password"
-            control={control}
-            name="password"
-            placeholder="Enter your password"
-            keyboardType="default"
-            secureTextEntry={true}
-            errors={errors}
-          />
+            <FormInputContainer<FormData>
+              label="Password"
+              control={control}
+              name="password"
+              placeholder="Enter your password"
+              keyboardType="default"
+              secureTextEntry={true}
+              errors={errors}
+            />
+          </View>
 
           <SubmitButton text="Login" onPress={handleSubmit(onSubmit)} />
 

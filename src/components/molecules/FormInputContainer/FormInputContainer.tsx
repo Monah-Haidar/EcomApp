@@ -44,6 +44,7 @@ const FormInputContainer = <T extends FieldValues>({
             placeholder={placeholder}
             keyboardType={keyboardType}
             secureTextEntry={secureTextEntry}
+            placeholderTextColor={theme.placeholderText}
           />
         )}
       />

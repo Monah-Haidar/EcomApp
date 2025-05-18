@@ -12,13 +12,13 @@ export const formFooterTextStyles = (
   StyleSheet.create({
     footerText: {
       fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-      fontSize: normalizeFont(FONT_SIZE.SM),
+      fontSize: normalizeFont(FONT_SIZE.LG),
       color: theme.text,
       textAlign: 'center',
     },
     footerLink: {
-      fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-      fontSize: normalizeFont(FONT_SIZE.SM),
+      fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
+      fontSize: normalizeFont(FONT_SIZE.LG),
       color: theme.primary,
     },
   });

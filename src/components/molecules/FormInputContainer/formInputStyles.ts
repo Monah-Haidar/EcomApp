@@ -3,6 +3,7 @@ import {moderateScale, scale, verticalScale} from '../../../utils/responsive';
 import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
 import {normalizeFont} from '../../../utils/normalizeFont';
 import {themes} from '../../../styles/theming';
+import { spacing } from '../../../constants/spacing';
 
 export const formInputStyles = (
   theme: typeof themes.lightTheme | typeof themes.darkTheme,
@@ -10,27 +11,28 @@ export const formInputStyles = (
   StyleSheet.create({
     inputContainer: {
       marginBottom: verticalScale(20),
-      width: '80%',
+      width: '100%',
     },
     label: {
-      fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-      fontSize: normalizeFont(FONT_SIZE.SM),
+      fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
+      fontSize: normalizeFont(FONT_SIZE.LG),
       color: theme.inputLabel,
-      marginBottom: verticalScale(6),
+      marginBottom: verticalScale(spacing.xs),
     },
     input: {
       fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-      fontSize: normalizeFont(FONT_SIZE.MD),
-      backgroundColor: theme.inputFieldBackground,
+      fontSize: normalizeFont(FONT_SIZE.XL),
       borderColor: theme.border,
       color: theme.text,
       borderWidth: 1,
-      borderRadius: scale(6),
-      padding: moderateScale(12),
+      borderRadius: scale(10),
+      padding: moderateScale(spacing.md),
       width: '100%',
     },
     errorText: {
-      color: 'red',
-      marginTop: 10,
+      fontFamily: FONT_FAMILY.POPPINS_REGULAR,
+      fontSize: normalizeFont(FONT_SIZE.MD),
+      color: theme.errorText,
+      marginTop: verticalScale(spacing.sm),
     },
   });

@@ -19,6 +19,8 @@ import {global} from '../../../styles/global';
 import {SubmitButton} from '../../../components/atoms/SubmitButton';
 import FormFooterText from '../../../components/atoms/FormFooterText/FormFooterText';
 import {FormInputContainer} from '../../../components/molecules/FormInputContainer';
+import { BackButton } from '../../../components/atoms/BackButton';
+
 
 const SignUpSchema = z.object({
   name: z
@@ -100,51 +102,45 @@ const SignUpScreen = () => {
           paddingRight: insets.right,
         }}
         keyboardShouldPersistTaps="handled">
-        
-        
         <View style={styles.container}>
 
+          <BackButton />
 
-          <Pressable
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}>
-            <Entypo name="chevron-with-circle-left" size={30} color="#4F8EF7" />
-          </Pressable>
+          <Text style={[styles.heading, styles.headingContainer]}>Sign Up</Text>
 
-
-          <Text style={styles.heading}>Sign Up</Text>
-
-          <FormInputContainer<FormData>
-            label="Name"
-            control={control}
-            name="name"
-            placeholder="Enter your name"
-            errors={errors}
-          />
-          <FormInputContainer<FormData>
-            label="Email"
-            control={control}
-            name="email"
-            placeholder="Enter your email"
-            keyboardType="email-address"
-            errors={errors}
-          />
-          <FormInputContainer<FormData>
-            label="Password"
-            control={control}
-            name="password"
-            placeholder="Enter your password"
-            secureTextEntry
-            errors={errors}
-          />
-          <FormInputContainer<FormData>
-            label="Phone Number"
-            control={control}
-            name="phoneNb"
-            placeholder="Enter your phone number"
-            keyboardType="phone-pad"
-            errors={errors}
-          />
+          <View>
+            <FormInputContainer<FormData>
+              label="Name"
+              control={control}
+              name="name"
+              placeholder="Enter your name"
+              errors={errors}
+            />
+            <FormInputContainer<FormData>
+              label="Email"
+              control={control}
+              name="email"
+              placeholder="Enter your email"
+              keyboardType="email-address"
+              errors={errors}
+            />
+            <FormInputContainer<FormData>
+              label="Password"
+              control={control}
+              name="password"
+              placeholder="Enter your password"
+              secureTextEntry
+              errors={errors}
+            />
+            <FormInputContainer<FormData>
+              label="Phone Number"
+              control={control}
+              name="phoneNb"
+              placeholder="Enter your phone number"
+              keyboardType="phone-pad"
+              errors={errors}
+            />
+          </View>
 
           <SubmitButton text="Sign Up" onPress={handleSubmit(onSubmit)} />
 

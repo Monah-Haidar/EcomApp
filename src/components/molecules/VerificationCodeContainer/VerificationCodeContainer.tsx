@@ -29,10 +29,10 @@ const VerificationCodeContainer = ({
   }, []);
 
   return (
-    <View style={styles.inputContainer}>
+    <View>
       <Text style={styles.label}>{label}</Text>
 
-      <View style={styles.inputRow}>
+      <View style={styles.inputContainer}>
         {code.map((digit, index) => (
           <TextInput
             key={index}

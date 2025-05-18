@@ -4,7 +4,8 @@ export const themes = {
     subheadingText: '#797A7B',
     inputLabel: '#363939',
     inputFieldBackground: '#f0f0f0',
-    border: '#c4c4c4',
+    placeholderText: '#797A7B',
+    border: '#E5E5E5',
     background: '#f9f9f9',
     buttonText: '#ffffff',
     primary: '#1E88E5',
@@ -16,15 +17,16 @@ export const themes = {
   darkTheme: {
     text: '#ffffff',
     subheadingText: '#dddddd',
-    inputLabel: '#bbbbbb',
+    inputLabel: '#ffffff',
     inputFieldBackground: '#2a2a2a',
+    placeholderText: '#E5E5E5',
     border: '#444444',
     background: '#121212',
     buttonText: '#ffffff',
     primary: '#1565C0',
     secondary: '#444444',
     cardBackground: '#1e1e1e',
-    errorText: '#f28b82',
+    errorText: '#d32f2f',
     errorTextContainer: '#3c1c1c',
   }
 }

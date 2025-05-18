@@ -2,7 +2,8 @@ import { StyleSheet } from "react-native";
 import { FONT_FAMILY, FONT_SIZE } from "../../../constants/font";
 import { themes } from "../../../styles/theming";
 import { normalizeFont } from "../../../utils/normalizeFont";
-import { scale, verticalScale } from "../../../utils/responsive";
+import { moderateScale, scale, verticalScale } from "../../../utils/responsive";
+import { spacing } from "../../../constants/spacing";
 
 
 
@@ -13,15 +14,15 @@ export const submitButtonStyles = (
   StyleSheet.create({
     submitButton: {
       backgroundColor: theme.primary,
-      paddingVertical: verticalScale(14),
-      borderRadius: scale(30),
+      borderRadius: scale(10),
       alignItems: 'center',
-      marginBottom: verticalScale(30),
-      width: '50%',
+      justifyContent: 'center',
+      padding: moderateScale(spacing.md),
+      width: '100%',
     },
     submitButtonText: {
       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
-      fontSize: normalizeFont(FONT_SIZE.LG),
+      fontSize: normalizeFont(FONT_SIZE.XL),
       color: theme.buttonText,
     },
   });

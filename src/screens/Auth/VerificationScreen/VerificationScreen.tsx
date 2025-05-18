@@ -12,6 +12,7 @@ import {
   TextInputKeyPressEventData,
   View
 } from 'react-native';
+import { BackButton } from '../../../components/atoms/BackButton';
 import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
 import { SubmitButton } from '../../../components/atoms/SubmitButton';
 import { VerificationCodeContainer } from '../../../components/molecules/VerificationCodeContainer';
@@ -37,8 +38,8 @@ const VerificationScreen = () => {
   const [code, setCode] = useState(Array(numberOfInputs).fill(''));
 
   const expectedCode = '123456';
-  
-  const globalStyles = global(theme);
+
+  const styles = global(theme);
 
   const handleChange = (text: string, index: number) => {
     if (!/^\d?$/.test(text)) return;
@@ -89,15 +90,18 @@ const VerificationScreen = () => {
           justifyContent: 'center',
         }}
         keyboardShouldPersistTaps="handled">
-        <View style={globalStyles.container}>
-          <View>
-            <Text style={globalStyles.heading}>
-              Please verify your email address
-            </Text>
-            <Text style={globalStyles.subHeading}>
-              We've sent you an email, please enter the code below.
+        <View style={styles.container}>
+          <BackButton />
+
+          <View style={styles.headingContainer}>
+            <Text style={styles.heading}>Verification</Text>
+            <Text style={styles.subHeading}>
+              We have sent an OTP code via email to{' '}
+              <Text style={{fontWeight: 'bold'}}>example@email.com</Text> ,
+              please enter it below to verify you account
             </Text>
           </View>
+
           {error && <FormErrorDisplay error={error} />}
 
           <VerificationCodeContainer
