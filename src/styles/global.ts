@@ -15,7 +15,7 @@ export const global = (
       gap: 20,
     },
     headingContainer: {
-      marginBottom: 14,
+      marginBottom: 8,
     },
     heading: {
       fontFamily: FONT_FAMILY.POPPINS_BOLD,
@@ -27,4 +27,5 @@ export const global = (
       fontSize: normalizeFont(FONT_SIZE.LG),
       color: theme.subheadingText,
     },
+    
   });

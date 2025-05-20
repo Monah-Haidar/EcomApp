@@ -87,7 +87,7 @@ const VerificationScreen = () => {
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          justifyContent: 'center',
+          // justifyContent: 'center',
         }}
         keyboardShouldPersistTaps="handled">
         <View style={styles.container}>

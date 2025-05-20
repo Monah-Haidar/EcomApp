@@ -15,13 +15,13 @@ export const formInputStyles = (
     },
     label: {
       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
-      fontSize: normalizeFont(FONT_SIZE.LG),
+      fontSize: normalizeFont(FONT_SIZE.MD),
       color: theme.inputLabel,
       marginBottom: verticalScale(spacing.xs),
     },
     input: {
       fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-      fontSize: normalizeFont(FONT_SIZE.XL),
+      fontSize: normalizeFont(FONT_SIZE.LG),
       borderColor: theme.border,
       color: theme.text,
       borderWidth: 1,

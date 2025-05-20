@@ -1,35 +1,47 @@
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {Controller, useForm} from 'react-hook-form';
+import {useForm} from 'react-hook-form';
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
+  StyleSheet,
   Text,
-  TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Entypo from 'react-native-vector-icons/Entypo';
 import {z} from 'zod';
+import {BackButton} from '../../../components/atoms/BackButton';
+import FormFooterText from '../../../components/atoms/FormFooterText/FormFooterText';
+import {SubmitButton} from '../../../components/atoms/SubmitButton';
+import {FormInputContainer} from '../../../components/molecules/FormInputContainer';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {global} from '../../../styles/global';
-import {SubmitButton} from '../../../components/atoms/SubmitButton';
-import FormFooterText from '../../../components/atoms/FormFooterText/FormFooterText';
-import {FormInputContainer} from '../../../components/molecules/FormInputContainer';
-import { BackButton } from '../../../components/atoms/BackButton';
-
+import {useSignUpMutation} from '../../../hooks/useSignUpMutation';
+import {useState} from 'react';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {ProfileImagePicker} from '../../../components/molecules/ProfileImagePicker';
+import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
 
 const SignUpSchema = z.object({
-  name: z
+  firstName: z
     .string({
-      required_error: 'Name is Required',
-      invalid_type_error: 'Name must be a string',
+      required_error: 'First name is Required',
+      invalid_type_error: 'First name must be a string',
     })
-    .min(3, {message: 'Name must be at least 3 characters long'})
-    .max(20, {message: 'Name must be at most 20 characters long'}),
+    .min(3, {message: 'First name must be at least 3 characters long'})
+    .max(20, {message: 'First name must be at most 20 characters long'}),
+
+  lastName: z
+    .string({
+      required_error: 'Last name is Required',
+      invalid_type_error: 'Last name must be a string',
+    })
+    .min(3, {message: 'Last name must be at least 3 characters long'})
+    .max(20, {message: 'Last name must be at most 20 characters long'}),
 
   email: z
     .string({
@@ -47,10 +59,6 @@ const SignUpSchema = z.object({
     })
     .min(8, {message: 'Password must be at least 8 characters long'})
     .max(50, {message: 'Password must be at most 50 characters long'}),
-
-  phoneNb: z
-    .string()
-    .regex(/^\d{10,15}$/, 'Phone number must be 10 to 15 digits long'),
 });
 
 type FormData = z.infer<typeof SignUpSchema>;
@@ -65,6 +73,9 @@ const SignUpScreen = () => {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   const {theme} = useTheme();
+
+  const [profileImage, setProfileImage] = useState<any>(null);
+
   const {
     control,
     handleSubmit,
@@ -72,19 +83,43 @@ const SignUpScreen = () => {
   } = useForm<FormData>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
-      name: 'dgagadg',
-      email: 'gdas@dgasg.com',
-      password: 'fdagf4aregadg',
-      phoneNb: '4234243242',
+      firstName: 'john',
+      lastName: 'doe',
+      email: 'john@doe.com',
+      password: '12345678',
     },
     mode: 'onBlur',
   });
+  const {mutate, isLoading, error} = useSignUpMutation();
 
   const styles = global(theme);
 
+  const handleImagePick = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      quality: 0.8,
+      selectionLimit: 1,
+    });
+
+    if (result.assets && result.assets.length > 0) {
+      const selectedImage = result.assets[0];
+
+      setProfileImage({
+        uri: selectedImage.uri,
+        type: selectedImage.type,
+        name: selectedImage.fileName || 'profile.jpg',
+      });
+    }
+  };
+
   const onSubmit = (data: FormData) => {
     console.log('Form Data:', data);
-    navigation.navigate('Verification');
+
+    const signUpData = {
+      ...data,
+      profileImage: profileImage,
+    }
+    mutate(signUpData);
   };
 
   return (
@@ -95,7 +130,7 @@ const SignUpScreen = () => {
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          justifyContent: 'center',
+          // justifyContent: 'center',
           paddingTop: insets.top,
           paddingBottom: insets.bottom,
           paddingLeft: insets.left,
@@ -103,17 +138,30 @@ const SignUpScreen = () => {
         }}
         keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
-
           <BackButton />
 
           <Text style={[styles.heading, styles.headingContainer]}>Sign Up</Text>
 
+          {error && <FormErrorDisplay error={error?.message} />}
+
           <View>
+            <ProfileImagePicker
+              onPress={handleImagePick}
+              profileImage={profileImage}
+            />
+
             <FormInputContainer<FormData>
-              label="Name"
+              label="First Name"
               control={control}
-              name="name"
-              placeholder="Enter your name"
+              name="firstName"
+              placeholder="Enter your first name"
+              errors={errors}
+            />
+            <FormInputContainer<FormData>
+              label="Last Name"
+              control={control}
+              name="lastName"
+              placeholder="Enter your last name"
               errors={errors}
             />
             <FormInputContainer<FormData>
@@ -132,17 +180,13 @@ const SignUpScreen = () => {
               secureTextEntry
               errors={errors}
             />
-            <FormInputContainer<FormData>
-              label="Phone Number"
-              control={control}
-              name="phoneNb"
-              placeholder="Enter your phone number"
-              keyboardType="phone-pad"
-              errors={errors}
-            />
           </View>
 
-          <SubmitButton text="Sign Up" onPress={handleSubmit(onSubmit)} />
+          <SubmitButton
+            text="Sign Up"
+            isLoading={isLoading}
+            onPress={handleSubmit(onSubmit)}
+          />
 
           <FormFooterText
             text="Already have an account?"
@@ -156,3 +200,32 @@ const SignUpScreen = () => {
 };
 
 export default SignUpScreen;
+
+const localStyles = StyleSheet.create({
+  imagePickerContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  imagePicker: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+  },
+  profileImage: {
+    width: '100%',
+    height: '100%',
+  },
+  placeholderContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+  },
+  placeholderText: {
+    fontSize: 14,
+    textAlign: 'center',
+  },
+});

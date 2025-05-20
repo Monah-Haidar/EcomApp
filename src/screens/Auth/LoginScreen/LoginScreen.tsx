@@ -14,22 +14,24 @@ import {
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {z} from 'zod';
-import {useAuth} from '../../../store/AuthStore/AuthStore';
+import {useAuthStore} from '../../../store/AuthStore';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {global} from '../../../styles/global';
 import {FormInputContainer} from '../../../components/molecules/FormInputContainer';
 import {SubmitButton} from '../../../components/atoms/SubmitButton';
 import FormFooterText from '../../../components/atoms/FormFooterText/FormFooterText';
 import {FormErrorDisplay} from '../../../components/atoms/FormErrorDisplay';
+import axiosInstance from '../../../api/config';
 
 const LoginSchema = z.object({
-  username: z
+  email: z
     .string({
-      required_error: 'Username is required',
-      invalid_type_error: 'Username must be a string',
+      required_error: 'Email is required',
+      invalid_type_error: 'Email must be a string',
     })
-    .min(3, {message: 'Username must be at least 3 characters long'})
-    .max(50, {message: 'Username must be at most 50 characters long'}),
+    .email({
+      message: 'Invalid email address',
+    }),
 
   password: z
     .string({
@@ -48,7 +50,7 @@ type RootStackParamList = {
 const LoginScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const auth = useAuth();
+  // const auth = useAuth();
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +61,7 @@ const LoginScreen = () => {
   } = useForm<FormData>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
     mode: 'onBlur',
@@ -70,14 +72,15 @@ const LoginScreen = () => {
   const onSubmit = (data: FormData) => {
     console.log('Form Data:', data);
 
-    if (!(data.username === 'eurisko' && data.password === 'academy2025')) {
-      console.log('invalid credentials');
-      return setError('Invalid credentials');
-    }
 
-    setError(null);
-    auth?.login();
-    console.log('Login successful!');
+    // if (!(data.email === 'eurisko' && data.password === 'academy2025')) {
+    //   console.log('invalid credentials');
+    //   return setError('Invalid credentials');
+    // }
+
+    // setError(null);
+    // auth?.login();
+    // console.log('Login successful!');
   };
 
   return (
@@ -88,7 +91,7 @@ const LoginScreen = () => {
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          justifyContent: 'center',
+          // justifyContent: 'center',
           paddingTop: insets.top,
           paddingBottom: insets.bottom,
           paddingLeft: insets.left,
@@ -104,12 +107,13 @@ const LoginScreen = () => {
           </View>
 
           {error && <FormErrorDisplay error={error} />}
+
           <View>
             <FormInputContainer<FormData>
-              label="Username"
+              label="Email"
               control={control}
-              name="username"
-              placeholder="Enter your username"
+              name="email"
+              placeholder="Enter your email"
               keyboardType="email-address"
               errors={errors}
             />

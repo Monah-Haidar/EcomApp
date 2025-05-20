@@ -1,38 +1,59 @@
+import {createContext, ReactNode, useContext, useState} from 'react';
+import {create} from 'zustand';
+import {persist} from 'zustand/middleware';
 
-import { createContext, ReactNode, useContext, useState } from 'react';
 
-export interface AuthContextType {
-  isSignedIn: boolean;
-  login: () => void;
-  logout: () => void;
+interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  profileImage?: {
+    url: string;
+  } | null;
+  isEmailVerified: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+type AuthState = {
+  accessToken: string | null;
+  refreshToken: string | null;
+  user: User | null;
+  isAuthenticated: boolean;
+  hasStoreLoaded?: boolean;
 
-export const AuthProvider = ({children}: {children: ReactNode}) => {
-  const [isSignedIn, setIsSignedIn] = useState(false);
-
-  const login = () => {
-    setIsSignedIn(true);
-  }
-
-  const logout = () => {
-    setIsSignedIn(false);
-  }
-
-  return (
-    <AuthContext.Provider value={{isSignedIn, login, logout}}>
-      {children}
-    </AuthContext.Provider>
-  );
+  setHasStoreLoaded?: () => void;
+  setTokens: (accessToken: string, refreshToken: string) => void;
+  setUser: (user: User) => void;
+  clearTokens: () => void;
 };
 
+const useAuthStore = create<AuthState>()(
+  persist(
+    set => ({
+      accessToken: null,
+      refreshToken: null,
+      user: null,
+      isAuthenticated: false,
+      hasStoreLoaded: false,
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
+      setHasStoreLoaded: () => set({hasStoreLoaded: true}),
 
-  if (!context) {
-    throw new Error('useAuth must be used within a AuthProvider');
-  }
-  return context;
-};
+      setTokens: (accessToken, refreshToken) =>
+        set({accessToken, refreshToken, isAuthenticated: true}),
+
+      setUser: user => set({user}),
+
+      clearTokens: () => set({
+        accessToken: null,
+        refreshToken: null,
+        user: null,
+        isAuthenticated: false,
+      }),
+    }),
+    {
+      name: 'auth-storage',
+    },
+  ),
+);
+
+export default useAuthStore;
