@@ -18,24 +18,29 @@ import { SubmitButton } from '../../../components/atoms/SubmitButton';
 import { VerificationCodeContainer } from '../../../components/molecules/VerificationCodeContainer';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { global } from '../../../styles/global';
+import { useVerificationMutation } from '../../../hooks/useVerificationMutation';
 
 type RootStackParamList = {
   Login: undefined;
 };
 
-const VerificationScreen = () => {
+const VerificationScreen = ({route}) => {
   const {theme} = useTheme();
+  const {mutate, isLoading, error} = useVerificationMutation();
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
+
 
   const inputRefs = useRef<(TextInput | null)[]>([]);
 
   const numberOfInputs = 6;
 
   const [code, setCode] = useState(Array(numberOfInputs).fill(''));
+
+  const {email} = route.params;
 
   const expectedCode = '123456';
 
@@ -67,16 +72,7 @@ const VerificationScreen = () => {
   const onSubmit = () => {
     const fullCode = code.join('');
 
-    if (fullCode.length < numberOfInputs || code.includes('')) {
-      return setError('Please enter all digits');
-    }
-
-    if (fullCode === expectedCode) {
-      Alert.alert('Success', 'Verification successful');
-      navigation.navigate('Login');
-    } else {
-      return setError('Invalid credentials');
-    }
+    mutate({email, otp: fullCode});
   };
 
   return (
@@ -97,12 +93,12 @@ const VerificationScreen = () => {
             <Text style={styles.heading}>Verification</Text>
             <Text style={styles.subHeading}>
               We have sent an OTP code via email to{' '}
-              <Text style={{fontWeight: 'bold'}}>example@email.com</Text> ,
+              <Text style={{fontWeight: 'bold'}}>{email}</Text> ,
               please enter it below to verify you account
             </Text>
           </View>
 
-          {error && <FormErrorDisplay error={error} />}
+          {error && <FormErrorDisplay error={error.message} />}
 
           <VerificationCodeContainer
             label="Enter Code"

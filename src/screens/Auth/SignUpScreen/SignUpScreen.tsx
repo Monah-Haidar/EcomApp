@@ -71,6 +71,7 @@ type RootStackParamList = {
 const SignUpScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const {mutate, isLoading, error} = useSignUpMutation();
   const insets = useSafeAreaInsets();
   const {theme} = useTheme();
 
@@ -85,12 +86,12 @@ const SignUpScreen = () => {
     defaultValues: {
       firstName: 'john',
       lastName: 'doe',
-      email: 'john@doe.com',
+      email: 'monahhaidar1123@gmail.com',
       password: '12345678',
     },
     mode: 'onBlur',
   });
-  const {mutate, isLoading, error} = useSignUpMutation();
+  
 
   const styles = global(theme);
 
@@ -113,7 +114,7 @@ const SignUpScreen = () => {
   };
 
   const onSubmit = (data: FormData) => {
-    console.log('Form Data:', data);
+    // console.log('Form Data:', data);
 
     const signUpData = {
       ...data,

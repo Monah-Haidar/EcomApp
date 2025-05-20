@@ -51,8 +51,8 @@ const signUpUser = async (data: SignUpUserProps) => {
     },
   );
 
-  console.log('User data: ', formData);
-  console.log('Response: ', response);
+  // console.log('User data: ', formData);
+  // console.log('Response: ', response);
 
   return response.data;
 };
@@ -62,13 +62,13 @@ const useSignUpMutation = () => {
   return useMutation({
     mutationFn: signUpUser,
     onSuccess: (data, variables) => {
-      console.log('Sign up success: ', data.data.message);
+      // console.log('Sign up success: ', data.data.message);
       navigation.navigate('Verification', {email: variables.email});
     },
 
     onError: error => {
       if (error instanceof AxiosError && error.response?.data) {
-        console.log('Sign up Error', error.response);
+        // console.log('Sign up Error', error.response);
         const errorData = error.response.data as ErrorResponse;
 
         if (errorData.error?.message) return errorData.error.message;
