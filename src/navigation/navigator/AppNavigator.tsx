@@ -3,9 +3,9 @@ import {
   DefaultTheme,
   NavigationContainer,
 } from '@react-navigation/native';
-// import { useAuth } from '../../store/AuthStore/AuthStore';
+
+import { useAuthStore } from '../../store/AuthStore';
 import { useTheme } from '../../store/ThemeStore/ThemeStore';
-import { ProductStack } from '../stacks/ProductStack';
 import { AuthStack } from '../stacks/AuthStack';
 import { MainTabNavigator } from '../tabs/MainTabNavigator';
 
@@ -13,14 +13,12 @@ import { MainTabNavigator } from '../tabs/MainTabNavigator';
 
 const AppNavigator = () => {
   const {themeName} = useTheme();
-  // const auth = useAuth();
-  const auth= {
-    isSignedIn: false
-  };
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+ 
   return (
     <NavigationContainer
       theme={themeName === 'darkTheme' ? DarkTheme : DefaultTheme}>
-      {auth?.isSignedIn ? <MainTabNavigator /> : <AuthStack />}
+      {isAuthenticated ? <MainTabNavigator /> : <AuthStack />}
     </NavigationContainer>
   );
 };

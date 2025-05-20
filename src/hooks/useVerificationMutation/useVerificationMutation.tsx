@@ -44,9 +44,8 @@ const useVerificationMutation = () => {
     //   console.log('Verification Error: ', error);
 
       if (error instanceof AxiosError && error.response?.data) {
-        console.log('Verification Error', error.response?.data);
+        // console.log('Verification Error', error.response?.data);
         const errorData = error.response.data as ErrorResponse;
-
         if (errorData.data?.message) return errorData.data.message;
       }
 

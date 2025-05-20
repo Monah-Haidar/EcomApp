@@ -8,13 +8,15 @@ import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useAuth } from '../../../store/AuthStore/AuthStore';
+import { useAuthStore } from '../../../store/AuthStore';
+
 
 const Stack = createNativeStackNavigator();
 
 const ProductStack = () => {
 
-  const auth = useAuth();
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+  const clearTokens = useAuthStore(state => state.clearTokens);
 
   const {themeName, setThemeName} = useTheme();
 
@@ -41,7 +43,7 @@ const ProductStack = () => {
                   <Feather name="sun" size={30} color="#4F8EF7" />
                 )}
               </Pressable>
-              <Pressable onPress={() => auth?.logout()}>
+              <Pressable onPress={clearTokens}>
                 <MaterialCommunityIcons
                   name="logout"
                   size={30}

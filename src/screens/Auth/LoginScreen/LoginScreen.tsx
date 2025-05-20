@@ -22,6 +22,7 @@ import {SubmitButton} from '../../../components/atoms/SubmitButton';
 import FormFooterText from '../../../components/atoms/FormFooterText/FormFooterText';
 import {FormErrorDisplay} from '../../../components/atoms/FormErrorDisplay';
 import axiosInstance from '../../../api/config';
+import { useLoginMutation } from '../../../hooks/useLoginMutation';
 
 const LoginSchema = z.object({
   email: z
@@ -40,6 +41,9 @@ const LoginSchema = z.object({
     })
     .min(8, {message: 'Password must be at least 8 characters long'})
     .max(50, {message: 'Password must be at most 50 characters long'}),
+
+  token_expires_in: z
+    .string(),
 });
 
 type FormData = z.infer<typeof LoginSchema>;
@@ -50,10 +54,10 @@ type RootStackParamList = {
 const LoginScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  // const auth = useAuth();
+  const {mutate, isLoading, error} = useLoginMutation();
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
   const {
     control,
     handleSubmit,
@@ -61,8 +65,9 @@ const LoginScreen = () => {
   } = useForm<FormData>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'monahhaidar1123+5@gmail.com',
+      password: '12345678',
+      token_expires_in: '1h'
     },
     mode: 'onBlur',
   });
@@ -70,8 +75,15 @@ const LoginScreen = () => {
   const styles = global(theme);
 
   const onSubmit = (data: FormData) => {
-    console.log('Form Data:', data);
+    // console.log('Form Data:', data);
 
+    const {email, password, token_expires_in} = data;
+
+
+    mutate({ email, password, token_expires_in });
+
+
+    // console.log('Login data: ', {email, password, token_expires_in});
 
     // if (!(data.email === 'eurisko' && data.password === 'academy2025')) {
     //   console.log('invalid credentials');
@@ -106,7 +118,7 @@ const LoginScreen = () => {
             </Text>
           </View>
 
-          {error && <FormErrorDisplay error={error} />}
+          {error && <FormErrorDisplay error={error?.message} />}
 
           <View>
             <FormInputContainer<FormData>
