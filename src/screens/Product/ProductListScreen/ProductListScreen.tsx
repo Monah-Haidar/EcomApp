@@ -91,13 +91,18 @@ import {
   ActivityIndicator,
   Text,
   RefreshControl,
+  Pressable,
+  Modal,
+  ListRenderItem,
 } from 'react-native';
 
 import {ProductCard} from '../../../components/molecules/ProductCard';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {productListStyles} from './styles';
+import {productListScreenStyles} from './productListScreenStyles';
 import useProducts from '../../../hooks/useProducts/useProducts';
 import AnimatedRefreshControl from '../../../utils/AnimatedRefreshControl';
+import {useMemo, useState} from 'react';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type ProductType = {
   _id: string;
@@ -121,6 +126,11 @@ const ProductListScreen = () => {
   const {theme} = useTheme();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  const [sortBy, setSortBy] = useState<'none' | 'price_asc' | 'price_desc'>(
+    'none',
+  );
+  const [showSortModal, setShowSortModal] = useState(false);
   const {
     data,
     fetchNextPage,
@@ -135,9 +145,19 @@ const ProductListScreen = () => {
   const numColumns = isLandscape ? 2 : 1;
   const itemWidth = width / numColumns - 20;
 
-  const styles = productListStyles(theme);
+  const styles = productListScreenStyles(theme);
 
-  const allProducts = data?.pages.flatMap(page => page.data) || [];
+  const allProducts = useMemo(() => {
+    const products = data?.pages.flatMap(page => page.data) || [];
+
+    if (sortBy === 'price_asc') {
+      return [...products].sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price_desc') {
+      return [...products].sort((a, b) => b.price - a.price);
+    }
+
+    return products;
+  }, [data, sortBy]);
 
   const handleEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -171,8 +191,7 @@ const ProductListScreen = () => {
   }
 
   const handleRefresh = () => refetch();
-
-  const renderItem = ({item, index}) => (
+  const renderItem: ListRenderItem<ProductType> = ({item, index}) => (
     <ProductCard
       item={item}
       itemWidth={itemWidth}
@@ -184,10 +203,100 @@ const ProductListScreen = () => {
       animationDelay={index * 50}
     />
   );
+  const renderSortButton = () => (
+    <Pressable
+      style={({pressed}) => [
+        styles.sortButton,
+        {opacity: pressed ? 0.8 : 1},
+      ]}
+      onPress={() => setShowSortModal(true)}>
+      <Icon name="sort" size={24} color={theme.text} />
+      <Text style={styles.sortButtonText}>Sort</Text>
+    </Pressable>
+  );
+  const renderSortModal = () => (
+    <Modal
+      visible={showSortModal}
+      transparent
+      animationType="slide"
+      onRequestClose={() => setShowSortModal(false)}>
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>Sort by Price</Text>
 
+          <Pressable
+            style={({pressed}) => [
+              styles.sortOption,
+              sortBy === 'none' && styles.selectedOption,
+              {opacity: pressed ? 0.8 : 1},
+            ]}
+            onPress={() => {
+              setSortBy('none');
+              setShowSortModal(false);
+            }}>
+            <Text
+              style={[
+                styles.sortOptionText,
+                sortBy === 'none' && styles.selectedOptionText,
+              ]}>
+              Default
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={({pressed}) => [
+              styles.sortOption,
+              sortBy === 'price_asc' && styles.selectedOption,
+              {opacity: pressed ? 0.8 : 1},
+            ]}
+            onPress={() => {
+              setSortBy('price_asc');
+              setShowSortModal(false);
+            }}>
+            <Text
+              style={[
+                styles.sortOptionText,
+                sortBy === 'price_asc' && styles.selectedOptionText,
+              ]}>
+              Price: Low to High
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={({pressed}) => [
+              styles.sortOption,
+              sortBy === 'price_desc' && styles.selectedOption,
+              {opacity: pressed ? 0.8 : 1},
+            ]}
+            onPress={() => {
+              setSortBy('price_desc');
+              setShowSortModal(false);
+            }}>
+            <Text
+              style={[
+                styles.sortOptionText,
+                sortBy === 'price_desc' && styles.selectedOptionText,
+              ]}>
+              Price: High to Low
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={({pressed}) => [
+              styles.cancelButton,
+              {opacity: pressed ? 0.8 : 1},
+            ]}
+            onPress={() => setShowSortModal(false)}>
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </Pressable>
+        </View>
+      </View>
+    </Modal>
+  );
   return (
     <View style={styles.mainContainer}>
-    <FlatList
+      <View style={styles.header}>{renderSortButton()}</View>
+      <FlatList
         contentContainerStyle={styles.container}
         data={allProducts}
         numColumns={numColumns}
@@ -199,18 +308,18 @@ const ProductListScreen = () => {
         ListFooterComponent={renderFooter}
         initialNumToRender={6}
         maxToRenderPerBatch={10}
-        windowSize={10}
-        refreshControl={
+        windowSize={10}        refreshControl={
           <RefreshControl
             refreshing={isRefetching}
             onRefresh={handleRefresh}
             colors={[theme.primary]}
             tintColor={theme.primary}
-            progressBackgroundColor={theme.card}
+            progressBackgroundColor={theme.cardBackground}
           />
         }
       />
-  </View>
+      {renderSortModal()}
+    </View>
   );
 };
 

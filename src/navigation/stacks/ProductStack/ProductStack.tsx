@@ -30,6 +30,7 @@ const ProductStack = () => {
         name="ProductList"
         component={ProductListScreen}
         options={{
+          
           headerTitleStyle: {
             fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
             fontSize: FONT_SIZE.XL,
@@ -58,6 +59,7 @@ const ProductStack = () => {
         name="ProductDetails"
         component={ProductDetailsScreen}
         options={{
+          headerShown: false,
           headerTitleStyle: {
             fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
             fontSize: FONT_SIZE.XL,
