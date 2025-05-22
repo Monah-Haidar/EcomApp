@@ -65,7 +65,7 @@ const LoginScreen = () => {
   } = useForm<FormData>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: 'monahhaidar1123+5@gmail.com',
+      email: 'monahhaidar1123+7@gmail.com',
       password: '12345678',
       token_expires_in: '1h'
     },

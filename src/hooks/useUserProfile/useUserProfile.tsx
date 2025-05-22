@@ -1,8 +1,7 @@
-import {Text, View} from 'react-native';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import axiosInstance from '../../api/config';
-import {useAuthStore} from '../../store/AuthStore';
-import {useQuery} from '@tanstack/react-query';
-import {useEffect} from 'react';
+import { useAuthStore } from '../../store/AuthStore';
 
 interface UserProfileResponse {
   success: boolean;
@@ -33,7 +32,6 @@ const useUserProfile = () => {
   const query = useQuery({
     queryKey: ['userProfile'],
     queryFn: fetchUserProfile,
-    enabled: isAuthenticated, // Only run if user is authenticated
     staleTime: 5 * 60 * 1000,
   });
 

@@ -8,7 +8,6 @@ import { useUserProfile } from '../../../hooks/useUserProfile';
 import { useAuthStore } from '../../../store/AuthStore';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { global } from '../../../styles/global';
-import { profileScreenStyles } from './profileScreenStyles';
 
 const ProfileScreen = () => {
   const {theme} = useTheme();

@@ -9,6 +9,8 @@ export interface User {
   lastName: string;
   profileImage?: {
     url: string;
+    type?: string;
+    name?: string;
   } | null;
   isEmailVerified: boolean;
   createdAt: string;
@@ -29,7 +31,7 @@ const secureStorage: StateStorage = {
   getItem: async (name: string) => {
     try {
       console.log(`[SecureStorage] Getting item: ${name}`);
-      
+
       if (await RNSecureStorage.exist(name)) {
         const value = await RNSecureStorage.getItem(name);
         return value;
@@ -44,7 +46,7 @@ const secureStorage: StateStorage = {
   removeItem: async (name: string) => {
     try {
       console.log(`[SecureStorage] Removing item: ${name}`);
-      
+
       if (await RNSecureStorage.exist(name)) {
         await RNSecureStorage.removeItem(name);
       } else {
@@ -68,6 +70,7 @@ type AuthState = {
   setHydrated?: () => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
   setUser: (user: User) => void;
+  
   clearTokens: () => void;
 };
 
@@ -77,13 +80,6 @@ const useAuthStore = create<AuthState>()(
       accessToken: null,
       refreshToken: null,
       user: null,
-      // user: {
-      //   id: '123',
-      //   email: 'monahhaidar1123+5@gmail.com',
-      //   firstName: 'Monah',
-      //   lastName: 'Haidar',
-      //   isEmailVerified: true,
-      // },
 
       isAuthenticated: false,
 
@@ -95,6 +91,7 @@ const useAuthStore = create<AuthState>()(
         set({accessToken, refreshToken, isAuthenticated: true}),
 
       setUser: user => set({user}),
+      
 
       clearTokens: () =>
         set({
@@ -107,7 +104,7 @@ const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => secureStorage),
-     
+
       onRehydrateStorage: () => state => {
         console.log('[STATE - REHYDRATE]');
         console.log(
@@ -129,7 +126,7 @@ const useAuthStore = create<AuthState>()(
             console.log(
               '[onRehydrate - else] Successfully rehydrated auth store',
             );
-            
+
             console.log(
               '[onRehydrate - else] Auth state after rehydration:',
               rehydratedState ? 'User exists' : 'No user data',

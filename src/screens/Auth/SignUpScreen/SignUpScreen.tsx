@@ -6,6 +6,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -24,7 +25,8 @@ import {useSignUpMutation} from '../../../hooks/useSignUpMutation';
 import {useState} from 'react';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {ProfileImagePicker} from '../../../components/molecules/ProfileImagePicker';
-import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
+import {FormErrorDisplay} from '../../../components/atoms/FormErrorDisplay';
+import Feather from 'react-native-vector-icons/Feather';
 
 const SignUpSchema = z.object({
   firstName: z
@@ -71,7 +73,7 @@ type RootStackParamList = {
 const SignUpScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const {mutate, isPending, error} = useSignUpMutation();
+  const {mutate, isPending, error} = useSignUpMutation();
   const insets = useSafeAreaInsets();
   const {theme} = useTheme();
 
@@ -91,9 +93,9 @@ const SignUpScreen = () => {
     },
     mode: 'onBlur',
   });
-  console.log('Screen Error: ', errors);
+  // console.log('Screen Error: ', errors);
 
-  const styles = global(theme);
+  const globalStyles = global(theme);
 
   const handleImagePick = async () => {
     const result = await launchImageLibrary({
@@ -119,7 +121,7 @@ const SignUpScreen = () => {
     const signUpData = {
       ...data,
       profileImage: profileImage,
-    }
+    };
     mutate(signUpData);
   };
 
@@ -138,18 +140,29 @@ const SignUpScreen = () => {
           paddingRight: insets.right,
         }}
         keyboardShouldPersistTaps="handled">
-        <View style={styles.container}>
+        <View style={globalStyles.container}>
           <BackButton />
 
-          <Text style={[styles.heading, styles.headingContainer]}>Sign Up</Text>
+          <Text style={[globalStyles.heading, globalStyles.headingContainer]}>
+            Sign Up
+          </Text>
 
           {error && <FormErrorDisplay error={error?.message} />}
 
           <View>
-            <ProfileImagePicker
-              onPress={handleImagePick}
-              profileImage={profileImage}
-            />
+            <View style={globalStyles.imageSection}>
+              <View>
+                <ProfileImagePicker localImage={profileImage} />
+                <Pressable
+                  style={globalStyles.cameraButton}
+                  onPress={handleImagePick}>
+                  <Feather name="camera" size={20} color={theme.buttonText} />
+                </Pressable>
+              </View>
+              <Text style={globalStyles.changePhotoText}>
+                Tap to add profile photo
+              </Text>
+            </View>
 
             <FormInputContainer<FormData>
               label="First Name"

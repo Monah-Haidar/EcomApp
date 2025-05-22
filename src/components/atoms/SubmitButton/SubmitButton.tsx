@@ -25,12 +25,12 @@ const SubmitButton = ({
   const {theme} = useTheme();
   const styles = submitButtonStyles(theme);
 
-  // Determine background and text colors based on variant
+  
   const getBgColor = () => {
     if (backgroundColor) return backgroundColor;
     switch (variant) {
       case 'danger':
-        return '#ffebee'; // Light red background
+        return '#ffebee'; 
       case 'primary':
       default:
         return theme.primary;

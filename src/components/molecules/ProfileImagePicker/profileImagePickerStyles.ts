@@ -7,10 +7,10 @@ export const profileImagePickerStyles = (
   theme: typeof themes.lightTheme | typeof themes.darkTheme,
 ) =>
   StyleSheet.create({
-    // imagePickerContainer: {
-    //   alignItems: 'center',
-    //   marginVertical: 20,
-    // },
+    imagePickerContainer: {
+      alignItems: 'center',
+      marginVertical: 20,
+    },
     // imagePicker: {
     //   width: 120,
     //   height: 120,
@@ -44,6 +44,7 @@ export const profileImagePickerStyles = (
       shadowOpacity: 0.1,
       shadowRadius: spacing.xs_plus,
       elevation: spacing.xs,
+      backgroundColor: theme.cardBackground,
     },
     profileImage: {
       width: '100%',
@@ -56,10 +57,12 @@ export const profileImagePickerStyles = (
       borderRadius: spacing.radius_xxl,
       justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: theme.secondary,
     },
     placeholderText: {
       fontSize: 40,
       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
+      color: theme.buttonText,
     },
 
 

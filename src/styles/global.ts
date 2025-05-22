@@ -44,4 +44,27 @@ export const global = (
       elevation: 1,
       marginBottom: spacing.md_plus,
     },
+    cameraButton: {
+      position: 'absolute',
+      bottom: 12,
+      right: 12,
+      padding: 10,
+      borderRadius: 20,
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
+      elevation: 3,
+      backgroundColor: theme.primary,
+    },
+    imageSection: {
+      alignItems: 'center',
+      paddingVertical: 24,
+    },
+    changePhotoText: {
+      marginTop: 12,
+      fontSize: normalizeFont(FONT_SIZE.SM),
+      fontFamily: FONT_FAMILY.POPPINS_REGULAR,
+      color: theme.subheadingText,
+    },
   });
