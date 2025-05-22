@@ -1,7 +1,6 @@
-import {createContext, ReactNode, useContext, useState} from 'react';
+import RNSecureStorage, {ACCESSIBLE} from 'rn-secure-storage';
 import {create} from 'zustand';
-import {persist} from 'zustand/middleware';
-
+import {createJSONStorage, persist, StateStorage} from 'zustand/middleware';
 
 interface User {
   id: string;
@@ -14,14 +13,58 @@ interface User {
   isEmailVerified: boolean;
 }
 
+const secureStorage: StateStorage = {
+  setItem: async (name: string, value: string) => {
+    try {
+      console.log(`[SecureStorage] Setting item: ${name}`);
+      await RNSecureStorage.setItem(name, value, {
+        accessible: ACCESSIBLE.WHEN_UNLOCKED,
+      });
+    } catch (e) {
+      console.error(`[SecureStorage] Error setting item ${name}:`, e);
+    }
+  },
+
+  getItem: async (name: string) => {
+    try {
+      console.log(`[SecureStorage] Getting item: ${name}`);
+      
+      if (await RNSecureStorage.exist(name)) {
+        const value = await RNSecureStorage.getItem(name);
+        return value;
+      }
+      console.log(`[SecureStorage] Item ${name} does not exist`);
+      return null;
+    } catch (e) {
+      console.error(`[SecureStorage] Error getting item ${name}:`, e);
+      return null;
+    }
+  },
+  removeItem: async (name: string) => {
+    try {
+      console.log(`[SecureStorage] Removing item: ${name}`);
+      
+      if (await RNSecureStorage.exist(name)) {
+        await RNSecureStorage.removeItem(name);
+      } else {
+        console.log(
+          `[SecureStorage] Item ${name} does not exist, nothing to remove`,
+        );
+      }
+    } catch (e) {
+      console.error(`[SecureStorage] Error removing item ${name}:`, e);
+    }
+  },
+};
+
 type AuthState = {
   accessToken: string | null;
   refreshToken: string | null;
   user: User | null;
   isAuthenticated: boolean;
-  hasStoreLoaded?: boolean;
+  hydrated: boolean;
 
-  setHasStoreLoaded?: () => void;
+  setHydrated?: () => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
   setUser: (user: User) => void;
   clearTokens: () => void;
@@ -33,25 +76,66 @@ const useAuthStore = create<AuthState>()(
       accessToken: null,
       refreshToken: null,
       user: null,
-      isAuthenticated: false,
-      hasStoreLoaded: false,
+      // user: {
+      //   id: '123',
+      //   email: 'monahhaidar1123+5@gmail.com',
+      //   firstName: 'Monah',
+      //   lastName: 'Haidar',
+      //   isEmailVerified: true,
+      // },
 
-      setHasStoreLoaded: () => set({hasStoreLoaded: true}),
+      isAuthenticated: false,
+
+      hydrated: false,
+
+      setHydrated: () => set({hydrated: true}),
 
       setTokens: (accessToken, refreshToken) =>
         set({accessToken, refreshToken, isAuthenticated: true}),
 
       setUser: user => set({user}),
 
-      clearTokens: () => set({
-        accessToken: null,
-        refreshToken: null,
-        user: null,
-        isAuthenticated: false,
-      }),
+      clearTokens: () =>
+        set({
+          accessToken: null,
+          refreshToken: null,
+          user: null,
+          isAuthenticated: false,
+        }),
     }),
     {
       name: 'auth-storage',
+      storage: createJSONStorage(() => secureStorage),
+     
+      onRehydrateStorage: () => state => {
+        console.log('[STATE - REHYDRATE]');
+        console.log(
+          '[onRehydrate - state] Starting rehydration process with state:',
+          state ? 'State exists' : 'No state',
+        );
+
+        state?.setHydrated?.();
+        console.log('[onRehydrate - state] Set hydrated state to true');
+
+        return (error: any, rehydratedState: any) => {
+          console.log('[ERROR - REHYDRATE]');
+          if (error) {
+            console.error(
+              '[onRehydrate - error] Error rehydrating auth store:',
+              error,
+            );
+          } else {
+            console.log(
+              '[onRehydrate - else] Successfully rehydrated auth store',
+            );
+            
+            console.log(
+              '[onRehydrate - else] Auth state after rehydration:',
+              rehydratedState ? 'User exists' : 'No user data',
+            );
+          }
+        };
+      },
     },
   ),
 );
