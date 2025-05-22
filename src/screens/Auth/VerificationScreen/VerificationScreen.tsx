@@ -26,7 +26,7 @@ type RootStackParamList = {
 
 const VerificationScreen = ({route}) => {
   const {theme} = useTheme();
-  const {mutate, isLoading, error} = useVerificationMutation();
+  const {mutate, isPending, error} = useVerificationMutation();
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -42,7 +42,7 @@ const VerificationScreen = ({route}) => {
 
   const {email} = route.params;
 
-  const expectedCode = '123456';
+  // const expectedCode = '123456';
 
   const styles = global(theme);
 
@@ -128,7 +128,7 @@ const VerificationScreen = ({route}) => {
             </View>
           </View> */}
 
-          <SubmitButton text="Create Account" onPress={onSubmit} />
+          <SubmitButton text="Create Account" onPress={onSubmit} isLoading={isPending} />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

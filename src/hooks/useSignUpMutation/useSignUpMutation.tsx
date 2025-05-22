@@ -68,9 +68,9 @@ const useSignUpMutation = () => {
 
     onError: error => {
       if (error instanceof AxiosError && error.response?.data) {
-        // console.log('Sign up Error', error.response);
+        // console.log('Sign up Error', error.response?.data?.error?.message);
         const errorData = error.response.data as ErrorResponse;
-
+        // console.log('errorData: ', errorData);
         if (errorData.error?.message) return errorData.error.message;
       }
 

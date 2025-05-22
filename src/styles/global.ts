@@ -14,6 +14,10 @@ export const global = (
       paddingHorizontal: 20,
       gap: 20,
     },
+    contentContainer: {
+      flexGrow: 1,
+      paddingBottom: 40,
+    },
     headingContainer: {
       marginBottom: 8,
     },

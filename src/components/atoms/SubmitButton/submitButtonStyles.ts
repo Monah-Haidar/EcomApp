@@ -1,28 +1,32 @@
-import { StyleSheet } from "react-native";
-import { FONT_FAMILY, FONT_SIZE } from "../../../constants/font";
-import { themes } from "../../../styles/theming";
-import { normalizeFont } from "../../../utils/normalizeFont";
-import { moderateScale, scale, verticalScale } from "../../../utils/responsive";
-import { spacing } from "../../../constants/spacing";
-
-
-
+import {StyleSheet} from 'react-native';
+import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
+import {themes} from '../../../styles/theming';
+import {normalizeFont} from '../../../utils/normalizeFont';
+import {moderateScale, scale, verticalScale} from '../../../utils/responsive';
+import {spacing} from '../../../constants/spacing';
 
 export const submitButtonStyles = (
   theme: typeof themes.lightTheme | typeof themes.darkTheme,
 ) =>
   StyleSheet.create({
-    submitButton: {
-      backgroundColor: theme.primary,
-      borderRadius: scale(10),
+    submitButtonContainer: {
+      paddingVertical: spacing.md,
+      borderRadius: spacing.radius_md,
       alignItems: 'center',
       justifyContent: 'center',
-      padding: moderateScale(spacing.md),
-      width: '100%',
+      marginVertical: spacing.sm,
+    },
+    buttonContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     submitButtonText: {
-      fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
-      fontSize: normalizeFont(FONT_SIZE.XL),
-      color: theme.buttonText,
+      fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
+      // fontSize: normalizeFont(FONT_SIZE.XL),
+      fontSize: normalizeFont(FONT_SIZE.LG),
+    },
+    iconContainer: {
+      marginRight: spacing.sm,
     },
   });

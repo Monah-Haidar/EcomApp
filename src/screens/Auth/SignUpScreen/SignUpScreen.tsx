@@ -71,7 +71,7 @@ type RootStackParamList = {
 const SignUpScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const {mutate, isLoading, error} = useSignUpMutation();
+    const {mutate, isPending, error} = useSignUpMutation();
   const insets = useSafeAreaInsets();
   const {theme} = useTheme();
 
@@ -91,7 +91,7 @@ const SignUpScreen = () => {
     },
     mode: 'onBlur',
   });
-  
+  console.log('Screen Error: ', errors);
 
   const styles = global(theme);
 
@@ -185,7 +185,7 @@ const SignUpScreen = () => {
 
           <SubmitButton
             text="Sign Up"
-            isLoading={isLoading}
+            isLoading={isPending}
             onPress={handleSubmit(onSubmit)}
           />
 

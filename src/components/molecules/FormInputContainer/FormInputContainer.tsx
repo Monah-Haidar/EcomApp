@@ -14,6 +14,7 @@ interface FormInputContainerProps<T extends FieldValues> {
   keyboardType?: KeyboardTypeOptions;
   secureTextEntry?: boolean;
   errors: FieldErrors<T>;
+  editable?: boolean
 }
 
 const FormInputContainer = <T extends FieldValues>({
@@ -24,6 +25,7 @@ const FormInputContainer = <T extends FieldValues>({
   keyboardType= 'default',
   secureTextEntry = false,
   errors,
+  editable = true,
 }: FormInputContainerProps<T>) => {
   const {theme} = useTheme();
 
@@ -45,6 +47,7 @@ const FormInputContainer = <T extends FieldValues>({
             keyboardType={keyboardType}
             secureTextEntry={secureTextEntry}
             placeholderTextColor={theme.placeholderText}
+            editable={editable}
           />
         )}
       />

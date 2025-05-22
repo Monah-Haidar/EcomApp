@@ -54,7 +54,7 @@ type RootStackParamList = {
 const LoginScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const {mutate, isLoading, error} = useLoginMutation();
+  const {mutate, isPending, error} = useLoginMutation();
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
   // const [error, setError] = useState<string | null>(null);
@@ -141,7 +141,7 @@ const LoginScreen = () => {
             />
           </View>
 
-          <SubmitButton text="Login" onPress={handleSubmit(onSubmit)} />
+          <SubmitButton text="Login" isLoading={isPending} onPress={handleSubmit(onSubmit)} />
 
           <FormFooterText
             text="Don't have an account?"

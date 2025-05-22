@@ -30,7 +30,7 @@ interface ErrorResponse {
 const loginUser = async ({
   email,
   password,
-  token_expires_in = '1h',
+  token_expires_in = '1min',
 }: LoginUserProps) => {
   const response = await axiosInstance.post('auth/login', {
     email,
