@@ -13,10 +13,12 @@ interface InfoRowProps {
 
 
 const InfoRow = ({label, icon}: InfoRowProps) => {
-  const {theme} = useTheme();
-  const styles = infoRowStyles(theme);
   const user = useAuthStore(state => state.user);
+  const {theme} = useTheme();
 
+
+  const styles = infoRowStyles(theme);
+  
   const userEmail = user?.email || 'Not available';
   
 

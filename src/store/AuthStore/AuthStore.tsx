@@ -2,7 +2,7 @@ import RNSecureStorage, {ACCESSIBLE} from 'rn-secure-storage';
 import {create} from 'zustand';
 import {createJSONStorage, persist, StateStorage} from 'zustand/middleware';
 
-interface User {
+export interface User {
   id: string;
   email: string;
   firstName: string;
@@ -11,6 +11,7 @@ interface User {
     url: string;
   } | null;
   isEmailVerified: boolean;
+  createdAt: string;
 }
 
 const secureStorage: StateStorage = {

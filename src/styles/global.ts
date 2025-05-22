@@ -2,6 +2,7 @@ import {StyleSheet} from 'react-native';
 import {FONT_FAMILY, FONT_SIZE} from '../constants/font';
 import {normalizeFont} from '../utils/normalizeFont';
 import {themes} from './theming';
+import { spacing } from '../constants/spacing';
 
 export const global = (
   theme: typeof themes.lightTheme | typeof themes.darkTheme,
@@ -31,5 +32,16 @@ export const global = (
       fontSize: normalizeFont(FONT_SIZE.LG),
       color: theme.subheadingText,
     },
-    
+    infoCard: {
+      backgroundColor: theme.cardBackground,
+      borderColor: theme.border,
+      borderRadius: spacing.radius_lg,
+      borderWidth: 1,
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 1},
+      shadowOpacity: 0.05,
+      shadowRadius: spacing.xs - 1,
+      elevation: 1,
+      marginBottom: spacing.md_plus,
+    },
   });
