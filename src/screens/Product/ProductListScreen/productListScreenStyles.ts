@@ -13,8 +13,8 @@ export const productListScreenStyles = (
       backgroundColor: theme.background,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: spacing.md_plus,
-    },    card: {
+    },
+    card: {
       backgroundColor: theme.cardBackground,
       borderRadius: spacing.radius_sm,
       padding: spacing.md_minus,
@@ -49,7 +49,8 @@ export const productListScreenStyles = (
       justifyContent: 'center',
       alignItems: 'center',
       height: '100%',
-    },    errorText: {
+    },
+    errorText: {
       color: theme.errorText,
       fontSize: normalizeFont(FONT_SIZE.MD),
     },
@@ -61,25 +62,37 @@ export const productListScreenStyles = (
     mainContainer: {
       flex: 1,
     },
-
     header: {
       flexDirection: 'row',
-      justifyContent: 'flex-end',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      gap: spacing.sm,
+      marginBottom: spacing.sm_plus,
       paddingHorizontal: spacing.md_plus,
       paddingVertical: spacing.sm,
       backgroundColor: theme.background,
     },
+    searchBarContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.cardBackground,
+      borderRadius: spacing.radius_md,
+      paddingHorizontal: spacing.sm,
+      height: 40,
+    },
     sortButton: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingHorizontal: spacing.md_minus,
-      paddingVertical: spacing.xs_plus,
-      borderRadius: spacing.xs_plus,
+      paddingHorizontal: spacing.md_plus,
+      paddingVertical: spacing.sm,
+      borderRadius: spacing.md_plus,
       backgroundColor: theme.cardBackground,
-    },    sortButtonText: {
-      marginLeft: spacing.xs,
+    },
+    sortButtonText: {
+      marginLeft: spacing.sm,
       color: theme.text,
-      fontSize: normalizeFont(FONT_SIZE.SM),
+      fontSize: normalizeFont(FONT_SIZE.MD),
       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
     },
     modalOverlay: {
@@ -134,5 +147,50 @@ export const productListScreenStyles = (
       fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
       color: theme.text,
       textAlign: 'center',
+    },
+    filterContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: spacing.sm,
+      backgroundColor: theme.background,
+    },
+    searchBar: {
+      flex: 1,
+      paddingHorizontal: spacing.sm,
+      paddingVertical: spacing.sm,
+      fontFamily: FONT_FAMILY.POPPINS_REGULAR,
+      fontSize: normalizeFont(FONT_SIZE.MD),
+      color: theme.text,
+    },
+    searchLoader: {
+      marginHorizontal: spacing.sm,
+    },
+    emptyStateContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: spacing.xl,
+      paddingHorizontal: spacing.lg,
+      minHeight: 300, // Ensure minimum height for better visual appearance
+    },
+    emptyStateText: {
+      fontSize: normalizeFont(FONT_SIZE.MD),
+      fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
+      color: theme.text,
+      marginTop: spacing.md_plus,
+      marginBottom: spacing.lg,
+      textAlign: 'center',
+    },
+    clearSearchButton: {
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.md_plus,
+      backgroundColor: theme.primary,
+      borderRadius: spacing.radius_sm,
+    },
+    clearSearchButtonText: {
+      fontSize: normalizeFont(FONT_SIZE.SM),
+      fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
+      color: theme.background,
     },
   });

@@ -2,7 +2,7 @@ import {useInfiniteQuery} from '@tanstack/react-query';
 
 import axiosInstance from '../../api/config';
 
-interface Product {
+export interface Product {
   _id: string;
   title: string;
   description: string;
