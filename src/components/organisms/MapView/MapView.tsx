@@ -1,18 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
+  ActivityIndicator,
   Text,
-  StyleSheet,
-  ViewStyle,
+  View,
+  ViewStyle
 } from 'react-native';
-import { useTheme } from '../../../store/ThemeStore/ThemeStore';
-import { spacing } from '../../../constants/spacing';
-import { FONT_FAMILY, FONT_SIZE } from '../../../constants/font';
-import { normalizeFont } from '../../../utils/normalizeFont';
+import MapViewLib, { Callout, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Feather from 'react-native-vector-icons/Feather';
-
-// In a real app, you'd use a package like react-native-maps
-// This is a placeholder component for now
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { mapViewStyles } from './mapViewStyles';
 
 interface MapViewProps {
   location: {
@@ -21,70 +17,121 @@ interface MapViewProps {
     name: string;
   };
   style?: ViewStyle;
+  interactive?: boolean;
 }
 
-const MapView = ({ location, style }: MapViewProps) => {
-  const { theme } = useTheme();
+const MapView = ({location, style, interactive = true}: MapViewProps) => {
+  const {theme} = useTheme();
   const styles = mapViewStyles(theme);
+  const [isMapReady, setIsMapReady] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
+
   
+  const initialRegion = {
+    latitude: location.latitude,
+    longitude: location.longitude,
+    latitudeDelta: 0.01, 
+    longitudeDelta: 0.01,
+  };
+  
+  useEffect(() => {
+    console.log('MapView: Received location:', location);
+    try {
+      
+      if (
+        !location.latitude ||
+        !location.longitude ||
+        isNaN(location.latitude) ||
+        isNaN(location.longitude) ||
+        location.latitude < -90 ||
+        location.latitude > 90 ||
+        location.longitude < -180 ||
+        location.longitude > 180
+      ) {
+        console.log('MapView: Invalid coordinates detected');
+        throw new Error('Invalid location coordinates');
+      }
+      
+      console.log('MapView: Coordinates are valid, resetting error state');
+      setMapError(null);
+    } catch (error) {
+      console.error('Map initialization error:', error);
+      setMapError('Failed to initialize map');
+    }
+  }, [location]);
+
+  console.log(
+    'MapView: Rendering with mapError:',
+    mapError,
+    'isMapReady:',
+    isMapReady,
+  );
   return (
     <View style={[styles.container, style]}>
-      <View style={styles.mapPlaceholder}>
-        <Feather name="map" size={40} color={theme.subheadingText} />
-        <Text style={styles.mapText}>
-          Map view would show here with coordinates:
-        </Text>
-        <Text style={styles.coordinatesText}>
-          {location.latitude}, {location.longitude}
-        </Text>
-        <View style={styles.marker}>
-          <Feather name="map-pin" size={24} color={theme.primary} />
-          <Text style={styles.markerText}>{location.name}</Text>
+      {mapError ? (
+        
+        <View style={styles.mapPlaceholder}>
+          <Feather name="map" size={40} color={theme.subheadingText} />
+          <Text style={styles.mapText}>
+            Unable to load map. Location coordinates:
+          </Text>
+          <Text style={styles.coordinatesText}>
+            {location.latitude}, {location.longitude}
+          </Text>
+          <View style={styles.marker}>
+            <Feather name="map-pin" size={24} color={theme.primary} />
+            <Text style={styles.markerText}>{location.name}</Text>
+          </View>
         </View>
-      </View>
+      ) : (
+        <View style={{flex: 1}}>
+          {!isMapReady && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={theme.primary} />
+              <Text style={styles.loadingText}>Loading map...</Text>
+            </View>
+          )}s
+          <MapViewLib
+            provider={PROVIDER_GOOGLE}
+            style={[styles.map, {height: 200, width: '100%'}]}
+            initialRegion={initialRegion}
+            onMapReady={() => {
+              console.log('Map is ready');
+              setIsMapReady(true);
+            }}
+            zoomEnabled={interactive}
+            scrollEnabled={interactive}
+            rotateEnabled={interactive}
+            pitchEnabled={interactive}
+            showsUserLocation={false}
+            showsMyLocationButton={false}>
+            <Marker
+              key={`marker-${location.latitude}-${location.longitude}`}
+              coordinate={{
+                latitude: Number(location.latitude),
+                longitude: Number(location.longitude),
+              }}
+              title={location.name}
+              description={`${location.latitude.toFixed(
+                6,
+              )}, ${location.longitude.toFixed(6)}`}>
+              {interactive && (
+                <Callout tooltip>
+                  <View style={styles.calloutContainer}>
+                    <Text style={styles.calloutTitle}>{location.name}</Text>
+                    <Text style={styles.calloutText}>
+                      {location.latitude.toFixed(6)},{' '}
+                      {location.longitude.toFixed(6)}
+                    </Text>
+                  </View>
+                </Callout>
+              )}
+            </Marker>
+          </MapViewLib>
+        </View>
+      )}
     </View>
   );
 };
-
-const mapViewStyles = (theme: any) => StyleSheet.create({
-  container: {
-    overflow: 'hidden',
-  },
-  mapPlaceholder: {
-    backgroundColor: theme.border,
-    height: '100%',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.md,
-  },
-  mapText: {
-    fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-    fontSize: normalizeFont(FONT_SIZE.SM),
-    color: theme.text,
-    marginTop: spacing.sm,
-    textAlign: 'center',
-  },
-  coordinatesText: {
-    fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
-    fontSize: normalizeFont(FONT_SIZE.SM),
-    color: theme.text,
-    marginVertical: spacing.xs,
-  },
-  marker: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: `${theme.cardBackground}CC`,
-    padding: spacing.sm,
-    borderRadius: spacing.radius_md,
-    marginTop: spacing.sm,
-  },
-  markerText: {
-    fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
-    fontSize: normalizeFont(FONT_SIZE.SM),
-    color: theme.text,
-    marginLeft: spacing.xs,
-  },
-});
 
 export default MapView;

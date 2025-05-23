@@ -1,63 +1,9 @@
-import {StyleSheet} from 'react-native';
-import {themes} from '../../../styles/theming';
-import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
-import { moderateScale, scale, verticalScale } from '../../../utils/responsive';
-import { normalizeFont } from '../../../utils/normalizeFont';
+import { StyleSheet } from 'react-native';
+import { FONT_FAMILY, FONT_SIZE } from '../../../constants/font';
 import { spacing } from '../../../constants/spacing';
+import { normalizeFont } from '../../../utils/normalizeFont';
 
-// export const productDetailsStyles = (
-//   width: number,
-//   theme: typeof themes.lightTheme | typeof themes.darkTheme,
-// ) =>
-//   StyleSheet.create({
-//     container: {
-//       backgroundColor: theme.background,
-//       padding: scale(16),
-//     },
-//     image: {
-//       width: '100%',
-//       height: width * 0.8,
-//       borderRadius: scale(12),
-//       marginBottom: verticalScale(16),
-//     },
-//     title: {
-//       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
-//       fontSize: normalizeFont(FONT_SIZE.XL),
-//       color: theme.text,
-//     },
-//     price: {
-//       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
-//       fontSize: normalizeFont(FONT_SIZE.LG),
-//       marginBottom: verticalScale(12),
-//       color: '#4CAF50',
-//     },
-//     description: {
-//       fontFamily: FONT_FAMILY.POPPINS_REGULAR,
-//       fontSize: normalizeFont(FONT_SIZE.MD),
-//       color: theme.text,
-//       marginBottom: verticalScale(24),
-//     },
-//     buttonRow: {
-//       flexDirection: 'row',
-//       justifyContent: 'space-between',
-//       gap: moderateScale(12),
-//     },
-//     button: {
-//       flex: 1,
-//       backgroundColor: theme.secondary,
-//       paddingVertical: verticalScale(14),
-//       borderRadius: scale(8),
-//       alignItems: 'center',
-//     },
-//     addButton: {
-//       backgroundColor: theme.primary,
-//     },
-//     buttonText: {
-//       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
-//       fontSize: normalizeFont(FONT_SIZE.MD),
-//       color: theme.buttonText,
-//     },
-//   });
+
 export const productDetailsScreenStyles = (theme: any, screenWidth: number) =>
   StyleSheet.create({
     container: {
@@ -127,8 +73,7 @@ export const productDetailsScreenStyles = (theme: any, screenWidth: number) =>
       fontFamily: FONT_FAMILY.POPPINS_REGULAR,
       fontSize: normalizeFont(FONT_SIZE.SM),
       color: theme.subheadingText,
-    },
-    mapSection: {
+    },    mapSection: {
       marginTop: spacing.md_plus,
     },
     sectionTitle: {
@@ -142,9 +87,11 @@ export const productDetailsScreenStyles = (theme: any, screenWidth: number) =>
       height: 200,
       borderRadius: spacing.radius_md,
       overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     contactSection: {
-      backgroundColor: `${theme.primary}15`, // Primary color with 15% opacity
+      backgroundColor: `${theme.primary}15`, 
       borderRadius: spacing.radius_md,
       padding: spacing.md_plus,
       marginTop: spacing.md_plus,
@@ -225,7 +172,7 @@ export const productDetailsScreenStyles = (theme: any, screenWidth: number) =>
       fontSize: normalizeFont(FONT_SIZE.SM),
       color: theme.buttonText,
     },
-    // Loading skeleton styles
+    
     loadingContainer: {
       padding: spacing.md_plus,
     },
@@ -285,7 +232,7 @@ export const productDetailsScreenStyles = (theme: any, screenWidth: number) =>
       justifyContent: 'center',
       paddingVertical: spacing.xl,
       paddingHorizontal: spacing.lg,
-      minHeight: 300, // Ensure minimum height for better visual appearance
+      minHeight: 300, 
     },
     emptyStateText: {
       fontSize: normalizeFont(FONT_SIZE.MD),

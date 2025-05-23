@@ -1,48 +1,37 @@
-import React, {useState, useEffect} from 'react';
+import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  Pressable,
-  Linking,
-  ActivityIndicator,
-  Modal,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
   Alert,
-  Platform,
+  Dimensions,
+  Linking,
+  Modal,
   PermissionsAndroid,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
-import {useRoute, useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {spacing} from '../../../constants/spacing';
-import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
-import {normalizeFont} from '../../../utils/normalizeFont';
-import {global} from '../../../styles/global';
-import Feather from 'react-native-vector-icons/Feather';
 import RNFS from 'react-native-fs';
-import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+import Feather from 'react-native-vector-icons/Feather';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { global } from '../../../styles/global';
 // import ImageCarousel from './imageCarousel';
 // import MapView from './mapView';
-import {useProduct} from '../../../hooks/useProduct';
-import {CustomHeader} from '../../../components/molecules/CustomHeader';
-import {ImageCarousel} from '../../../components/organisms/ImageCarousel';
-import {SubmitButton} from '../../../components/atoms/SubmitButton';
-import {MapView} from '../../../components/organisms/MapView';
-import {productDetailsScreenStyles} from './productDetailsScreenStyles';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useAuthStore} from '../../../store/AuthStore';
-import {useMutation} from '@tanstack/react-query';
-import axiosInstance from '../../../api/config';
-import {useDeleteProduct} from '../../../hooks/useDeleteProduct';
-import {useUserProfile} from '../../../hooks/useUserProfile';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
-// import { ImageCarousel } from '../../../components/molecules/ImageCarousel';
-// import { BackButton } from '../../../components/atoms/BackButton';
-// import { MapView } from '../../../components/molecules/MapView';
+import { SubmitButton } from '../../../components/atoms/SubmitButton';
+import { CustomHeader } from '../../../components/molecules/CustomHeader';
+import { ImageCarousel } from '../../../components/organisms/ImageCarousel';
+import { MapView } from '../../../components/organisms/MapView';
+import { useDeleteProduct } from '../../../hooks/useDeleteProduct';
+import { useProduct } from '../../../hooks/useProduct';
+import { useUserProfile } from '../../../hooks/useUserProfile';
+import { useAuthStore } from '../../../store/AuthStore';
+import { productDetailsScreenStyles } from './productDetailsScreenStyles';
 
 
 // Define expected route params
@@ -185,37 +174,37 @@ const ProductDetailsScreen = () => {
     }
   };  const downloadAndSaveImage = async (imageUrl: string) => {
     try {
-      // Show loading indicator
+      
       setShowSaveModal(false);
       Alert.alert('Downloading', 'Downloading image...');
 
-      // Construct the full URL
+      
       const fullImageUrl = `https://backend-practice.eurisko.me${imageUrl}`;
       
-      // Create a unique file name based on timestamp
+      
       const fileName = `product_${Date.now()}.jpg`;
       
-      // Get the local file path
+      
       const localFilePath = `${RNFS.CachesDirectoryPath}/${fileName}`;
       
-      // Check if directory exists and create it if needed
+      
       const dirExists = await RNFS.exists(RNFS.CachesDirectoryPath);
       if (!dirExists) {
         await RNFS.mkdir(RNFS.CachesDirectoryPath);
       }
       
-      // Download the file
+      
       const response = await RNFS.downloadFile({
         fromUrl: fullImageUrl,
         toFile: localFilePath,
-        background: false, // Set to false to ensure completion before saving
+        background: false, 
       }).promise;
       
       if (response.statusCode === 200) {
-        // Verify the file exists before saving to gallery
+        
         const fileExists = await RNFS.exists(localFilePath);
         if (fileExists) {
-          // Save to camera roll using the new API
+          
           await CameraRoll.save(`file://${localFilePath}`, { type: 'photo' });
           Alert.alert('Success', 'Image saved to your gallery');
         } else {
@@ -324,14 +313,7 @@ const ProductDetailsScreen = () => {
         },
       ]}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* <View style={styles.header}>
-          <Pressable
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}>
-            <Feather name="arrow-left" size={20} color={theme.primary} />
-            <Text style={styles.backButtonText}>Back to products</Text>
-          </Pressable>
-        </View> */}
+      
 
         <CustomHeader text="Product Details" />
 
@@ -364,8 +346,8 @@ const ProductDetailsScreen = () => {
                 Listed on {formatDate(product.createdAt)}
               </Text>
             </View>
-          )}
-
+          )} 
+                 
           {product.location && (
             <View style={styles.infoRow}>
               <Feather
@@ -378,7 +360,7 @@ const ProductDetailsScreen = () => {
             </View>
           )}
 
-          {/* Map Section */}
+          
           {product.location &&
             product.location.latitude &&
             product.location.longitude && (
@@ -484,7 +466,7 @@ const ProductDetailsScreen = () => {
         </View>
       </Modal>
 
-      {/* Save Image Modal */}
+      
       <Modal
         visible={showSaveModal}
         transparent={true}
