@@ -1,87 +1,3 @@
-// import {useNavigation} from '@react-navigation/native';
-// import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-// import {FlatList, Pressable, useWindowDimensions, View} from 'react-native';
-
-// import {ProductCard} from '../../../components/molecules/ProductCard';
-// import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-// import {productListStyles} from './styles';
-// import { useProducts } from '../../../hooks/useProducts';
-
-// type ProductType = {
-//   _id: string;
-//   title: string;
-//   description: string;
-//   price: number;
-//   images: Array<{
-//     url: string;
-//     _id: string;
-//   }>;
-// };
-
-// type RootStackParamList = {
-//   ProductDetails: {
-//     product: ProductType;
-//   };
-// };
-
-// const ProductListScreen = () => {
-//   const {width, height} = useWindowDimensions();
-//   const {theme} = useTheme();
-//   const navigation =
-//     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-//   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useProducts();
-
-//   const isLandscape = width > height;
-//   const numColumns = isLandscape ? 3 : 1;
-//   const styles = productListStyles(theme);
-//   const itemWidth = width / numColumns - 20;
-
-//   if (status === 'pending') return
-
-//   return (
-//     <View>
-//       <FlatList
-//         contentContainerStyle={styles.container}
-//         // data={data.data}
-//         numColumns={numColumns}
-//         key={numColumns}
-//         keyExtractor={item => item._id}
-//         // renderItem={({item}) => (
-//         //   <Pressable
-//         //     onPress={() =>
-//         //       navigation.navigate('ProductDetails', {product: item})
-//         //     }
-//         //     style={({pressed}) => [
-//         //       {
-//         //         opacity: pressed ? 0.6 : 1,
-//         //       },
-//         //     ]}>
-//         //     <ProductCard
-//         //       item={item}
-//         //       itemWidth={itemWidth}
-//         //       source={{uri: item.images[0].url}}
-//         //     />
-//         //   </Pressable>
-//         // )}
-//         renderItem={({item, index}) => (
-//           <ProductCard
-//             item={item}
-//             itemWidth={itemWidth}
-//             source={{uri: item.images[0]?.url}}
-//             onPress={() =>
-//               navigation.navigate('ProductDetails', {product: item})
-//             }
-//             onSwipeAction={() => console.log('Bookmarked:', item._id)}
-//             animationDelay={index * 100}
-//           />
-//         )}
-//       />
-//     </View>
-//   );
-// };
-
-// export default ProductListScreen;
-
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {
@@ -119,8 +35,9 @@ type ProductType = {
 
 type RootStackParamList = {
   ProductDetails: {
-    product: ProductType;
+    productId: ProductType;
   };
+  AddProduct: undefined;
 };
 
 const ProductListScreen = () => {
@@ -147,13 +64,14 @@ const ProductListScreen = () => {
   const {data: searchData, isPending, error} = useSearchProduct(searchQuery);
 
   // console.log('Search Query: ', searchQuery);
-  console.log('Search Data: ', searchData?.data);
+  // console.log('Search Data: ', searchData?.data);
 
   const isLandscape = width > height;
   const numColumns = isLandscape ? 2 : 1;
   const itemWidth = width / numColumns - 20;
 
-  const styles = productListScreenStyles(theme);  const displayProducts = useMemo(() => {
+  const styles = productListScreenStyles(theme);
+  const displayProducts = useMemo(() => {
     // If user has entered a search query
     if (searchQuery.trim()) {
       // If search is in progress, return empty array to show loading state
@@ -164,21 +82,21 @@ const ProductListScreen = () => {
       // Return search results if available
       if (searchData?.data) {
         const searchResults = searchData.data;
-        
+
         // Apply the same sorting logic to search results
         if (sortBy === 'price_asc') {
           return [...searchResults].sort((a, b) => a.price - b.price);
         } else if (sortBy === 'price_desc') {
           return [...searchResults].sort((a, b) => b.price - a.price);
         }
-        
+
         return searchResults;
       }
-      
+
       // If search data is undefined or null, return empty array to show empty state
       return [];
-    } 
-    
+    }
+
     // Otherwise use the paginated product data
     const products = data?.pages.flatMap(page => page.data) || [];
 
@@ -203,18 +121,22 @@ const ProductListScreen = () => {
         <ActivityIndicator size="small" color={theme.primary} />
       </View>
     );
-  };  const renderEmptyState = () => {
+  };
+  const renderEmptyState = () => {
     // If there's an active search query
-    if (searchQuery.trim()) {      // First check if search is in progress - show loading state
+    if (searchQuery.trim()) {
+      // First check if search is in progress - show loading state
       if (isPending) {
         return (
           <View style={styles.emptyStateContainer}>
             <ActivityIndicator size="large" color={theme.primary} />
-            <Text style={styles.emptyStateText}>Searching for "{searchQuery}"...</Text>
+            <Text style={styles.emptyStateText}>
+              Searching for "{searchQuery}"...
+            </Text>
           </View>
         );
       }
-        // If search is complete with no results or data is undefined/null - show no results state
+      // If search is complete with no results or data is undefined/null - show no results state
       if (!searchData?.data || searchData.data.length === 0) {
         return (
           <View style={styles.emptyStateContainer}>
@@ -238,7 +160,11 @@ const ProductListScreen = () => {
       }
     } else {
       // For non-search empty state (normal product list is empty)
-      if (!data?.pages || data.pages.length === 0 || data.pages[0].data.length === 0) {
+      if (
+        !data?.pages ||
+        data.pages.length === 0 ||
+        data.pages[0].data.length === 0
+      ) {
         return (
           <View style={styles.emptyStateContainer}>
             <Icon name="inventory-2" size={48} color={theme.text + '80'} />
@@ -247,7 +173,7 @@ const ProductListScreen = () => {
         );
       }
     }
-    
+
     return null;
   };
 
@@ -262,13 +188,21 @@ const ProductListScreen = () => {
   if (status === 'error') {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Failed to load products</Text>
+        <Text style={styles.emptyStateText}>Failed to load products</Text>
+        <Pressable
+          style={({pressed}) => [
+            styles.retryButton,
+            {opacity: pressed ? 0.8 : 1},
+          ]}
+          onPress={() => refetch()}>
+          <Text style={styles.retryButtonText}>Retry</Text>
+        </Pressable>
       </View>
     );
   }
 
   const handleRefresh = () => refetch();
-  
+
   const handleClearSearch = () => {
     setSearchQuery('');
   };
@@ -280,7 +214,9 @@ const ProductListScreen = () => {
       source={{
         uri: `https://backend-practice.eurisko.me${item.images[0]?.url}`,
       }}
-      onPress={() => navigation.navigate('ProductDetails', {product: item})}
+      onPress={() =>
+        navigation.navigate('ProductDetails', {productId: item._id})
+      }
       onSwipeAction={() => console.log('Bookmarked:', item._id)}
       animationDelay={index * 50}
     />
@@ -377,7 +313,7 @@ const ProductListScreen = () => {
 
   return (
     <View style={styles.container}>
-  <View style={styles.header}>
+      <View style={styles.header}>
         <View style={styles.searchBarContainer}>
           <Icon name="search" size={24} color={theme.text + '80'} />
           <TextInput
@@ -406,37 +342,46 @@ const ProductListScreen = () => {
         <View style={[styles.loadingContainer, {marginTop: 30}]}>
           <ActivityIndicator size="large" color={theme.primary} />
         </View>
-      ) : ( */}        <FlatList
-          contentContainerStyle={[
-            styles.container,
-            // Add flex styling if list is empty for proper centering of empty state
-            (!displayProducts || displayProducts.length === 0) && { flex: 1 }
-          ]}
-          data={displayProducts}
-          numColumns={numColumns}
-          key={numColumns.toString()}
-          keyExtractor={item => item._id}
-          renderItem={renderItem}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.3}
-          ListFooterComponent={renderFooter}
-          ListEmptyComponent={renderEmptyState}
-          initialNumToRender={6}
-          maxToRenderPerBatch={10}
-          windowSize={10}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefetching}
-              onRefresh={handleRefresh}
-              colors={[theme.primary]}
-              tintColor={theme.primary}
-              progressBackgroundColor={theme.cardBackground}
-            />
-          }
-        />
+      ) : ( */}
+      <FlatList
+        contentContainerStyle={[
+          styles.container,
+          // Add flex styling if list is empty for proper centering of empty state
+          (!displayProducts || displayProducts.length === 0) && {flex: 1},
+        ]}
+        data={displayProducts}
+        numColumns={numColumns}
+        key={numColumns.toString()}
+        keyExtractor={item => item._id}
+        renderItem={renderItem}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.3}
+        ListFooterComponent={renderFooter}
+        ListEmptyComponent={renderEmptyState}
+        initialNumToRender={6}
+        maxToRenderPerBatch={10}
+        windowSize={10}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={handleRefresh}
+            colors={[theme.primary]}
+            tintColor={theme.primary}
+            progressBackgroundColor={theme.cardBackground}
+          />
+        }
+      />
       {/* )} */}
-
       {renderSortModal()}
+
+      <Pressable
+        style={({pressed}) => [
+          styles.floatingActionButton,
+          {opacity: pressed ? 0.8 : 1},
+        ]}
+        onPress={() => navigation.navigate('AddProduct')}>
+        <Icon name="add" size={24} color="#fff" />
+      </Pressable>
     </View>
   );
 };

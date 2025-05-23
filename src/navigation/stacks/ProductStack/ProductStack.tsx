@@ -8,13 +8,12 @@ import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useAuthStore } from '../../../store/AuthStore';
-
+import {useAuthStore} from '../../../store/AuthStore';
+import { AddProductScreen } from '../../../screens/Product/AddProductScreen';
 
 const Stack = createNativeStackNavigator();
 
 const ProductStack = () => {
-
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   const clearTokens = useAuthStore(state => state.clearTokens);
 
@@ -30,7 +29,6 @@ const ProductStack = () => {
         name="ProductList"
         component={ProductListScreen}
         options={{
-          
           headerTitleStyle: {
             fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
             fontSize: FONT_SIZE.XL,
@@ -66,6 +64,9 @@ const ProductStack = () => {
           },
         }}
       />
+      <Stack.Screen name="AddProduct" component={AddProductScreen} options={{
+        headerShown: false,
+      }}/>
     </Stack.Navigator>
   );
 };

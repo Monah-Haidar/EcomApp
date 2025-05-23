@@ -39,7 +39,7 @@ const searchProducts = async (searchQuery: string) => {
 
 const useSearchProduct = (searchQuery: string) => {
   const debouncedKeyword = useDebounce(searchQuery);
-  console.log('Search Query: ', debouncedKeyword);
+  // console.log('Search Query: ', debouncedKeyword);
   return useQuery({
     queryKey: ['searchProduct', debouncedKeyword],
     queryFn: () => searchProducts(debouncedKeyword),

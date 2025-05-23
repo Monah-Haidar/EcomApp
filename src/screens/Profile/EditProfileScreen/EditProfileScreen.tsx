@@ -44,6 +44,7 @@ import {CustomHeader} from '../../../components/molecules/CustomHeader';
 import {ProfileHeader} from '../../../components/organisms/ProfileHeader';
 import {ProfileImagePicker} from '../../../components/molecules/ProfileImagePicker';
 import {useUpdateProfileMutation} from '../../../hooks/useUpdateProfileMutation';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // import {editProfileScreenStyles} from './editProfileScreenStyles';
 
 // Define validation schema for profile updates
@@ -65,6 +66,7 @@ const EditProfileScreen = () => {
   const {theme} = useTheme();
   const navigation = useNavigation();
   const user = useAuthStore(state => state.user);
+  const insets = useSafeAreaInsets();
   const [profileImage, setProfileImage] = useState<any>(null);
 
   const {mutate, isPending, error} = useUpdateProfileMutation();
@@ -138,7 +140,12 @@ const EditProfileScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView
         style={{backgroundColor: theme.background}}
-        contentContainerStyle={globalStyles.contentContainer}>
+        contentContainerStyle={[globalStyles.contentContainer, {
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+        }]}>
         <CustomHeader text="Edit Profile" />
 
         <View style={globalStyles.container}>

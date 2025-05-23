@@ -2,6 +2,7 @@ import { Text, View } from 'react-native';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { BackButton } from '../../atoms/BackButton';
 import { customHeaderStyles } from './customHeaderStyles';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface CustomHeaderProps {
   text: string;
@@ -10,6 +11,7 @@ interface CustomHeaderProps {
 
 const CustomHeader = ({text}: CustomHeaderProps) => {
   const {theme} = useTheme();
+  
   const styles = customHeaderStyles(theme);
   return (
     <View style={styles.AuthenticatedHeader}>

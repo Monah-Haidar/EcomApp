@@ -13,11 +13,12 @@ export const global = (
       flex: 1,
       paddingTop: 50,
       paddingHorizontal: 20,
-      gap: 20,
+      gap: 10,
     },
     contentContainer: {
       flexGrow: 1,
       paddingBottom: 40,
+      backgroundColor: theme.background,
     },
     headingContainer: {
       marginBottom: 8,

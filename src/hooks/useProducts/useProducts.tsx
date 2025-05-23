@@ -42,7 +42,7 @@ const fetchProducts = async ({pageParam = 1}) => {
     },
   });
 
-  console.log('Products Response: ', response.data.data);
+  // console.log('Products Response: ', response.data.data);
 
   return response.data as ProductsResponse;
 };

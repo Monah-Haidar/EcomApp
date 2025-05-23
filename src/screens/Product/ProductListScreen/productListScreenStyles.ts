@@ -193,4 +193,37 @@ export const productListScreenStyles = (
       fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
       color: theme.background,
     },
+    floatingActionButton: {
+    position: 'absolute',
+    bottom: 40,
+    right: 20,
+    backgroundColor: theme.primary,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    zIndex: 999,
+  },
+  retryButton: {
+    paddingVertical: spacing.sm_plus,
+    paddingHorizontal: spacing.md_plus,
+    backgroundColor: theme.primary,
+    borderRadius: spacing.radius_sm,
+    
+  },
+  retryButtonText: {
+    fontSize: normalizeFont(FONT_SIZE.SM),
+    fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
+    color: theme.text,
+    
+  },
   });
