@@ -43,11 +43,13 @@ const LocationPicker = ({
   },
 }: LocationPickerProps) => {
   const {theme} = useTheme();
-  const styles = locationPickerStyles(theme);
+  
   const [selectedLocation, setSelectedLocation] = useState<{
     latitude: number;
     longitude: number;
   } | null>(null);
+
+  const styles = locationPickerStyles(theme);
 
   const handleMapPress = (event: any) => {
     setSelectedLocation(event.nativeEvent.coordinate);
