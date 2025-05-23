@@ -1,51 +1,98 @@
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Text,
-  View,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Text,
+    View,
+    Pressable,
+    ActivityIndicator,
 } from 'react-native';
-import {CustomHeader} from '../../../components/molecules/CustomHeader';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {addProductScreenStyles} from './addProductScreenStyles';
-import {global} from '../../../styles/global';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {useForm} from 'react-hook-form';
-import FormInputContainer from '../../../components/molecules/FormInputContainer/FormInputContainer';
-import {SubmitButton} from '../../../components/atoms/SubmitButton';
-import {useState} from 'react';
-import {ProductImagePicker} from '../../../components/molecules/ProductImagePicker';
-import {ProductSchema, ProductFormData} from '../../../schemas/ProductSchema';
-import { useAddProduct } from '../../../hooks/useAddProduct';
+import { CustomHeader } from '../../../components/molecules/CustomHeader';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 
-const EditProductScreen = () => {
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SubmitButton } from '../../../components/atoms/SubmitButton';
+import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
+import FormInputContainer from '../../../components/molecules/FormInputContainer/FormInputContainer';
+import { ProductImagePicker } from '../../../components/molecules/ProductImagePicker';
+import LocationPicker from '../../../components/molecules/LocationPicker/LocationPicker';
+import { useEditProduct } from '../../../hooks/useEditProduct';
+import { useProduct } from '../../../hooks/useProduct';
+import { ProductFormData, ProductSchema } from '../../../schemas/ProductSchema';
+import { global } from '../../../styles/global';
+import { editProductScreenStyles } from './editProductScreenStyles';
+
+const EditProductScreen = ({route}: {route: any}) => {
+  const {productId} = route.params;
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
-//   const { mutate, isPending, error } = useAddProduct();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    data,
+    isPending: pendingProduct,
+    error: productError,
+  } = useProduct(productId);
+  const {mutate, isPending: pendingEdit, error: editError} = useEditProduct();
+
+  const product = data?.data;
   const [imageError, setImageError] = useState<string | null>(null);
-  const [productImages, setProductImages] = useState<Array<{uri: string, type: string, name: string}>>([]);
+  const [productImages, setProductImages] = useState<Array<{uri: string; type: string; name: string}>>([]);
+  const [location, setLocation] = useState<{name: string, longitude: number, latitude: number} | null>(null);
+  const [isLocationPickerVisible, setIsLocationPickerVisible] = useState(false);
 
   const {
     control,
     handleSubmit,
+    reset,
     formState: {errors},
   } = useForm<ProductFormData>({
     resolver: zodResolver(ProductSchema),
     defaultValues: {
-      title: ,
-      description: ,
-      price: ,
-      location: ,
+      title: '',
+      description: '',
+      price: '',
     },
   });
 
-  const styles = addProductScreenStyles(theme);
+  // Update form when product data is loaded
+  useEffect(() => {
+    if (product) {
+      reset({
+        title: product.title,
+        description: product.description,
+        price: product.price.toString(),
+      });
+
+      // Convert server image format to the format expected by ProductImagePicker
+      if (product.images && product.images.length > 0) {
+        const formattedImages = product.images.map(img => ({
+          uri: `https://backend-practice.eurisko.me${img.url}`,
+          type: 'image/jpeg',
+          name: `image-${img._id}.jpg`,
+          _id: img._id, // Keep track of existing images
+        }));
+        setProductImages(formattedImages);
+      }
+
+      // Set location if available
+      if (product.location) {
+        setLocation({
+          name: product.location.name,
+          latitude: product.location.latitude,
+          longitude: product.location.longitude,
+        });
+      }
+    }
+  }, [product, reset]);  const styles = editProductScreenStyles(theme);
   const globalStyles = global(theme);
 
-  // console.log('ERROR', error?.message);
+  const handleLocationSelect = (selectedLocation: {name: string, longitude: number, latitude: number}) => {
+    setLocation(selectedLocation);
+    setIsLocationPickerVisible(false);
+  };
 
   const onSubmit = async (data: ProductFormData) => {
     // Validate images
@@ -56,14 +103,24 @@ const EditProductScreen = () => {
       setImageError(null);
     }
 
+    if (!location) {
+      console.log('Location is required');
+      return;
+    }
+
+    // Log data for debugging
     console.log('Product data:', data);
     console.log('Product images:', productImages);
+    console.log('Product location:', location);
+    
+    // Call the edit mutation with the updated product data
     mutate({
+      _id: productId,
       ...data,
       images: productImages,
-    })
+      location: location,
+    });
   };
-
   return (
     <View
       style={{
@@ -72,78 +129,100 @@ const EditProductScreen = () => {
         paddingBottom: insets.bottom,
         paddingLeft: insets.left,
         paddingRight: insets.right,
-        backgroundColor: theme.background
+        backgroundColor: theme.background,
       }}>
-      <CustomHeader text="Add Product" />
-      {/* <Text style={styles.title}>Create New Product</Text> */}
+      <CustomHeader text="Edit Product" />
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{flex: 1}}>
-        <ScrollView
-          contentContainerStyle={globalStyles.contentContainer}
-          showsVerticalScrollIndicator={false}>
-          <View style={globalStyles.container}>
-            <Text style={styles.title}>Create New Product</Text>
-            {/* Product Images */}
-            <ProductImagePicker
-              images={productImages}
-              onImagesChange={newImages => {
-                setProductImages(newImages);
-                if (newImages.length > 0) {
-                  setImageError(null);
-                }
-              }}
-            />
-            {imageError && <Text style={styles.imageError}>{imageError}</Text>}
+      {pendingProduct ? (
+        <View style={[globalStyles.container, {alignItems: 'center', justifyContent: 'center'}]}>
+          <ActivityIndicator size="large" color={theme.primary} />
+          <Text style={{marginTop: 20, color: theme.text}}>Loading product...</Text>
+        </View>
+      ) : (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{flex: 1}}>
+          <ScrollView
+            contentContainerStyle={globalStyles.contentContainer}
+            showsVerticalScrollIndicator={false}>
+            <View style={globalStyles.container}>
+              <Text style={styles.title}>Update Product</Text>
 
-            {/* Product Name */}
-            <FormInputContainer
-              label="Product Name"
-              control={control}
-              name="title"
-              placeholder="Enter product name"
-              errors={errors}
-            />
+              {(productError || editError) && <FormErrorDisplay error={(productError || editError)?.message || 'An error occurred'} />}
 
-            {/* Product Description */}
-            <FormInputContainer
-              label="Description"
-              control={control}
-              name="description"
-              placeholder="Enter product description"
-              errors={errors}
-            />
-
-            {/* Product Price */}
-            <FormInputContainer
-              label="Price ($)"
-              control={control}
-              name="price"
-              placeholder="Enter product price"
-              keyboardType="numeric"
-              errors={errors}
-            />
-
-            {/* Product Location */}
-            <FormInputContainer
-              label="Location"
-              control={control}
-              name="location"
-              placeholder="Enter product location"
-              errors={errors}
-            />
-            {/* Submit Button */}
-            <View style={styles.buttonContainer}>
-              <SubmitButton
-                text="Add Product"
-                onPress={handleSubmit(onSubmit)}
-                isLoading={isPending}
+              <ProductImagePicker
+                images={productImages}
+                onImagesChange={newImages => {
+                  setProductImages(newImages);
+                  if (newImages.length > 0) {
+                    setImageError(null);
+                  }
+                }}
               />
+              {imageError && <Text style={styles.imageError}>{imageError}</Text>}
+
+              {/* Product Name */}
+              <FormInputContainer
+                label="Product Name"
+                control={control}
+                name="title"
+                placeholder="Enter product name"
+                errors={errors}
+              />
+
+              {/* Product Description */}
+              <FormInputContainer
+                label="Description"
+                control={control}
+                name="description"
+                placeholder="Enter product description"
+                errors={errors}
+              />
+
+              {/* Product Price */}
+              <FormInputContainer
+                label="Price ($)"
+                control={control}
+                name="price"
+                placeholder="Enter product price"
+                keyboardType="numeric"
+                errors={errors}
+              />
+
+              {/* Product Location */}
+              <View style={styles.locationContainer}>
+                <Text style={styles.label}>Location</Text>
+                <Pressable onPress={() => setIsLocationPickerVisible(true)} style={styles.locationInput}>
+                  <Text style={styles.locationText}>
+                    {location ? location.name : 'Select Location'}
+                  </Text>
+                </Pressable>
+              </View>
+
+              {/* Submit Button */}
+              <View style={styles.buttonContainer}>
+                <SubmitButton
+                  text="Update Product"
+                  onPress={handleSubmit(onSubmit)}
+                  isLoading={pendingEdit}
+                />
+              </View>
             </View>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      )}
+
+      <LocationPicker
+        isVisible={isLocationPickerVisible}
+        onClose={() => setIsLocationPickerVisible(false)}
+        onLocationSelect={handleLocationSelect}
+        initialRegion={location ? {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        } : undefined}
+      />
     </View>
   );
 };

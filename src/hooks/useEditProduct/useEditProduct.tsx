@@ -1,3 +1,5 @@
+
+
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import axiosInstance from '../../api/config';
 import {useNavigation} from '@react-navigation/native';
@@ -12,6 +14,7 @@ interface ErrorResponse {
 }
 
 interface Product {
+  _id: string;
   title: string;
   description: string;
   price: string;
@@ -24,13 +27,19 @@ interface Product {
     uri: string;
     type: string;
     name: string;
+    _id?: string; 
+    url?: string; 
   }>;
 }
 
-const addProduct = async (product: Product) => {
+const editProduct = async (product: Product) => {
   
   const formData = new FormData();
   
+  
+  const productId = product._id;
+  
+ 
   formData.append('title', product.title);
   formData.append('description', product.description);
   
@@ -40,13 +49,18 @@ const addProduct = async (product: Product) => {
   if (product.images && product.images.length > 0) {
     product.images.forEach(image => {
       
-      formData.append('images', {
-        uri: image.uri,
-        type: image.type || 'image/jpeg',
-        name: image.name || `image-${Date.now()}.jpg`,
-      } as any); // Cast to any is needed for React Native FormData
+      if (!image._id) {
+        
+        formData.append('images', {
+          uri: image.uri,
+          type: image.type || 'image/jpeg',
+          name: image.name || `image-${Date.now()}.jpg`,
+        } as any); 
+      }
     });
-  } 
+  }
+
+  
   if (product.location) {
     
     formData.append('latitude', product.location.latitude.toString());
@@ -62,30 +76,9 @@ const addProduct = async (product: Product) => {
         longitude: product.location.longitude,
       }),
     );
-
-    // // Debug logging for location
-    // console.log('Location data being sent:', {
-    //   latitude: product.location.latitude.toString(),
-    //   longitude: product.location.longitude.toString(),
-    //   locationName: product.location.name,
-    //   locationJSON: JSON.stringify({
-    //     name: product.location.name,
-    //     latitude: product.location.latitude,
-    //     longitude: product.location.longitude
-    //   })
-    // });
   }
 
-  // // Log the FormData for debugging
-  // console.log('Sending product data to API:', {
-  //   title: product.title,
-  //   description: product.description,
-  //   price: product.price,
-  //   location: product.location,
-  //   imagesCount: product.images?.length || 0
-  // });
-
-  const response = await axiosInstance.post('products', formData, {
+  const response = await axiosInstance.put(`products/${productId}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -94,19 +87,23 @@ const addProduct = async (product: Product) => {
   return response.data;
 };
 
-const useAddProduct = () => {
+const useEditProduct = () => {
   const queryClient = useQueryClient();
   const navigation = useNavigation();
+  
   return useMutation({
-    mutationFn: addProduct,
+    mutationFn: editProduct,
     onSuccess: data => {
-      console.log('Product added successfully:', data);
+      console.log('Product updated successfully:', data);
 
+      
       queryClient.invalidateQueries({queryKey: ['products']});
+      queryClient.invalidateQueries({queryKey: ['product']});
+      
       navigation.goBack();
     },
     onError: error => {
-      console.error('Error adding product:', error);
+      console.error('Error updating product:', error);
 
       if (error instanceof AxiosError) {
         console.log('Status:', error.response?.status);
@@ -120,9 +117,9 @@ const useAddProduct = () => {
         }
       }
 
-      return 'Failed to add product. Please try again.';
+      return 'Failed to update product. Please try again.';
     },
   });
 };
 
-export default useAddProduct;
+export default useEditProduct;

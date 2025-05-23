@@ -1,33 +1,33 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   Text,
   View,
-  Pressable,
 } from 'react-native';
-import {CustomHeader} from '../../../components/molecules/CustomHeader';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {addProductScreenStyles} from './addProductScreenStyles';
-import {global} from '../../../styles/global';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {useForm} from 'react-hook-form';
-import FormInputContainer from '../../../components/molecules/FormInputContainer/FormInputContainer';
-import {SubmitButton} from '../../../components/atoms/SubmitButton';
-import {useState} from 'react';
-import {ProductImagePicker} from '../../../components/molecules/ProductImagePicker';
-import {ProductSchema, ProductFormData} from '../../../schemas/ProductSchema';
-import { useAddProduct } from '../../../hooks/useAddProduct';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
+import { SubmitButton } from '../../../components/atoms/SubmitButton';
+import { CustomHeader } from '../../../components/molecules/CustomHeader';
+import FormInputContainer from '../../../components/molecules/FormInputContainer/FormInputContainer';
 import LocationPicker from '../../../components/molecules/LocationPicker/LocationPicker';
+import { ProductImagePicker } from '../../../components/molecules/ProductImagePicker';
+import { useAddProduct } from '../../../hooks/useAddProduct';
+import { ProductFormData, ProductSchema } from '../../../schemas/ProductSchema';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { global } from '../../../styles/global';
+import { addProductScreenStyles } from './addProductScreenStyles';
 
 const AddProductScreen = () => {
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
   const { mutate, isPending, error } = useAddProduct();
 
-  const [isLoading, setIsLoading] = useState(false);
+
   const [imageError, setImageError] = useState<string | null>(null);
   const [productImages, setProductImages] = useState<Array<{uri: string, type: string, name: string}>>([]);
   const [location, setLocation] = useState<{name: string, longitude: number, latitude: number} | null>(null);

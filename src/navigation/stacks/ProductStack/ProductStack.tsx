@@ -68,9 +68,9 @@ const ProductStack = () => {
       <Stack.Screen name="AddProduct" component={AddProductScreen} options={{
         headerShown: false,
       }}/>
-      {/* <Stack.Screen name="EditProduct" component={EditProductScreen} options={{
+      <Stack.Screen name="EditProduct" component={EditProductScreen} options={{
         headerShown: false,
-      }}/> */}
+      }}/>
     </Stack.Navigator>
   );
 };
