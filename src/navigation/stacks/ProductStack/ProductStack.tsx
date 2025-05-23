@@ -10,6 +10,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {useAuthStore} from '../../../store/AuthStore';
 import { AddProductScreen } from '../../../screens/Product/AddProductScreen';
+import { EditProductScreen } from '../../../screens/Product/EditProductScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -67,6 +68,9 @@ const ProductStack = () => {
       <Stack.Screen name="AddProduct" component={AddProductScreen} options={{
         headerShown: false,
       }}/>
+      {/* <Stack.Screen name="EditProduct" component={EditProductScreen} options={{
+        headerShown: false,
+      }}/> */}
     </Stack.Navigator>
   );
 };

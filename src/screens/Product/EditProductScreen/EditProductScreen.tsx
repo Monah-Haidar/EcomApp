@@ -4,7 +4,6 @@ import {
   ScrollView,
   Text,
   View,
-  Pressable,
 } from 'react-native';
 import {CustomHeader} from '../../../components/molecules/CustomHeader';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
@@ -19,19 +18,15 @@ import {useState} from 'react';
 import {ProductImagePicker} from '../../../components/molecules/ProductImagePicker';
 import {ProductSchema, ProductFormData} from '../../../schemas/ProductSchema';
 import { useAddProduct } from '../../../hooks/useAddProduct';
-import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
-import LocationPicker from '../../../components/molecules/LocationPicker/LocationPicker';
 
-const AddProductScreen = () => {
+const EditProductScreen = () => {
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
-  const { mutate, isPending, error } = useAddProduct();
+//   const { mutate, isPending, error } = useAddProduct();
 
   const [isLoading, setIsLoading] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
   const [productImages, setProductImages] = useState<Array<{uri: string, type: string, name: string}>>([]);
-  const [location, setLocation] = useState<{name: string, longitude: number, latitude: number} | null>(null);
-  const [isLocationPickerVisible, setIsLocationPickerVisible] = useState(false);
 
   const {
     control,
@@ -40,67 +35,33 @@ const AddProductScreen = () => {
   } = useForm<ProductFormData>({
     resolver: zodResolver(ProductSchema),
     defaultValues: {
-      title: 'Test Product',
-      description: 'This is a test product description',
-      price: '20.00',
+      title: ,
+      description: ,
+      price: ,
+      location: ,
     },
   });
 
   const styles = addProductScreenStyles(theme);
   const globalStyles = global(theme);
+
+  // console.log('ERROR', error?.message);
+
   const onSubmit = async (data: ProductFormData) => {
-    try {
-      if (productImages.length === 0) {
-        setImageError('Please add at least one product image');
-        return;
-      } else {
-        setImageError(null);
-      }      if (!location || !location.latitude || !location.longitude || !location.name) {
-        console.log('Location validation failed:', location);
-        // Could add a user-facing error here
-        return;
-      }
-
-      // Validate that latitude and longitude are valid numbers
-      if (isNaN(location.latitude) || isNaN(location.longitude)) {
-        console.log('Invalid latitude or longitude:', location);
-        return;
-      }
-
-      // Ensure location name is not empty
-      if (!location.name.trim()) {
-        console.log('Location name is empty');
-        return;
-      }
-
-      console.log('Product data:', data);
-      console.log('Product images:', productImages);
-      console.log('Product location:', location);
-      
-      // Ensure all image objects have the correct format
-      const formattedImages = productImages.map(image => ({
-        uri: image.uri,
-        type: image.type || 'image/jpeg', // Provide default mime type if missing
-        name: image.name || `image-${Date.now()}.jpg`, // Provide default name if missing
-      }));
-      
-      mutate({
-        ...data,
-        location: {
-          name: location.name || 'Unknown Location',
-          longitude: location.longitude,
-          latitude: location.latitude,
-        },
-        images: formattedImages,
-      });
-    } catch (err) {
-      console.error('Error in onSubmit:', err);
+    // Validate images
+    if (productImages.length === 0) {
+      setImageError('Please add at least one product image');
+      return;
+    } else {
+      setImageError(null);
     }
-  };
 
-  const handleLocationSelect = (selectedLocation: {name: string, longitude: number, latitude: number}) => {
-    setLocation(selectedLocation);
-    setIsLocationPickerVisible(false);
+    console.log('Product data:', data);
+    console.log('Product images:', productImages);
+    mutate({
+      ...data,
+      images: productImages,
+    })
   };
 
   return (
@@ -114,6 +75,7 @@ const AddProductScreen = () => {
         backgroundColor: theme.background
       }}>
       <CustomHeader text="Add Product" />
+      {/* <Text style={styles.title}>Create New Product</Text> */}
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -123,8 +85,7 @@ const AddProductScreen = () => {
           showsVerticalScrollIndicator={false}>
           <View style={globalStyles.container}>
             <Text style={styles.title}>Create New Product</Text>
-
-            {error && <FormErrorDisplay error={error?.message} />}
+            {/* Product Images */}
             <ProductImagePicker
               images={productImages}
               onImagesChange={newImages => {
@@ -136,6 +97,7 @@ const AddProductScreen = () => {
             />
             {imageError && <Text style={styles.imageError}>{imageError}</Text>}
 
+            {/* Product Name */}
             <FormInputContainer
               label="Product Name"
               control={control}
@@ -144,6 +106,7 @@ const AddProductScreen = () => {
               errors={errors}
             />
 
+            {/* Product Description */}
             <FormInputContainer
               label="Description"
               control={control}
@@ -152,6 +115,7 @@ const AddProductScreen = () => {
               errors={errors}
             />
 
+            {/* Product Price */}
             <FormInputContainer
               label="Price ($)"
               control={control}
@@ -161,15 +125,15 @@ const AddProductScreen = () => {
               errors={errors}
             />
 
-            <View style={styles.locationContainer}>
-              <Text style={styles.label}>Location</Text>
-              <Pressable onPress={() => setIsLocationPickerVisible(true)} style={styles.locationInput}>
-                <Text style={styles.locationText}>
-                  {location ? location.name : 'Select Location'}
-                </Text>
-              </Pressable>
-            </View>
-
+            {/* Product Location */}
+            <FormInputContainer
+              label="Location"
+              control={control}
+              name="location"
+              placeholder="Enter product location"
+              errors={errors}
+            />
+            {/* Submit Button */}
             <View style={styles.buttonContainer}>
               <SubmitButton
                 text="Add Product"
@@ -180,13 +144,8 @@ const AddProductScreen = () => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-      <LocationPicker
-        isVisible={isLocationPickerVisible}
-        onClose={() => setIsLocationPickerVisible(false)}
-        onLocationSelect={handleLocationSelect}
-      />
     </View>
   );
 };
 
-export default AddProductScreen;
+export default EditProductScreen;

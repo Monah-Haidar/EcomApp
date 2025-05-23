@@ -26,4 +26,27 @@ export const addProductScreenStyles = (
       fontFamily: 'Poppins-Regular',
       marginTop: verticalScale(5),
     },
+    locationContainer: {
+      marginTop: verticalScale(15),
+      marginBottom: verticalScale(10),
+    },
+    label: {
+      fontSize: normalizeFont(FONT_SIZE.MD),
+      fontFamily: FONT_FAMILY.POPPINS_MEDIUM,
+      color: theme.text,
+      marginBottom: verticalScale(5),
+    },
+    locationInput: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 8,
+      paddingVertical: verticalScale(12),
+      paddingHorizontal: verticalScale(10),
+      backgroundColor: theme.inputFieldBackground,
+    },
+    locationText: {
+      fontSize: normalizeFont(FONT_SIZE.MD),
+      fontFamily: FONT_FAMILY.POPPINS_REGULAR,
+      color: theme.text,
+    },
   });

@@ -124,6 +124,8 @@ const EditProfileScreen = () => {
     //     navigation.goBack();
     //   }
     // });
+    // console.log('Profile data:', data);
+    console.log('Profile image:', profileImage);
 
     mutate({
       ...data,
