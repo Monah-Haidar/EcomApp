@@ -12,14 +12,19 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
+  Platform,
+  PermissionsAndroid,
 } from 'react-native';
 import {useRoute, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {spacing} from '../../../constants/spacing';
 import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
 import {normalizeFont} from '../../../utils/normalizeFont';
 import {global} from '../../../styles/global';
 import Feather from 'react-native-vector-icons/Feather';
+import RNFS from 'react-native-fs';
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 // import ImageCarousel from './imageCarousel';
 // import MapView from './mapView';
 import {useProduct} from '../../../hooks/useProduct';
@@ -30,12 +35,15 @@ import {MapView} from '../../../components/organisms/MapView';
 import {productDetailsScreenStyles} from './productDetailsScreenStyles';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useAuthStore} from '../../../store/AuthStore';
-import { useMutation } from '@tanstack/react-query';
+import {useMutation} from '@tanstack/react-query';
 import axiosInstance from '../../../api/config';
-import { useDeleteProduct } from '../../../hooks/useDeleteProduct';
+import {useDeleteProduct} from '../../../hooks/useDeleteProduct';
+import {useUserProfile} from '../../../hooks/useUserProfile';
+import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
 // import { ImageCarousel } from '../../../components/molecules/ImageCarousel';
 // import { BackButton } from '../../../components/atoms/BackButton';
 // import { MapView } from '../../../components/molecules/MapView';
+
 
 // Define expected route params
 type ProductDetails = {
@@ -59,22 +67,30 @@ type ProductDetails = {
   createdAt?: string;
 };
 
+// Define navigation param types
+type RootStackParamList = {
+  ProductDetails: { productId: string };
+  EditProduct: { productId: string };
+  AddProduct: undefined;
+};
+
 const ProductDetailsScreen = () => {
   const route = useRoute();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
   const user = useAuthStore(state => state.user);
-
+  const {data: userProfileData} = useUserProfile(); // Add the user profile hook
   // const [loading, setLoading] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState('');
   const [showDeleteModal, setDeleteModal] = useState(false);
 
-  const {productId} = route.params;
+  // Access route params with proper type assertion
+  const {productId} = route.params as {productId: string};
 
   const {data: ProductData, isPending, error} = useProduct(productId);
-  const {mutate: deleteProduct, isPending: isDeleting} = useDeleteProduct();
+  const {mutate: deleteProduct, isPending: isDeleting, error: deleteError} = useDeleteProduct();
 
   // console.log(productId);
 
@@ -128,21 +144,136 @@ const ProductDetailsScreen = () => {
         Alert.alert('Error', 'Email app is not available on this device');
       })
       .catch(error => console.error('Failed to open email:', error));
-  };
+  };  const requestStoragePermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        // For Android 13+ (API level 33+)
+        if (Platform.Version >= 33) {
+          const photoPermission = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+            {
+              title: 'Photo Library Permission',
+              message: 'App needs access to your photo library to save images',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            }
+          );
+          return photoPermission === PermissionsAndroid.RESULTS.GRANTED;
+        } 
+        // For Android 12 and below
+        else {
+          const storagePermission = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+            {
+              title: 'Storage Permission',
+              message: 'App needs access to your storage to save images',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            }
+          );
+          return storagePermission === PermissionsAndroid.RESULTS.GRANTED;
+        }
+      } catch (err) {
+        console.error('Permission request error:', err);
+        return false;
+      }
+    } else {
+      // iOS doesn't need explicit permission for camera roll
+      return true;
+    }
+  };  const downloadAndSaveImage = async (imageUrl: string) => {
+    try {
+      // Show loading indicator
+      setShowSaveModal(false);
+      Alert.alert('Downloading', 'Downloading image...');
 
-  const handleSaveImage = () => {
-    // In a real implementation, this would use react-native-fs or similar
-    // to download and save the image to the device
-    Alert.alert('Success', 'Image saved to your gallery');
+      // Construct the full URL
+      const fullImageUrl = `https://backend-practice.eurisko.me${imageUrl}`;
+      
+      // Create a unique file name based on timestamp
+      const fileName = `product_${Date.now()}.jpg`;
+      
+      // Get the local file path
+      const localFilePath = `${RNFS.CachesDirectoryPath}/${fileName}`;
+      
+      // Check if directory exists and create it if needed
+      const dirExists = await RNFS.exists(RNFS.CachesDirectoryPath);
+      if (!dirExists) {
+        await RNFS.mkdir(RNFS.CachesDirectoryPath);
+      }
+      
+      // Download the file
+      const response = await RNFS.downloadFile({
+        fromUrl: fullImageUrl,
+        toFile: localFilePath,
+        background: false, // Set to false to ensure completion before saving
+      }).promise;
+      
+      if (response.statusCode === 200) {
+        // Verify the file exists before saving to gallery
+        const fileExists = await RNFS.exists(localFilePath);
+        if (fileExists) {
+          // Save to camera roll using the new API
+          await CameraRoll.save(`file://${localFilePath}`, { type: 'photo' });
+          Alert.alert('Success', 'Image saved to your gallery');
+        } else {
+          throw new Error('Downloaded file not found');
+        }
+      } else {
+        Alert.alert('Error', `Failed to download image: ${response.statusCode}`);
+      }
+    } catch (error) {
+      console.error('Image download error:', error);
+      Alert.alert('Error', 'Failed to save image: ' + 
+        (typeof error === 'object' && error !== null && 'message' in error
+          ? String(error.message)
+          : 'Unknown error'));
+    }
+  };const handleSaveImage = async () => {
     setShowSaveModal(false);
+    
+    if (!selectedImageUrl) {
+      Alert.alert('Error', 'No image selected');
+      return;
+    }
+
+    try {
+      const hasPermission = await requestStoragePermission();
+      if (hasPermission) {
+        await downloadAndSaveImage(selectedImageUrl);
+      } else {
+        Alert.alert(
+          'Permission Denied',
+          'Please grant storage permission to save images'
+        );
+      }
+    } catch (error) {
+      console.error('Save image error:', error);
+      Alert.alert(
+        'Error',
+        typeof error === 'object' && error !== null && 'message' in error
+          ? String(error.message)
+          : 'An unexpected error occurred while saving the image'
+      );
+    }
   };
 
-  const canEditDelete = product?.user?._id === user?.id; // Replace with actual user ID check
+  const userId = user?.id || userProfileData?.data?.user?.id;
+  const canEditDelete = product?.user?._id === userId;
 
-  
+  console.log('product user ID:', product?.user?._id);
+  console.log('current user ID from auth store:', user?.id);
+  console.log(
+    'current user ID from profile API:',
+    userProfileData?.data?.user?.id,
+  );
+  console.log('using user ID:', userId);
+  console.log('canEditDelete:', canEditDelete);
 
   const handleProductDelete = () => {
-    deleteProduct(product?.user?._id);
+    deleteProduct(product?._id);
     setDeleteModal(false);
   };
 
@@ -203,6 +334,8 @@ const ProductDetailsScreen = () => {
         </View> */}
 
         <CustomHeader text="Product Details" />
+
+        {deleteError && <FormErrorDisplay error={deleteError?.message} />}
 
         <View style={styles.carouselContainer}>
           <ImageCarousel
@@ -296,18 +429,17 @@ const ProductDetailsScreen = () => {
                 size={20}
                 color={theme.buttonText}
               />
-              <Text style={styles.emailButtonText}>Add To Card</Text>
+              <Text style={styles.emailButtonText}>Add To Cart</Text>
             </Pressable>
           </View>
 
-          {true && (
+          {canEditDelete && (
             <View>
               <SubmitButton
                 text="Edit Product"
                 icon={
                   <Feather name="edit" size={20} color={theme.buttonText} />
-                }
-                onPress={() =>
+                }                onPress={() => 
                   navigation.navigate('EditProduct', {productId: product._id})
                 }
               />
@@ -317,13 +449,13 @@ const ProductDetailsScreen = () => {
                 icon={
                   <Feather name="trash" size={20} color={theme.errorText} />
                 }
+                isLoading={isDeleting}
                 onPress={() => setDeleteModal(true)}
               />
             </View>
           )}
         </View>
       </ScrollView>
-
 
       <Modal
         visible={showDeleteModal}

@@ -20,7 +20,7 @@ const useDeleteProduct = () => {
     },
     onError: (error: any) => {
       console.error('Error deleting product:', error);
-      Alert.alert('Error', 'Failed to delete product');
+      
     },
   });
 };
