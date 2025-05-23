@@ -1,15 +1,15 @@
-import React, {useRef, useState} from 'react';
-import {View, Text, Pressable, StyleSheet} from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   Camera,
+  PhotoFile,
   useCameraDevice,
   useCameraPermission,
-  PhotoFile,
 } from 'react-native-vision-camera';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { cameraViewStyles } from './cameraViewStyles';
-// import {cameraViewStyles} from './cameraViewStyles';
+
 
 interface CameraViewProps {
   onPhotoTaken: (photo: {uri: string}) => void;
@@ -41,7 +41,7 @@ const CameraView = ({onPhotoTaken, onClose}: CameraViewProps) => {
         enableAutoStabilization: true,
       });
 
-      // Convert file path to URI format
+      
       const photoUri = `file://${photo.path}`;
       onPhotoTaken({uri: photoUri});
       onClose();
@@ -92,19 +92,19 @@ const CameraView = ({onPhotoTaken, onClose}: CameraViewProps) => {
         photo={true}
       />
       
-      {/* Header with close button */}
+      
       <View style={styles.header}>
         <Pressable style={styles.headerCloseButton} onPress={onClose}>
           <Ionicons name="close" size={24} color="white" />
         </Pressable>
       </View>
 
-      {/* Bottom controls */}
+      
       <View style={styles.bottomControls}>
         <View style={styles.controlsRow}>
           <View style={styles.spacer} />
           
-          {/* Capture button */}
+          
           <Pressable
             style={[styles.captureButton, isLoading && styles.captureButtonDisabled]}
             onPress={handleTakePhoto}

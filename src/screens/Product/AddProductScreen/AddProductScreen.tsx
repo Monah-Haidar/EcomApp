@@ -57,31 +57,26 @@ const AddProductScreen = () => {
         setImageError(null);
       }      if (!location || !location.latitude || !location.longitude || !location.name) {
         console.log('Location validation failed:', location);
-        // Could add a user-facing error here
+        
         return;
       }
 
-      // Validate that latitude and longitude are valid numbers
+      
       if (isNaN(location.latitude) || isNaN(location.longitude)) {
         console.log('Invalid latitude or longitude:', location);
         return;
       }
 
-      // Ensure location name is not empty
+      
       if (!location.name.trim()) {
         console.log('Location name is empty');
         return;
-      }
-
-      console.log('Product data:', data);
-      console.log('Product images:', productImages);
-      console.log('Product location:', location);
+      }      
       
-      // Ensure all image objects have the correct format
       const formattedImages = productImages.map(image => ({
         uri: image.uri,
-        type: image.type || 'image/jpeg', // Provide default mime type if missing
-        name: image.name || `image-${Date.now()}.jpg`, // Provide default name if missing
+        type: image.type || 'image/jpeg',
+        name: image.name || `image-${Date.now()}.jpg`, 
       }));
       
       mutate({

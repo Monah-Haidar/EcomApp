@@ -26,7 +26,7 @@ const ProductImagePicker = ({images, onImagesChange}: ProductImagePickerProps) =
     try {
       const result = await launchImageLibrary({
         mediaType: 'photo',
-        selectionLimit: 5 - images.length, // Limit based on remaining slots
+        selectionLimit: 5 - images.length, 
         quality: 0.8,
       });
       
@@ -51,8 +51,8 @@ const ProductImagePicker = ({images, onImagesChange}: ProductImagePickerProps) =
   const handlePhotoTaken = (photo: {uri: string}) => {
     const newPhoto = {
       ...photo,
-      type: 'image/jpeg', // Default type for camera photos
-      name: `camera_${Date.now()}.jpg`, // Default name for camera photos
+      type: 'image/jpeg', 
+      name: `camera_${Date.now()}.jpg`, 
     };
     onImagesChange([...images, newPhoto]);
     setShowCamera(false);
@@ -98,7 +98,7 @@ const ProductImagePicker = ({images, onImagesChange}: ProductImagePickerProps) =
         <Text style={styles.helperText}>Add at least one product image</Text>
       )}
       
-      {/* Image Source Selection Modal */}
+      
       <Modal
         visible={showImageModal}
         transparent={true}
@@ -132,7 +132,7 @@ const ProductImagePicker = ({images, onImagesChange}: ProductImagePickerProps) =
         </View>
       </Modal>
       
-      {/* Camera Modal */}
+      
       <Modal
         visible={showCamera}
         animationType="slide"

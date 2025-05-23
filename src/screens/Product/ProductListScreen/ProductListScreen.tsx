@@ -63,8 +63,7 @@ const ProductListScreen = () => {
 
   const {data: searchData, isPending, error} = useSearchProduct(searchQuery);
 
-  // console.log('Search Query: ', searchQuery);
-  // console.log('Search Data: ', searchData?.data);
+  
 
   const isLandscape = width > height;
   const numColumns = isLandscape ? 2 : 1;
@@ -123,9 +122,9 @@ const ProductListScreen = () => {
     );
   };
   const renderEmptyState = () => {
-    // If there's an active search query
+    
     if (searchQuery.trim()) {
-      // First check if search is in progress - show loading state
+      
       if (isPending) {
         return (
           <View style={styles.emptyStateContainer}>
@@ -136,7 +135,7 @@ const ProductListScreen = () => {
           </View>
         );
       }
-      // If search is complete with no results or data is undefined/null - show no results state
+      
       if (!searchData?.data || searchData.data.length === 0) {
         return (
           <View style={styles.emptyStateContainer}>
@@ -325,9 +324,7 @@ const ProductListScreen = () => {
             placeholderTextColor={theme.text + '80'}
             autoCapitalize="none"
           />
-          {/* {isPending && (
-            <ActivityIndicator size="small" color={theme.primary} style={styles.searchLoader} />
-          )} */}
+          
           {searchQuery.length > 0 && (
             <Pressable
               onPress={() => setSearchQuery('')}
@@ -338,15 +335,11 @@ const ProductListScreen = () => {
         </View>
         <View>{renderSortButton()}</View>
       </View>
-      {/* {isPending ? (
-        <View style={[styles.loadingContainer, {marginTop: 30}]}>
-          <ActivityIndicator size="large" color={theme.primary} />
-        </View>
-      ) : ( */}
+      
       <FlatList
         contentContainerStyle={[
           styles.container,
-          // Add flex styling if list is empty for proper centering of empty state
+          
           (!displayProducts || displayProducts.length === 0) && {flex: 1},
         ]}
         data={displayProducts}
@@ -371,7 +364,7 @@ const ProductListScreen = () => {
           />
         }
       />
-      {/* )} */}
+      
       {renderSortModal()}
 
       <Pressable

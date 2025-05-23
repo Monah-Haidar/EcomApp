@@ -19,7 +19,7 @@ export interface User {
 const secureStorage: StateStorage = {
   setItem: async (name: string, value: string) => {
     try {
-      // console.log(`[SecureStorage] Setting item: ${name}`);
+      
       await RNSecureStorage.setItem(name, value, {
         accessible: ACCESSIBLE.WHEN_UNLOCKED,
       });
@@ -30,7 +30,6 @@ const secureStorage: StateStorage = {
 
   getItem: async (name: string) => {
     try {
-      // console.log(`[SecureStorage] Getting item: ${name}`);
 
       if (await RNSecureStorage.exist(name)) {
         const value = await RNSecureStorage.getItem(name);
@@ -106,14 +105,10 @@ const useAuthStore = create<AuthState>()(
       storage: createJSONStorage(() => secureStorage),
 
       onRehydrateStorage: () => state => {
-        // console.log('[STATE - REHYDRATE]');
-        // console.log(
-        //   '[onRehydrate - state] Starting rehydration process with state:',
-        //   state ? 'State exists' : 'No state',
-        // );
+      
 
         state?.setHydrated?.();
-        console.log('[onRehydrate - state] Set hydrated state to true');
+        
 
         return (error: any, rehydratedState: any) => {
           console.log('[ERROR - REHYDRATE]');

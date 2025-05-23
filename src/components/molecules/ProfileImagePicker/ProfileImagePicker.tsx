@@ -1,7 +1,7 @@
-import {Image, Pressable, Text, View} from 'react-native';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {profileImagePickerStyles} from './profileImagePickerStyles';
-import useAuthStore, {User} from '../../../store/AuthStore/AuthStore';
+import { Image, Text, View } from 'react-native';
+import useAuthStore from '../../../store/AuthStore/AuthStore';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { profileImagePickerStyles } from './profileImagePickerStyles';
 
 interface ProfileImagePickerProps {
   localImage?: {uri: string} | null;

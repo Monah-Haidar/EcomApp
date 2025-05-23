@@ -1,7 +1,7 @@
-import { StyleSheet, Dimensions } from "react-native";
-import { themes } from "../../../styles/theming";
+import { Dimensions, StyleSheet } from "react-native";
 import { FONT_FAMILY, FONT_SIZE } from "../../../constants/font";
 import { spacing } from "../../../constants/spacing";
+import { themes } from "../../../styles/theming";
 import { normalizeFont } from "../../../utils/normalizeFont";
 
 const { width, height } = Dimensions.get('window');

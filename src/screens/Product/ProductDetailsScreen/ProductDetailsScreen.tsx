@@ -1,7 +1,7 @@
-import { CameraRoll } from '@react-native-camera-roll/camera-roll';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import React, {useState} from 'react';
 import {
   Alert,
   Dimensions,
@@ -13,28 +13,24 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import RNFS from 'react-native-fs';
 import Feather from 'react-native-vector-icons/Feather';
-import { useTheme } from '../../../store/ThemeStore/ThemeStore';
-import { global } from '../../../styles/global';
-// import ImageCarousel from './imageCarousel';
-// import MapView from './mapView';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
-import { SubmitButton } from '../../../components/atoms/SubmitButton';
-import { CustomHeader } from '../../../components/molecules/CustomHeader';
-import { ImageCarousel } from '../../../components/organisms/ImageCarousel';
-import { MapView } from '../../../components/organisms/MapView';
-import { useDeleteProduct } from '../../../hooks/useDeleteProduct';
-import { useProduct } from '../../../hooks/useProduct';
-import { useUserProfile } from '../../../hooks/useUserProfile';
-import { useAuthStore } from '../../../store/AuthStore';
-import { productDetailsScreenStyles } from './productDetailsScreenStyles';
+import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import {global} from '../../../styles/global';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {FormErrorDisplay} from '../../../components/atoms/FormErrorDisplay';
+import {SubmitButton} from '../../../components/atoms/SubmitButton';
+import {CustomHeader} from '../../../components/molecules/CustomHeader';
+import {ImageCarousel} from '../../../components/organisms/ImageCarousel';
+import {MapView} from '../../../components/organisms/MapView';
+import {useDeleteProduct} from '../../../hooks/useDeleteProduct';
+import {useProduct} from '../../../hooks/useProduct';
+import {useUserProfile} from '../../../hooks/useUserProfile';
+import {useAuthStore} from '../../../store/AuthStore';
+import {productDetailsScreenStyles} from './productDetailsScreenStyles';
 
-
-// Define expected route params
 type ProductDetails = {
   location?: {
     name: string;
@@ -56,36 +52,36 @@ type ProductDetails = {
   createdAt?: string;
 };
 
-// Define navigation param types
 type RootStackParamList = {
-  ProductDetails: { productId: string };
-  EditProduct: { productId: string };
+  ProductDetails: {productId: string};
+  EditProduct: {productId: string};
   AddProduct: undefined;
 };
 
 const ProductDetailsScreen = () => {
   const route = useRoute();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
   const user = useAuthStore(state => state.user);
-  const {data: userProfileData} = useUserProfile(); // Add the user profile hook
-  // const [loading, setLoading] = useState(false);
+  const {data: userProfileData} = useUserProfile();
+
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState('');
   const [showDeleteModal, setDeleteModal] = useState(false);
 
-  // Access route params with proper type assertion
   const {productId} = route.params as {productId: string};
 
   const {data: ProductData, isPending, error} = useProduct(productId);
-  const {mutate: deleteProduct, isPending: isDeleting, error: deleteError} = useDeleteProduct();
-
-  // console.log(productId);
+  const {
+    mutate: deleteProduct,
+    isPending: isDeleting,
+    error: deleteError,
+  } = useDeleteProduct();
 
   const product = ProductData?.data as ProductDetails;
 
-  // console.log(product);
   const {width} = Dimensions.get('window');
   const styles = productDetailsScreenStyles(theme, width);
   const globalStyles = global(theme);
@@ -122,21 +118,18 @@ const ProductDetailsScreen = () => {
       subject,
     )}`;
 
-    // console.log('Email URL:', url);
-
     Linking.canOpenURL(url)
       .then(supported => {
-        // console.log('Supported:', supported);
         if (supported) {
           return Linking.openURL(url);
         }
         Alert.alert('Error', 'Email app is not available on this device');
       })
       .catch(error => console.error('Failed to open email:', error));
-  };  const requestStoragePermission = async () => {
+  };
+  const requestStoragePermission = async () => {
     if (Platform.OS === 'android') {
       try {
-        // For Android 13+ (API level 33+)
         if (Platform.Version >= 33) {
           const photoPermission = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
@@ -146,12 +139,10 @@ const ProductDetailsScreen = () => {
               buttonNeutral: 'Ask Me Later',
               buttonNegative: 'Cancel',
               buttonPositive: 'OK',
-            }
+            },
           );
           return photoPermission === PermissionsAndroid.RESULTS.GRANTED;
-        } 
-        // For Android 12 and below
-        else {
+        } else {
           const storagePermission = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
             {
@@ -160,7 +151,7 @@ const ProductDetailsScreen = () => {
               buttonNeutral: 'Ask Me Later',
               buttonNegative: 'Cancel',
               buttonPositive: 'OK',
-            }
+            },
           );
           return storagePermission === PermissionsAndroid.RESULTS.GRANTED;
         }
@@ -169,60 +160,59 @@ const ProductDetailsScreen = () => {
         return false;
       }
     } else {
-      // iOS doesn't need explicit permission for camera roll
       return true;
     }
-  };  const downloadAndSaveImage = async (imageUrl: string) => {
+  };
+  const downloadAndSaveImage = async (imageUrl: string) => {
     try {
-      
       setShowSaveModal(false);
       Alert.alert('Downloading', 'Downloading image...');
 
-      
       const fullImageUrl = `https://backend-practice.eurisko.me${imageUrl}`;
-      
-      
+
       const fileName = `product_${Date.now()}.jpg`;
-      
-      
+
       const localFilePath = `${RNFS.CachesDirectoryPath}/${fileName}`;
-      
-      
+
       const dirExists = await RNFS.exists(RNFS.CachesDirectoryPath);
       if (!dirExists) {
         await RNFS.mkdir(RNFS.CachesDirectoryPath);
       }
-      
-      
+
       const response = await RNFS.downloadFile({
         fromUrl: fullImageUrl,
         toFile: localFilePath,
-        background: false, 
+        background: false,
       }).promise;
-      
+
       if (response.statusCode === 200) {
-        
         const fileExists = await RNFS.exists(localFilePath);
         if (fileExists) {
-          
-          await CameraRoll.save(`file://${localFilePath}`, { type: 'photo' });
+          await CameraRoll.save(`file://${localFilePath}`, {type: 'photo'});
           Alert.alert('Success', 'Image saved to your gallery');
         } else {
           throw new Error('Downloaded file not found');
         }
       } else {
-        Alert.alert('Error', `Failed to download image: ${response.statusCode}`);
+        Alert.alert(
+          'Error',
+          `Failed to download image: ${response.statusCode}`,
+        );
       }
     } catch (error) {
       console.error('Image download error:', error);
-      Alert.alert('Error', 'Failed to save image: ' + 
-        (typeof error === 'object' && error !== null && 'message' in error
-          ? String(error.message)
-          : 'Unknown error'));
+      Alert.alert(
+        'Error',
+        'Failed to save image: ' +
+          (typeof error === 'object' && error !== null && 'message' in error
+            ? String(error.message)
+            : 'Unknown error'),
+      );
     }
-  };const handleSaveImage = async () => {
+  };
+  const handleSaveImage = async () => {
     setShowSaveModal(false);
-    
+
     if (!selectedImageUrl) {
       Alert.alert('Error', 'No image selected');
       return;
@@ -235,7 +225,7 @@ const ProductDetailsScreen = () => {
       } else {
         Alert.alert(
           'Permission Denied',
-          'Please grant storage permission to save images'
+          'Please grant storage permission to save images',
         );
       }
     } catch (error) {
@@ -244,7 +234,7 @@ const ProductDetailsScreen = () => {
         'Error',
         typeof error === 'object' && error !== null && 'message' in error
           ? String(error.message)
-          : 'An unexpected error occurred while saving the image'
+          : 'An unexpected error occurred while saving the image',
       );
     }
   };
@@ -252,14 +242,6 @@ const ProductDetailsScreen = () => {
   const userId = user?.id || userProfileData?.data?.user?.id;
   const canEditDelete = product?.user?._id === userId;
 
-  console.log('product user ID:', product?.user?._id);
-  console.log('current user ID from auth store:', user?.id);
-  console.log(
-    'current user ID from profile API:',
-    userProfileData?.data?.user?.id,
-  );
-  console.log('using user ID:', userId);
-  console.log('canEditDelete:', canEditDelete);
 
   const handleProductDelete = () => {
     deleteProduct(product?._id);
@@ -313,8 +295,6 @@ const ProductDetailsScreen = () => {
         },
       ]}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-      
-
         <CustomHeader text="Product Details" />
 
         {deleteError && <FormErrorDisplay error={deleteError?.message} />}
@@ -346,8 +326,8 @@ const ProductDetailsScreen = () => {
                 Listed on {formatDate(product.createdAt)}
               </Text>
             </View>
-          )} 
-                 
+          )}
+
           {product.location && (
             <View style={styles.infoRow}>
               <Feather
@@ -360,7 +340,6 @@ const ProductDetailsScreen = () => {
             </View>
           )}
 
-          
           {product.location &&
             product.location.latitude &&
             product.location.longitude && (
@@ -421,7 +400,8 @@ const ProductDetailsScreen = () => {
                 text="Edit Product"
                 icon={
                   <Feather name="edit" size={20} color={theme.buttonText} />
-                }                onPress={() => 
+                }
+                onPress={() =>
                   navigation.navigate('EditProduct', {productId: product._id})
                 }
               />
@@ -466,7 +446,6 @@ const ProductDetailsScreen = () => {
         </View>
       </Modal>
 
-      
       <Modal
         visible={showSaveModal}
         transparent={true}

@@ -57,7 +57,7 @@ const EditProductScreen = ({route}: {route: any}) => {
     },
   });
 
-  // Update form when product data is loaded
+  
   useEffect(() => {
     if (product) {
       reset({
@@ -66,18 +66,18 @@ const EditProductScreen = ({route}: {route: any}) => {
         price: product.price.toString(),
       });
 
-      // Convert server image format to the format expected by ProductImagePicker
+      
       if (product.images && product.images.length > 0) {
         const formattedImages = product.images.map(img => ({
           uri: `https://backend-practice.eurisko.me${img.url}`,
           type: 'image/jpeg',
           name: `image-${img._id}.jpg`,
-          _id: img._id, // Keep track of existing images
+          _id: img._id, 
         }));
         setProductImages(formattedImages);
       }
 
-      // Set location if available
+     
       if (product.location) {
         setLocation({
           name: product.location.name,
@@ -95,7 +95,7 @@ const EditProductScreen = ({route}: {route: any}) => {
   };
 
   const onSubmit = async (data: ProductFormData) => {
-    // Validate images
+    
     if (productImages.length === 0) {
       setImageError('Please add at least one product image');
       return;
@@ -108,12 +108,7 @@ const EditProductScreen = ({route}: {route: any}) => {
       return;
     }
 
-    // Log data for debugging
-    console.log('Product data:', data);
-    console.log('Product images:', productImages);
-    console.log('Product location:', location);
     
-    // Call the edit mutation with the updated product data
     mutate({
       _id: productId,
       ...data,
@@ -161,7 +156,7 @@ const EditProductScreen = ({route}: {route: any}) => {
               />
               {imageError && <Text style={styles.imageError}>{imageError}</Text>}
 
-              {/* Product Name */}
+              
               <FormInputContainer
                 label="Product Name"
                 control={control}
@@ -170,7 +165,7 @@ const EditProductScreen = ({route}: {route: any}) => {
                 errors={errors}
               />
 
-              {/* Product Description */}
+              
               <FormInputContainer
                 label="Description"
                 control={control}
@@ -179,7 +174,7 @@ const EditProductScreen = ({route}: {route: any}) => {
                 errors={errors}
               />
 
-              {/* Product Price */}
+              
               <FormInputContainer
                 label="Price ($)"
                 control={control}
@@ -189,7 +184,7 @@ const EditProductScreen = ({route}: {route: any}) => {
                 errors={errors}
               />
 
-              {/* Product Location */}
+              
               <View style={styles.locationContainer}>
                 <Text style={styles.label}>Location</Text>
                 <Pressable onPress={() => setIsLocationPickerVisible(true)} style={styles.locationInput}>
@@ -199,7 +194,7 @@ const EditProductScreen = ({route}: {route: any}) => {
                 </Pressable>
               </View>
 
-              {/* Submit Button */}
+              
               <View style={styles.buttonContainer}>
                 <SubmitButton
                   text="Update Product"

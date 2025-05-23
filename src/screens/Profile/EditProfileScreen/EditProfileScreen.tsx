@@ -114,19 +114,7 @@ const EditProfileScreen = () => {
   };
 
   const onSubmit = (data: FormData) => {
-    // const updateData = {
-    //   ...data,
-    //   profileImage: profileImage
-    // };
-    // mutate(updateData, {
-    //   onSuccess: () => {
-    //     Alert.alert('Success', 'Profile updated successfully');
-    //     navigation.goBack();
-    //   }
-    // });
-    // console.log('Profile data:', data);
-    console.log('Profile image:', profileImage);
-
+    
     mutate({
       ...data,
       profileImage: profileImage,
@@ -134,7 +122,7 @@ const EditProfileScreen = () => {
   };
 
   const globalStyles = global(theme);
-  // const styles = editProfileScreenStyles(theme);
+  
 
   return (
     <KeyboardAvoidingView

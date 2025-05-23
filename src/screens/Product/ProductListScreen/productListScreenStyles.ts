@@ -1,9 +1,9 @@
-import {StyleSheet} from 'react-native';
-import {themes} from '../../../styles/theming';
-import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
-import {spacing} from '../../../constants/spacing';
-import {moderateScale, scale, verticalScale} from '../../../utils/responsive';
-import {normalizeFont} from '../../../utils/normalizeFont';
+import { StyleSheet } from 'react-native';
+import { FONT_FAMILY, FONT_SIZE } from '../../../constants/font';
+import { spacing } from '../../../constants/spacing';
+import { themes } from '../../../styles/theming';
+import { normalizeFont } from '../../../utils/normalizeFont';
+import { verticalScale } from '../../../utils/responsive';
 
 export const productListScreenStyles = (
   theme: typeof themes.lightTheme | typeof themes.darkTheme,
@@ -172,7 +172,7 @@ export const productListScreenStyles = (
       justifyContent: 'center',
       paddingVertical: spacing.xl,
       paddingHorizontal: spacing.lg,
-      minHeight: 300, // Ensure minimum height for better visual appearance
+      minHeight: 300, 
     },
     emptyStateText: {
       fontSize: normalizeFont(FONT_SIZE.MD),

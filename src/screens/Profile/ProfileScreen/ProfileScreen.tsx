@@ -13,7 +13,7 @@ const ProfileScreen = () => {
   const {theme} = useTheme();
   const navigation = useNavigation();
   const {isPending} = useUserProfile();
-  // const user = useAuthStore(state => state.user);
+  
   const clearTokens = useAuthStore(state => state.clearTokens);
   
 
@@ -29,14 +29,7 @@ const ProfileScreen = () => {
     );
   }
 
-  // console.log('User Profile: ', userProfile?.data.user);
-
-  // const user = userProfile?.data.user;
-
-  // console.log(
-  //   'URL: ',
-  //   `https://backend-practice.eurisko.me${user?.profileImage.url}`,
-  // );
+ 
 
   return (
     <ScrollView
@@ -80,44 +73,3 @@ const ProfileScreen = () => {
 
 export default ProfileScreen;
 
-{
-  /* <View
-            style={[
-              styles.profileImageWrapper,
-              {backgroundColor: theme.cardBackground},
-            ]}>
-            {user?.profileImage ? (
-              <Image
-                source={{uri: 'https://backend-practice.eurisko.me' + user.profileImage.url}}
-                style={styles.profileImage}
-              />
-              // <Text>{'https://backend-practice.eurisko.me/api' + user.profileImage.url}</Text>
-            ) : (
-              <View
-                style={[
-                  styles.placeholderImage,
-                  {backgroundColor: theme.secondary},
-                ]}>
-                <Text
-                  style={[styles.placeholderText, {color: theme.buttonText}]}>
-                  {user?.firstName?.[0]}
-                  {user?.lastName?.[0]}
-                </Text>
-              </View>
-            )}
-          </View> */
-}
-
-{
-  /* {user?.isEmailVerified ? (
-          <View style={[styles.verifiedBadge, {backgroundColor: '#e6f7eb'}]}>
-            <MaterialIcons name="verified" size={16} color="#34a853" />
-            <Text style={styles.verifiedText}>Verified Account</Text>
-          </View>
-        ) : (
-          <View style={[styles.verifiedBadge, {backgroundColor: '#e6f7eb'}]}>
-            <MaterialIcons name="verified" size={16} color="#d32f2f" />
-            <Text style={{color: '#d32f2f'}}>Unverified Account</Text>
-          </View>
-        )} */
-}

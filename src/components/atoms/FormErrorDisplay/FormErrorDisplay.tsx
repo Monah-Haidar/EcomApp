@@ -10,14 +10,11 @@ interface FormErrorDisplayProps {
 const FormErrorDisplay = ({error}: FormErrorDisplayProps) => {
   const {theme} = useTheme();
   const styles = formErrorDisplayStyles(theme);
-  // return <Text style={styles.generalError}>{error}</Text>;
+
   return (
     <View style={[styles.errorContainer, {backgroundColor: '#ffebee'}]}>
       <Feather name="alert-circle" size={18} color="#d32f2f" />
-      <Text style={styles.errorText}>
-        {/* {typeof error === 'string' ? error : 'An error occurred. Please try again.'} */}
-        {error}
-      </Text>
+      <Text style={styles.errorText}>{error}</Text>
     </View>
   );
 };

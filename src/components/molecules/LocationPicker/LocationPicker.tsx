@@ -1,19 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  Pressable,
-  Modal,
-  Platform,
-  PermissionsAndroid,
   Alert,
+  Modal,
+  PermissionsAndroid,
+  Platform,
+  Pressable,
+  Text,
+  View,
 } from 'react-native';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {locationPickerStyles} from './locationPickerStyles';
 import Geolocation from '@react-native-community/geolocation';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { locationPickerStyles } from './locationPickerStyles';
 
 interface LocationPickerProps {
   isVisible: boolean;
@@ -54,7 +54,7 @@ const LocationPicker = ({
   };
   const handleConfirmLocation = () => {
     if (selectedLocation) {
-      // Generate a more descriptive location name based on coordinates
+      
       const locationName = `Location ${selectedLocation.latitude.toFixed(4)}, ${selectedLocation.longitude.toFixed(4)}`;
       onLocationSelect({
         ...selectedLocation, 

@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Image,
-  StyleSheet,
-  ScrollView,
   Dimensions,
+  Image,
+  ScrollView,
   TouchableWithoutFeedback,
+  View
 } from 'react-native';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
-import { spacing } from '../../../constants/spacing';
+import { imageCarouselStyles } from './imageCarouselStyles';
 
 interface ImageCarouselProps {
   images: Array<{
@@ -25,7 +24,7 @@ const ImageCarousel = ({ images, onLongPress }: ImageCarouselProps) => {
   
   const styles = imageCarouselStyles(theme, width);
   
-  // Ensure images is not undefined or empty
+  
   const validImages = images && images.length > 0 ? images : [];
   
   const handleScroll = (event: any) => {
@@ -74,31 +73,6 @@ const ImageCarousel = ({ images, onLongPress }: ImageCarouselProps) => {
   );
 };
 
-const imageCarouselStyles = (theme: any, screenWidth: number) => StyleSheet.create({
-  container: {
-    position: 'relative',
-  },
-  image: {
-    width: screenWidth,
-    height: 250,
-  },
-  pagination: {
-    position: 'absolute',
-    bottom: spacing.md,
-    flexDirection: 'row',
-    alignSelf: 'center',
-  },
-  paginationDot: {
-    width: spacing.sm,
-    height: spacing.sm,
-    borderRadius: spacing.xs,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    marginHorizontal: spacing.xs / 2,
-  },
-  paginationDotActive: {
-    backgroundColor: theme.buttonText,
-    width: spacing.md_minus,
-  },
-});
+
 
 export default ImageCarousel;

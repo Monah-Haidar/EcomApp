@@ -90,7 +90,7 @@ const MapView = ({location, style, interactive = true}: MapViewProps) => {
               <ActivityIndicator size="large" color={theme.primary} />
               <Text style={styles.loadingText}>Loading map...</Text>
             </View>
-          )}s
+          )}
           <MapViewLib
             provider={PROVIDER_GOOGLE}
             style={[styles.map, {height: 200, width: '100%'}]}
@@ -120,7 +120,7 @@ const MapView = ({location, style, interactive = true}: MapViewProps) => {
                   <View style={styles.calloutContainer}>
                     <Text style={styles.calloutTitle}>{location.name}</Text>
                     <Text style={styles.calloutText}>
-                      {location.latitude.toFixed(6)},{' '}
+                      {location.latitude.toFixed(6)},
                       {location.longitude.toFixed(6)}
                     </Text>
                   </View>

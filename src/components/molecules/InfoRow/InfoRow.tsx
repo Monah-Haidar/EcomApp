@@ -1,9 +1,8 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {infoRowStyles} from './infoRowStyles';
-import {useAuthStore} from '../../../store/AuthStore';
-import Feather from 'react-native-vector-icons/Feather';
+import { Text, View } from 'react-native';
+import { useAuthStore } from '../../../store/AuthStore';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { infoRowStyles } from './infoRowStyles';
 
 interface InfoRowProps {
   label: string;

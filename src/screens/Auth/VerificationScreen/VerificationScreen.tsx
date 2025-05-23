@@ -31,7 +31,7 @@ const VerificationScreen = ({route}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  // const [error, setError] = useState<string | null>(null);
+  
 
 
   const inputRefs = useRef<(TextInput | null)[]>([]);
@@ -42,7 +42,7 @@ const VerificationScreen = ({route}) => {
 
   const {email} = route.params;
 
-  // const expectedCode = '123456';
+ 
 
   const styles = global(theme);
 
@@ -83,7 +83,7 @@ const VerificationScreen = ({route}) => {
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          // justifyContent: 'center',
+          
         }}
         keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
@@ -107,26 +107,6 @@ const VerificationScreen = ({route}) => {
             handleBackspace={handleBackspace}
             inputRefs={inputRefs}
           />
-
-          {/* <View style={styles.inputContainer}>
-            <Text style={styles.label}>Enter Code</Text>
-            <View style={styles.inputRow}>
-              {code.map((digit, index) => (
-                <TextInput
-                  key={index}
-                  ref={(ref: TextInput | null) => {
-                    inputRefs.current[index] = ref;
-                  }}
-                  style={styles.input}
-                  keyboardType="number-pad"
-                  maxLength={1}
-                  value={digit}
-                  onChangeText={text => handleChange(text, index)}
-                  onKeyPress={e => handleBackspace(e, index)}
-                />
-              ))}
-            </View>
-          </View> */}
 
           <SubmitButton text="Create Account" onPress={onSubmit} isLoading={isPending} />
         </View>

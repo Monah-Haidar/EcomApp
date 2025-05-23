@@ -1,9 +1,9 @@
-import {Text, View} from 'react-native';
-import {ProfileImagePicker} from '../../molecules/ProfileImagePicker';
-import {Badge} from '../../atoms/Badge';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {profileHeaderStyles} from './profileHeaderStyles';
-import useAuthStore, {User} from '../../../store/AuthStore/AuthStore';
+import { Text, View } from 'react-native';
+import useAuthStore from '../../../store/AuthStore/AuthStore';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { Badge } from '../../atoms/Badge';
+import { ProfileImagePicker } from '../../molecules/ProfileImagePicker';
+import { profileHeaderStyles } from './profileHeaderStyles';
 
 
 
@@ -16,12 +16,6 @@ const ProfileHeader = () => {
     <View style={styles.profileHeader}>
       <View style={styles.profileImageContainer}>
         <ProfileImagePicker />
-
-        {/* <TouchableOpacity
-            style={[styles.cameraButton, {backgroundColor: theme.primary}]}
-            onPress={() => navigation.navigate('EditProfile')}>
-            <Feather name="camera" size={20} color={theme.buttonText} />
-          </TouchableOpacity> */}
       </View>
 
       <Text style={[styles.userName, {color: theme.text}]}>

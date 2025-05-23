@@ -2,7 +2,6 @@ import { Text, View } from 'react-native';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { BackButton } from '../../atoms/BackButton';
 import { customHeaderStyles } from './customHeaderStyles';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface CustomHeaderProps {
   text: string;
