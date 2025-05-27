@@ -13,6 +13,8 @@ interface BadgeProps {
 const Badge = ({isVerified, text, icon}: BadgeProps) => {
   const {theme} = useTheme();
   const styles = useMemo(() => badgeStyles(theme), [theme]);
+
+  
   return (
     <View
       style={[

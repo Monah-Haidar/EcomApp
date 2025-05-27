@@ -1,11 +1,8 @@
+import React, { useMemo } from 'react';
 import { Control, Controller, FieldErrors, FieldValues } from 'react-hook-form';
 import { KeyboardTypeOptions, Text, TextInput, View } from 'react-native';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { formInputStyles } from './formInputStyles';
-import React, { useMemo } from 'react';
-
-
-
 
 interface FormInputContainerProps<T extends FieldValues> {
   label: string;
@@ -15,7 +12,7 @@ interface FormInputContainerProps<T extends FieldValues> {
   keyboardType?: KeyboardTypeOptions;
   secureTextEntry?: boolean;
   errors: FieldErrors<T>;
-  editable?: boolean
+  editable?: boolean;
 }
 
 const FormInputContainer = <T extends FieldValues>({
@@ -23,14 +20,14 @@ const FormInputContainer = <T extends FieldValues>({
   control,
   name,
   placeholder,
-  keyboardType= 'default',
+  keyboardType = 'default',
   secureTextEntry = false,
   errors,
   editable = true,
 }: FormInputContainerProps<T>) => {
   const {theme} = useTheme();
 
-  const styles =  useMemo(() => formInputStyles(theme), [theme]);
+  const styles = useMemo(() => formInputStyles(theme), [theme]);
 
   return (
     <View style={styles.inputContainer}>
@@ -53,10 +50,12 @@ const FormInputContainer = <T extends FieldValues>({
         )}
       />
       {errors?.[name] && (
-        <Text style={styles.errorText}>{errors?.[name]?.message as string}</Text>
+        <Text style={styles.errorText}>
+          {errors?.[name]?.message as string}
+        </Text>
       )}
     </View>
   );
 };
 
-export default React.memo(FormInputContainer);
+export default FormInputContainer;

@@ -1,29 +1,36 @@
 import {
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    Text,
-    View,
-    Pressable,
-    ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  View,
+  Pressable,
+  ActivityIndicator,
 } from 'react-native';
-import { CustomHeader } from '../../../components/molecules/CustomHeader';
-import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import {CustomHeader} from '../../../components/molecules/CustomHeader';
+import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SubmitButton } from '../../../components/atoms/SubmitButton';
-import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SubmitButton} from '../../../components/atoms/SubmitButton';
+import {FormErrorDisplay} from '../../../components/atoms/FormErrorDisplay';
 import FormInputContainer from '../../../components/molecules/FormInputContainer/FormInputContainer';
-import { ProductImagePicker } from '../../../components/molecules/ProductImagePicker';
+import {ProductImagePicker} from '../../../components/molecules/ProductImagePicker';
 import LocationPicker from '../../../components/molecules/LocationPicker/LocationPicker';
-import { useEditProduct } from '../../../hooks/useEditProduct';
-import { useProduct } from '../../../hooks/useProduct';
-import { ProductFormData, ProductSchema } from '../../../schemas/ProductSchema';
-import { global } from '../../../styles/global';
-import { editProductScreenStyles } from './editProductScreenStyles';
+import {useEditProduct} from '../../../hooks/useEditProduct';
+import {useProduct} from '../../../hooks/useProduct';
+import {ProductFormData, ProductSchema} from '../../../schemas/ProductSchema';
+import {global} from '../../../styles/global';
+import {editProductScreenStyles} from './editProductScreenStyles';
+import React from 'react';
+
+interface ProductImage {
+  uri: string;
+  type: string;
+  name: string;
+}
 
 const EditProductScreen = ({route}: {route: any}) => {
   const {productId} = route.params;
@@ -39,8 +46,14 @@ const EditProductScreen = ({route}: {route: any}) => {
 
   const product = data?.data;
   const [imageError, setImageError] = useState<string | null>(null);
-  const [productImages, setProductImages] = useState<Array<{uri: string; type: string; name: string}>>([]);
-  const [location, setLocation] = useState<{name: string, longitude: number, latitude: number} | null>(null);
+  const [productImages, setProductImages] = useState<
+    Array<{uri: string; type: string; name: string}>
+  >([]);
+  const [location, setLocation] = useState<{
+    name: string;
+    longitude: number;
+    latitude: number;
+  } | null>(null);
   const [isLocationPickerVisible, setIsLocationPickerVisible] = useState(false);
 
   const {
@@ -57,7 +70,6 @@ const EditProductScreen = ({route}: {route: any}) => {
     },
   });
 
-  
   useEffect(() => {
     if (product) {
       reset({
@@ -66,18 +78,16 @@ const EditProductScreen = ({route}: {route: any}) => {
         price: product.price.toString(),
       });
 
-      
       if (product.images && product.images.length > 0) {
         const formattedImages = product.images.map(img => ({
           uri: `https://backend-practice.eurisko.me${img.url}`,
           type: 'image/jpeg',
           name: `image-${img._id}.jpg`,
-          _id: img._id, 
+          _id: img._id,
         }));
         setProductImages(formattedImages);
       }
 
-     
       if (product.location) {
         setLocation({
           name: product.location.name,
@@ -86,52 +96,85 @@ const EditProductScreen = ({route}: {route: any}) => {
         });
       }
     }
-  }, [product, reset]);  const styles = editProductScreenStyles(theme);
-  const globalStyles = global(theme);
+  }, [product, reset]);
 
-  const handleLocationSelect = (selectedLocation: {name: string, longitude: number, latitude: number}) => {
+  const styles = useMemo(() => editProductScreenStyles(theme), [theme]);
+  const globalStyles = useMemo(() => global(theme), [theme]);
+
+  const viewStyle = useMemo(() => ({
+    flex: 1,
+    paddingTop: insets.top,
+    paddingBottom: insets.bottom,
+    paddingLeft: insets.left,
+    paddingRight: insets.right,
+    backgroundColor: theme.background,
+  }), [insets.top, insets.bottom, insets.left, insets.right, theme.background]);
+
+  const handleLocationSelect = useCallback((selectedLocation: {
+    name: string;
+    longitude: number;
+    latitude: number;
+  }) => {
     setLocation(selectedLocation);
     setIsLocationPickerVisible(false);
-  };
+  },[]);
 
-  const onSubmit = async (data: ProductFormData) => {
-    
-    if (productImages.length === 0) {
-      setImageError('Please add at least one product image');
-      return;
-    } else {
+  const onSubmit = useCallback(
+    async (data: ProductFormData) => {
+      if (productImages.length === 0) {
+        setImageError('Please add at least one product image');
+        return;
+      } else {
+        setImageError(null);
+      }
+
+      if (!location) {
+        console.log('Location is required');
+        return;
+      }
+
+      mutate({
+        _id: productId,
+        ...data,
+        images: productImages,
+        location: location,
+      });
+    },
+    [mutate, productId, productImages, location],
+  );
+
+  const handleImagesChange = useCallback((newImages: ProductImage[]) => {
+    setProductImages(newImages);
+    if (newImages.length > 0) {
       setImageError(null);
     }
+  }, []);
 
-    if (!location) {
-      console.log('Location is required');
-      return;
-    }
+  const closeLocationPicker = useCallback(
+    () => setIsLocationPickerVisible(false),
+    [],
+  );
 
-    
-    mutate({
-      _id: productId,
-      ...data,
-      images: productImages,
-      location: location,
-    });
-  };
+  const openLocationPicker = useCallback(
+    () => setIsLocationPickerVisible(true),
+    [],
+  );
+
   return (
     <View
-      style={{
-        flex: 1,
-        paddingTop: insets.top,
-        paddingBottom: insets.bottom,
-        paddingLeft: insets.left,
-        paddingRight: insets.right,
-        backgroundColor: theme.background,
-      }}>
+      style={viewStyle}>
       <CustomHeader text="Edit Product" />
 
       {pendingProduct ? (
-        <View style={[globalStyles.container, {alignItems: 'center', justifyContent: 'center'}]}>
+        <View
+          style={[
+            globalStyles.container,
+            {alignItems: 'center', justifyContent: 'center'},
+          ]}>
           <ActivityIndicator size="large" color={theme.primary} />
-          <Text style={{marginTop: 20, color: theme.text}}>Loading product...</Text>
+          <Text style={{marginTop: 20, color: theme.text}}>
+            Loading product...
+          </Text>
         </View>
       ) : (
         <KeyboardAvoidingView
@@ -143,20 +186,22 @@ const EditProductScreen = ({route}: {route: any}) => {
             <View style={globalStyles.container}>
               <Text style={styles.title}>Update Product</Text>
 
-              {(productError || editError) && <FormErrorDisplay error={(productError || editError)?.message || 'An error occurred'} />}
+              {(productError || editError) && (
+                <FormErrorDisplay
+                  error={
+                    (productError || editError)?.message || 'An error occurred'
+                  }
+                />
+              )}
 
               <ProductImagePicker
                 images={productImages}
-                onImagesChange={newImages => {
-                  setProductImages(newImages);
-                  if (newImages.length > 0) {
-                    setImageError(null);
-                  }
-                }}
+                onImagesChange={handleImagesChange}
               />
-              {imageError && <Text style={styles.imageError}>{imageError}</Text>}
+              {imageError && (
+                <Text style={styles.imageError}>{imageError}</Text>
+              )}
 
-              
               <FormInputContainer
                 label="Product Name"
                 control={control}
@@ -165,7 +210,6 @@ const EditProductScreen = ({route}: {route: any}) => {
                 errors={errors}
               />
 
-              
               <FormInputContainer
                 label="Description"
                 control={control}
@@ -174,7 +218,6 @@ const EditProductScreen = ({route}: {route: any}) => {
                 errors={errors}
               />
 
-              
               <FormInputContainer
                 label="Price ($)"
                 control={control}
@@ -184,17 +227,17 @@ const EditProductScreen = ({route}: {route: any}) => {
                 errors={errors}
               />
 
-              
               <View style={styles.locationContainer}>
                 <Text style={styles.label}>Location</Text>
-                <Pressable onPress={() => setIsLocationPickerVisible(true)} style={styles.locationInput}>
+                <Pressable
+                  onPress={openLocationPicker}
+                  style={styles.locationInput}>
                   <Text style={styles.locationText}>
                     {location ? location.name : 'Select Location'}
                   </Text>
                 </Pressable>
               </View>
 
-              
               <View style={styles.buttonContainer}>
                 <SubmitButton
                   text="Update Product"
@@ -209,17 +252,21 @@ const EditProductScreen = ({route}: {route: any}) => {
 
       <LocationPicker
         isVisible={isLocationPickerVisible}
-        onClose={() => setIsLocationPickerVisible(false)}
+        onClose={closeLocationPicker}
         onLocationSelect={handleLocationSelect}
-        initialRegion={location ? {
-          latitude: location.latitude,
-          longitude: location.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        } : undefined}
+        initialRegion={
+          location
+            ? {
+                latitude: location.latitude,
+                longitude: location.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }
+            : undefined
+        }
       />
     </View>
   );
 };
 
-export default EditProductScreen;
+export default React.memo(EditProductScreen);

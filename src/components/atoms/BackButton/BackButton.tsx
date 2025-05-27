@@ -6,7 +6,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 const BackButton = () => {
   const navigation = useNavigation();
 
-  const goBack = useCallback(() => { navigation.goBack(); }, []);
+  const goBack = useCallback(() => { navigation.goBack(); }, [navigation]);
 
   return (
     <Pressable

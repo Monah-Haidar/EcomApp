@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -19,6 +19,7 @@ import { VerificationCodeContainer } from '../../../components/molecules/Verific
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { global } from '../../../styles/global';
 import { useVerificationMutation } from '../../../hooks/useVerificationMutation';
+import React from 'react';
 
 type RootStackParamList = {
   Login: undefined;
@@ -46,7 +47,7 @@ const VerificationScreen = ({route}) => {
 
   const styles = global(theme);
 
-  const handleChange = (text: string, index: number) => {
+  const handleChange = useCallback((text: string, index: number) => {
     if (!/^\d?$/.test(text)) return;
 
     const newCode = [...code];
@@ -58,22 +59,22 @@ const VerificationScreen = ({route}) => {
     }
 
     const fullCode = newCode.join('');
-  };
+  }, [code]);
 
-  const handleBackspace = (
+  const handleBackspace = useCallback((
     e: NativeSyntheticEvent<TextInputKeyPressEventData>,
     index: number,
   ) => {
     if (e.nativeEvent.key === 'Backspace' && code[index] === '' && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
-  };
+  }, [code]);
 
-  const onSubmit = () => {
+  const onSubmit = useCallback(() => {
     const fullCode = code.join('');
 
     mutate({email, otp: fullCode});
-  };
+  }, [code, email, mutate]);
 
   return (
     <KeyboardAvoidingView
@@ -83,7 +84,6 @@ const VerificationScreen = ({route}) => {
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          
         }}
         keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
@@ -115,4 +115,4 @@ const VerificationScreen = ({route}) => {
   );
 };
 
-export default VerificationScreen;
+export default React.memo(VerificationScreen);

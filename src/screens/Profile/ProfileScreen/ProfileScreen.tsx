@@ -1,24 +1,23 @@
-import { useNavigation } from '@react-navigation/native';
-import { ScrollView, Text, View } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {ScrollView, Text, View} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import { SubmitButton } from '../../../components/atoms/SubmitButton';
-import { InfoRow } from '../../../components/molecules/InfoRow';
-import { ProfileHeader } from '../../../components/organisms/ProfileHeader';
-import { useUserProfile } from '../../../hooks/useUserProfile';
-import { useAuthStore } from '../../../store/AuthStore';
-import { useTheme } from '../../../store/ThemeStore/ThemeStore';
-import { global } from '../../../styles/global';
+import {SubmitButton} from '../../../components/atoms/SubmitButton';
+import {InfoRow} from '../../../components/molecules/InfoRow';
+import {ProfileHeader} from '../../../components/organisms/ProfileHeader';
+import {useUserProfile} from '../../../hooks/useUserProfile';
+import {useAuthStore} from '../../../store/AuthStore';
+import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import {global} from '../../../styles/global';
+import {useCallback, useMemo} from 'react';
 
 const ProfileScreen = () => {
   const {theme} = useTheme();
   const navigation = useNavigation();
   const {isPending} = useUserProfile();
-  
-  const clearTokens = useAuthStore(state => state.clearTokens);
-  
 
- 
-  const globalStyles = global(theme);
+  const clearTokens = useAuthStore(state => state.clearTokens);
+
+  const globalStyles = useMemo(() => global(theme), [theme]);
 
   if (isPending) {
     return (
@@ -29,13 +28,15 @@ const ProfileScreen = () => {
     );
   }
 
- 
+  const handleNavigate = useCallback(
+    () => navigation.navigate('EditProfile'),
+    [navigation]
+  );
 
   return (
     <ScrollView
       style={[globalStyles.container, {backgroundColor: theme.background}]}
       contentContainerStyle={globalStyles.contentContainer}>
-
       <ProfileHeader />
 
       <View>
@@ -55,7 +56,7 @@ const ProfileScreen = () => {
 
         <SubmitButton
           text="Edit Profile"
-          onPress={() => navigation.navigate('EditProfile')}
+          onPress={handleNavigate}
           variant="primary"
           icon={<Feather name="edit-2" size={16} color={theme.buttonText} />}
         />
@@ -72,4 +73,3 @@ const ProfileScreen = () => {
 };
 
 export default ProfileScreen;
-

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {
   Animated,
   Image,
@@ -6,11 +6,11 @@ import {
   PanResponder,
   Pressable,
   Text,
-  View
+  View,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import { useTheme } from '../../../store/ThemeStore/ThemeStore';
-import { productCardStyles } from './productCardStyles';
+import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import {productCardStyles} from './productCardStyles';
 
 interface ProductItem {
   _id: string;
@@ -44,24 +44,58 @@ const ProductCard = ({
   onSwipeAction,
   animationDelay = 0,
 }: ProductCardProps) => {
-  const { theme } = useTheme();
-  const styles = productCardStyles(theme);
+  const {theme} = useTheme();
+
   const [isSwipingLeft, setIsSwipingLeft] = useState(false);
-  
-  // Animation values
+
+  const styles = useMemo(() => productCardStyles(theme), [theme]);
+
   const translateX = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.95)).current;
-  
-  // Format price
-  const formatPrice = (price: number) => {
+
+  const formatPrice = useCallback((price: number) => {
     return `$${price.toLocaleString('en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     })}`;
-  };
-  
-  // Handle pan gestures for swipe
+  }, []);
+
+  const renderImage = useMemo(() => {
+    if (item.images && item.images.length > 0) {
+      return <Image source={source} style={styles.image} resizeMode="cover" />;
+    }
+
+    return (
+      <View style={styles.placeholderImage}>
+        <Feather name="image" size={40} color={theme.subheadingText} />
+      </View>
+    );
+  }, [
+    item.images,
+    source,
+    styles.image,
+    styles.placeholderImage,
+    theme.subheadingText,
+  ]);
+
+  const renderLocation = useMemo(() => {
+    if (!item.location) return null;
+    return (
+      <View style={styles.locationContainer}>
+        <Feather
+          name="map-pin"
+          size={14}
+          color={theme.subheadingText}
+          style={styles.locationIcon}
+        />
+        <Text style={styles.locationText} numberOfLines={1}>
+          {item.location.name || 'Online'}
+        </Text>
+      </View>
+    );
+  }, [item.location, styles, theme.subheadingText]);
+
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, gestureState) => {
@@ -84,7 +118,7 @@ const ProductCard = ({
             toValue: -80,
             useNativeDriver: true,
           }).start();
-          
+
           // Call swipe action handler
           onSwipeAction && onSwipeAction();
         } else {
@@ -95,9 +129,9 @@ const ProductCard = ({
           }).start();
         }
       },
-    })
+    }),
   ).current;
-  
+
   // Entrance animation
   React.useEffect(() => {
     Animated.sequence([
@@ -117,64 +151,35 @@ const ProductCard = ({
       ]),
     ]).start();
   }, []);
-  
+
   return (
     <Animated.View
       style={[
         styles.container,
-        { 
+        {
           width: itemWidth,
           opacity,
-          transform: [
-            { translateX },
-            { scale }
-          ]
-        }
+          transform: [{translateX}, {scale}],
+        },
       ]}
-      {...panResponder.panHandlers}
-    >
-      {/* Main Card */}
-      <Pressable 
-        style={({ pressed }) => [
-          styles.card,
-          { opacity: pressed ? 0.9 : 1 }
-        ]}
-        onPress={onPress}
-      >
-        {/* Image */}
-        <View style={styles.imageContainer}>
-          {item.images && item.images.length > 0 ? (
-            <Image
-              source={source}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          ) : (
-            <View style={styles.placeholderImage}>
-              <Feather name="image" size={40} color={theme.subheadingText} />
-            </View>
-          )}
-        </View>
-        
-        
+      {...panResponder.panHandlers}>
+      <Pressable
+        style={({pressed}) => [styles.card, {opacity: pressed ? 0.9 : 1}]}
+        onPress={onPress}>
+        <View style={styles.imageContainer}>{renderImage}</View>
+
         <View style={styles.content}>
           <View style={styles.titlePriceContainer}>
-            <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+            <Text style={styles.title} numberOfLines={1}>
+              {item.title}
+            </Text>
             <Text style={styles.price}>{formatPrice(item.price)}</Text>
           </View>
-          
-          
-          {item.location && (
-            <View style={styles.locationContainer}>
-              <Feather name="map-pin" size={14} color={theme.subheadingText} style={styles.locationIcon} />
-              <Text style={styles.locationText} numberOfLines={1}>
-                {item.location.name || 'Online'}
-              </Text>
-            </View>
-          )}
+
+          {renderLocation}
         </View>
       </Pressable>
-      
+
       {/* Swipe Action Indicator */}
       {/* <Animated.View
         style={[
@@ -195,6 +200,4 @@ const ProductCard = ({
   );
 };
 
-
-
-export default ProductCard;
+export default React.memo(ProductCard);

@@ -1,7 +1,7 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {useNavigation} from '@react-navigation/native';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {useForm} from 'react-hook-form';
 import {
   KeyboardAvoidingView,
   Modal,
@@ -9,26 +9,24 @@ import {
   Pressable,
   ScrollView,
   Text,
-  View
+  View,
 } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { z } from 'zod';
-import { FormErrorDisplay } from '../../../components/atoms/FormErrorDisplay';
-import { SubmitButton } from '../../../components/atoms/SubmitButton';
-import { CameraView } from '../../../components/molecules/CameraView';
-import { CustomHeader } from '../../../components/molecules/CustomHeader';
-import { FormInputContainer } from '../../../components/molecules/FormInputContainer';
-import { ProfileImagePicker } from '../../../components/molecules/ProfileImagePicker';
-import { useUpdateProfileMutation } from '../../../hooks/useUpdateProfileMutation';
+import {z} from 'zod';
+import {FormErrorDisplay} from '../../../components/atoms/FormErrorDisplay';
+import {SubmitButton} from '../../../components/atoms/SubmitButton';
+import {CameraView} from '../../../components/molecules/CameraView';
+import {CustomHeader} from '../../../components/molecules/CustomHeader';
+import {FormInputContainer} from '../../../components/molecules/FormInputContainer';
+import {ProfileImagePicker} from '../../../components/molecules/ProfileImagePicker';
+import {useUpdateProfileMutation} from '../../../hooks/useUpdateProfileMutation';
 import useAuthStore from '../../../store/AuthStore/AuthStore';
-import { useTheme } from '../../../store/ThemeStore/ThemeStore';
-import { global } from '../../../styles/global';
-import { editProfileScreenStyles } from './editProfileScreenStyles';
-
-
+import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import {global} from '../../../styles/global';
+import {editProfileScreenStyles} from './editProfileScreenStyles';
 
 const ProfileUpdateSchema = z.object({
   firstName: z
@@ -78,11 +76,12 @@ const EditProfileScreen = () => {
       });
     }
   }, [user, reset]);
-  const handleImagePick = () => {
-    setShowImageModal(true);
-  };
 
-  const handleGalleryPress = async () => {
+  const handleImagePick = useCallback(() => {
+    setShowImageModal(true);
+  }, []);
+
+  const handleGalleryPress = useCallback(async () => {
     setShowImageModal(false);
     try {
       const result = await launchImageLibrary({
@@ -103,14 +102,14 @@ const EditProfileScreen = () => {
     } catch (error) {
       console.error('Error picking image from gallery:', error);
     }
-  };
+  }, []);
 
-  const handleCameraPress = () => {
+  const handleCameraPress = useCallback(() => {
     setShowImageModal(false);
     setShowCamera(true);
-  };
+  }, []);
 
-  const handlePhotoTaken = (photo: {uri: string}) => {
+  const handlePhotoTaken = useCallback((photo: {uri: string}) => {
     const newPhoto = {
       ...photo,
       type: 'image/jpeg',
@@ -118,17 +117,28 @@ const EditProfileScreen = () => {
     };
     setProfileImage(newPhoto);
     setShowCamera(false);
-  };
+  },[]);
 
-  const onSubmit = (data: FormData) => {
-    mutate({
-      ...data,
-      profileImage: profileImage,
-    });
-  };
+  const onSubmit = useCallback(
+    (data: FormData) => {
+      mutate({
+        ...data,
+        profileImage: profileImage,
+      });
+    },
+    [mutate, profileImage],
+  );
 
-  const globalStyles = global(theme);
-  const localStyles = editProfileScreenStyles(theme);
+  const globalStyles = useMemo(() => global(theme), [theme]);
+  const localStyles = useMemo(() => editProfileScreenStyles(theme), [theme]);
+
+  const closeImageModal = useCallback(() => {
+    setShowImageModal(false);
+  }, []);
+
+  const closeCamera = useCallback(() => {
+    setShowCamera(false);
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -195,12 +205,11 @@ const EditProfileScreen = () => {
           </View>
         </View>
 
-        
         <Modal
           visible={showImageModal}
           transparent={true}
           animationType="fade"
-          onRequestClose={() => setShowImageModal(false)}>
+          onRequestClose={closeImageModal}>
           <View style={localStyles.modalOverlay}>
             <View
               style={[
@@ -251,7 +260,7 @@ const EditProfileScreen = () => {
                   localStyles.modalCancelButton,
                   {backgroundColor: theme.border},
                 ]}
-                onPress={() => setShowImageModal(false)}>
+                onPress={closeImageModal}>
                 <Text
                   style={[localStyles.modalCancelText, {color: theme.text}]}>
                   Cancel
@@ -261,20 +270,15 @@ const EditProfileScreen = () => {
           </View>
         </Modal>
 
-        
         <Modal
           visible={showCamera}
           animationType="slide"
-          onRequestClose={() => setShowCamera(false)}>
-          <CameraView
-            onPhotoTaken={handlePhotoTaken}
-            onClose={() => setShowCamera(false)}
-          />
+          onRequestClose={closeCamera}>
+          <CameraView onPhotoTaken={handlePhotoTaken} onClose={closeCamera} />
         </Modal>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 };
 
-
-export default EditProfileScreen;
+export default React.memo(EditProfileScreen);

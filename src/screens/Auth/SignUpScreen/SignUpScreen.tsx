@@ -22,11 +22,12 @@ import {FormInputContainer} from '../../../components/molecules/FormInputContain
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {global} from '../../../styles/global';
 import {useSignUpMutation} from '../../../hooks/useSignUpMutation';
-import {useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {ProfileImagePicker} from '../../../components/molecules/ProfileImagePicker';
 import {FormErrorDisplay} from '../../../components/atoms/FormErrorDisplay';
 import Feather from 'react-native-vector-icons/Feather';
+import React from 'react';
 
 const SignUpSchema = z.object({
   firstName: z
@@ -115,15 +116,32 @@ const SignUpScreen = () => {
     }
   };
 
-  const onSubmit = (data: FormData) => {
-    // console.log('Form Data:', data);
+  const onSubmit = useCallback(
+    (data: FormData) => {
+      const signUpData = {
+        ...data,
+        profileImage: profileImage,
+      };
+      mutate(signUpData);
+    },
+    [mutate, profileImage]
+  );
 
-    const signUpData = {
-      ...data,
-      profileImage: profileImage,
-    };
-    mutate(signUpData);
-  };
+  const handleNavigate = useCallback(
+    () => navigation.navigate('Login'),
+    [navigation],
+  );
+
+  const scrollViewStyle = useMemo(
+    () => ({
+      flexGrow: 1,
+      paddingTop: insets.top,
+      paddingBottom: insets.bottom,
+      paddingLeft: insets.left,
+      paddingRight: insets.right,
+    }),
+    [insets.top, insets.bottom, insets.left, insets.right]
+  );
 
   return (
     <KeyboardAvoidingView
@@ -131,14 +149,7 @@ const SignUpScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
       <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          // justifyContent: 'center',
-          paddingTop: insets.top,
-          paddingBottom: insets.bottom,
-          paddingLeft: insets.left,
-          paddingRight: insets.right,
-        }}
+        contentContainerStyle={scrollViewStyle}
         keyboardShouldPersistTaps="handled">
         <View style={globalStyles.container}>
           <BackButton />
@@ -205,7 +216,7 @@ const SignUpScreen = () => {
           <FormFooterText
             text="Already have an account?"
             linkText="Login"
-            onPress={() => navigation.navigate('Login')}
+            onPress={handleNavigate}
           />
         </View>
       </ScrollView>
@@ -213,33 +224,6 @@ const SignUpScreen = () => {
   );
 };
 
-export default SignUpScreen;
+export default React.memo(SignUpScreen);
 
-const localStyles = StyleSheet.create({
-  imagePickerContainer: {
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  imagePicker: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-  },
-  profileImage: {
-    width: '100%',
-    height: '100%',
-  },
-  placeholderContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-  },
-  placeholderText: {
-    fontSize: 14,
-    textAlign: 'center',
-  },
-});
+
