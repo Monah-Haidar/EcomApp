@@ -2,6 +2,7 @@ import { Control, Controller, FieldErrors, FieldValues } from 'react-hook-form';
 import { KeyboardTypeOptions, Text, TextInput, View } from 'react-native';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { formInputStyles } from './formInputStyles';
+import React, { useMemo } from 'react';
 
 
 
@@ -29,7 +30,7 @@ const FormInputContainer = <T extends FieldValues>({
 }: FormInputContainerProps<T>) => {
   const {theme} = useTheme();
 
-  const styles = formInputStyles(theme);
+  const styles =  useMemo(() => formInputStyles(theme), [theme]);
 
   return (
     <View style={styles.inputContainer}>
@@ -58,4 +59,4 @@ const FormInputContainer = <T extends FieldValues>({
   );
 };
 
-export default FormInputContainer;
+export default React.memo(FormInputContainer);

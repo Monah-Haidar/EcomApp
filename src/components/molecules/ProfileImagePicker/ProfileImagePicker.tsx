@@ -1,3 +1,4 @@
+import React, { useMemo } from 'react';
 import { Image, Text, View } from 'react-native';
 import useAuthStore from '../../../store/AuthStore/AuthStore';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
@@ -10,7 +11,7 @@ interface ProfileImagePickerProps {
 const ProfileImagePicker = ({localImage}: ProfileImagePickerProps) => {
   const user = useAuthStore(state => state.user);
   const {theme} = useTheme();
-  const styles = profileImagePickerStyles(theme);
+  const styles =  useMemo(() => profileImagePickerStyles(theme), [theme]);
 
   return (
     <View style={styles.imagePickerContainer}>
@@ -45,4 +46,4 @@ const ProfileImagePicker = ({localImage}: ProfileImagePickerProps) => {
 
 
 
-export default ProfileImagePicker;
+export default React.memo(ProfileImagePicker);

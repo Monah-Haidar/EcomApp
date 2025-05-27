@@ -1,7 +1,8 @@
 import {Text, TextInput, View} from 'react-native';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {verificationCodeContainerStyles} from './verificationCodeContainerStyles';
-import {useEffect, useRef} from 'react';
+import {useEffect, useMemo, useRef} from 'react';
+import React from 'react';
 
 interface VerificationCodeContainerProps {
   label: string;
@@ -22,7 +23,7 @@ const VerificationCodeContainer = ({
 
   const {theme} = useTheme();
 
-  const styles = verificationCodeContainerStyles(theme);
+  const styles =  useMemo(() => verificationCodeContainerStyles(theme), [theme]);
 
   useEffect(() => {
     inputRefs.current[0]?.focus();
@@ -55,4 +56,4 @@ const VerificationCodeContainer = ({
   );
 };
 
-export default VerificationCodeContainer;
+export default React.memo(VerificationCodeContainer);

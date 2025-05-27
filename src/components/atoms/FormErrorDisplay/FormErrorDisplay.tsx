@@ -2,6 +2,7 @@ import {Text, View} from 'react-native';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {formErrorDisplayStyles} from './formErrorDisplayStyles';
 import Feather from 'react-native-vector-icons/Feather';
+import React, { useMemo } from 'react';
 
 interface FormErrorDisplayProps {
   error: string;
@@ -9,7 +10,7 @@ interface FormErrorDisplayProps {
 
 const FormErrorDisplay = ({error}: FormErrorDisplayProps) => {
   const {theme} = useTheme();
-  const styles = formErrorDisplayStyles(theme);
+  const styles =  useMemo(() => formErrorDisplayStyles(theme), [theme]);
 
   return (
     <View style={[styles.errorContainer, {backgroundColor: '#ffebee'}]}>
@@ -19,4 +20,4 @@ const FormErrorDisplay = ({error}: FormErrorDisplayProps) => {
   );
 };
 
-export default FormErrorDisplay;
+export default React.memo(FormErrorDisplay);

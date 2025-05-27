@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   Alert,
   Modal,
@@ -49,14 +49,15 @@ const LocationPicker = ({
     longitude: number;
   } | null>(null);
 
-  const styles = locationPickerStyles(theme);
+  const styles = useMemo(() => locationPickerStyles(theme), [theme]);
 
-  const handleMapPress = (event: any) => {
+  const handleMapPress = useCallback((event: any) => {
     setSelectedLocation(event.nativeEvent.coordinate);
-  };
-  const handleConfirmLocation = () => {
+  }, []);
+
+  const handleConfirmLocation = useCallback(() => {
+
     if (selectedLocation) {
-      
       const locationName = `Location ${selectedLocation.latitude.toFixed(4)}, ${selectedLocation.longitude.toFixed(4)}`;
       onLocationSelect({
         ...selectedLocation, 
@@ -68,17 +69,18 @@ const LocationPicker = ({
       });
       onClose();
     }
-  };
 
-  const getUserCurrentLocation = () => {
+  }, [selectedLocation, onLocationSelect, onClose]);
+
+  const getUserCurrentLocation = useCallback(() => {
     Geolocation.getCurrentPosition(position => {
       const {latitude, longitude} = position.coords;
       setSelectedLocation({latitude, longitude});
       console.log('Current location:', position);
     });
-  };
+  }, []);
 
-  const requestLocationPermission = async () => {
+  const requestLocationPermission = useCallback(async () => {
     if (Platform.OS === 'android') {
       try {
         const granted = await PermissionsAndroid.request(
@@ -98,7 +100,7 @@ const LocationPicker = ({
         console.warn(err);
       }
     }
-  };
+  }, [getUserCurrentLocation]);
 
 //   useEffect(() => {
 //     requestLocationPermission();
@@ -138,4 +140,4 @@ const LocationPicker = ({
   );
 };
 
-export default LocationPicker;
+export default React.memo(LocationPicker);

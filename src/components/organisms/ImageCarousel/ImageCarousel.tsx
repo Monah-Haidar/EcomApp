@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {
   Dimensions,
   Image,
   ScrollView,
   TouchableWithoutFeedback,
-  View
+  View,
 } from 'react-native';
-import { useTheme } from '../../../store/ThemeStore/ThemeStore';
-import { imageCarouselStyles } from './imageCarouselStyles';
+import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import {imageCarouselStyles} from './imageCarouselStyles';
 
 interface ImageCarouselProps {
   images: Array<{
@@ -17,62 +17,80 @@ interface ImageCarouselProps {
   onLongPress?: (imageUrl: string) => void;
 }
 
-const ImageCarousel = ({ images, onLongPress }: ImageCarouselProps) => {
-  const { theme } = useTheme();
+interface CarouselImage {
+  url: string;
+  _id?: string;
+}
+
+const ImageCarousel = ({images, onLongPress}: ImageCarouselProps) => {
+  const {theme} = useTheme();
   const [activeIndex, setActiveIndex] = useState(0);
-  const { width } = Dimensions.get('window');
-  
-  const styles = imageCarouselStyles(theme, width);
-  
-  
-  const validImages = images && images.length > 0 ? images : [];
-  
-  const handleScroll = (event: any) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const currentIndex = Math.round(contentOffsetX / width);
-    setActiveIndex(currentIndex);
-  };
-  
+  const {width} = Dimensions.get('window');
+
+  const styles = useMemo(
+    () => imageCarouselStyles(theme, width),
+    [theme, width],
+  );
+
+  const validImages = useMemo(
+    () => (images && images.length > 0 ? images : []),
+    [images],
+  );
+
+  const handleScroll = useCallback(
+    (event: any) => {
+      const contentOffsetX = event.nativeEvent.contentOffset.x;
+      const currentIndex = Math.round(contentOffsetX / width);
+      setActiveIndex(currentIndex);
+    },
+    [width],
+  );
+
+  const renderImage = useCallback(
+    (image: CarouselImage, index: number) => (
+      <TouchableWithoutFeedback
+        key={image._id || index}
+        onLongPress={() => onLongPress?.(image.url)}>
+        <Image
+          source={{uri: `https://backend-practice.eurisko.me${image.url}`}}
+          style={styles.image}
+          resizeMode="cover"
+        />
+      </TouchableWithoutFeedback>
+    ),
+    [onLongPress, styles.image],
+  );
+
+  const renderPaginationDot = useCallback(
+    (_: any, index: number) => (
+      <View
+        key={index}
+        style={[
+          styles.paginationDot,
+          index === activeIndex && styles.paginationDotActive,
+        ]}
+      />
+    ),
+    [activeIndex, styles.paginationDot, styles.paginationDotActive],
+  );
+
   return (
     <View style={styles.container}>
       <ScrollView
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={handleScroll}
-      >
-        {validImages.map((image, index) => (
-          <TouchableWithoutFeedback
-            key={image._id || index}
-            onLongPress={() => onLongPress?.(image.url)}
-          >
-            <Image
-              source={{ uri: `https://backend-practice.eurisko.me${image.url}` }}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          </TouchableWithoutFeedback>
-        ))}
+        onMomentumScrollEnd={handleScroll}>
+        {validImages.map(renderImage)}
       </ScrollView>
-      
-      {/* Pagination indicators */}
+
       {validImages.length > 1 && (
         <View style={styles.pagination}>
-          {validImages.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.paginationDot,
-                index === activeIndex && styles.paginationDotActive,
-              ]}
-            />
-          ))}
+          {validImages.map(renderPaginationDot)}
         </View>
       )}
     </View>
   );
 };
 
-
-
-export default ImageCarousel;
+export default React.memo(ImageCarousel);

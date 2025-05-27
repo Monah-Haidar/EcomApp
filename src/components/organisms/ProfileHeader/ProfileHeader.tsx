@@ -4,13 +4,14 @@ import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { Badge } from '../../atoms/Badge';
 import { ProfileImagePicker } from '../../molecules/ProfileImagePicker';
 import { profileHeaderStyles } from './profileHeaderStyles';
+import React, { useMemo } from 'react';
 
 
 
 const ProfileHeader = () => {
   const user = useAuthStore(state => state.user);
   const {theme} = useTheme();
-  const styles = profileHeaderStyles(theme);
+  const styles =  useMemo(() => profileHeaderStyles(theme), [theme]);
 
   return (
     <View style={styles.profileHeader}>
@@ -31,4 +32,4 @@ const ProfileHeader = () => {
   );
 };
 
-export default ProfileHeader;
+export default React.memo(ProfileHeader);

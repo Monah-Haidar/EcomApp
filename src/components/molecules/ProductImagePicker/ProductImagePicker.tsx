@@ -2,9 +2,10 @@ import {Image, Modal, Pressable, ScrollView, Text, View} from 'react-native';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
-import {useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { productImagePickerStyles } from './productImagePickerStyles';
 import {CameraView} from '../CameraView';
+import React from 'react';
 
 interface ProductImagePickerProps {
   images: Array<{uri: string, type: string, name: string}>;
@@ -13,15 +14,17 @@ interface ProductImagePickerProps {
 
 const ProductImagePicker = ({images, onImagesChange}: ProductImagePickerProps) => {
   const {theme} = useTheme();
-  const styles = productImagePickerStyles(theme);
+
   const [showImageModal, setShowImageModal] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+
+    const styles = useMemo(() => productImagePickerStyles(theme), [theme]);
   
-  const handleAddImagePress = () => {
+  const handleAddImagePress = useCallback(() => {
     setShowImageModal(true);
-  };
+  }, []);
   
-  const handleGalleryPress = async () => {
+  const handleGalleryPress = useCallback(async () => {
     setShowImageModal(false);
     try {
       const result = await launchImageLibrary({
@@ -41,14 +44,14 @@ const ProductImagePicker = ({images, onImagesChange}: ProductImagePickerProps) =
     } catch (error) {
       console.error('Error picking image from gallery:', error);
     }
-  };
+  }, [images, onImagesChange]);
   
-  const handleCameraPress = () => {
+  const handleCameraPress = useCallback(() => {
     setShowImageModal(false);
     setShowCamera(true);
-  };
+  }, []);
   
-  const handlePhotoTaken = (photo: {uri: string}) => {
+  const handlePhotoTaken = useCallback((photo: {uri: string}) => {
     const newPhoto = {
       ...photo,
       type: 'image/jpeg', 
@@ -56,13 +59,18 @@ const ProductImagePicker = ({images, onImagesChange}: ProductImagePickerProps) =
     };
     onImagesChange([...images, newPhoto]);
     setShowCamera(false);
-  };
+  }, [images, onImagesChange]);
   
-  const handleRemoveImage = (index: number) => {
+  const handleRemoveImage = useCallback((index: number) => {
     const updatedImages = [...images];
     updatedImages.splice(index, 1);
     onImagesChange(updatedImages);
-  };
+  }, [images, onImagesChange]);
+
+
+const closeImageModal = useCallback(() => setShowImageModal(false), []);
+  const closeCamera = useCallback(() => setShowCamera(false), []);
+
 
   return (
     <View style={styles.container}>
@@ -103,7 +111,7 @@ const ProductImagePicker = ({images, onImagesChange}: ProductImagePickerProps) =
         visible={showImageModal}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => setShowImageModal(false)}
+        onRequestClose={closeImageModal}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -124,7 +132,7 @@ const ProductImagePicker = ({images, onImagesChange}: ProductImagePickerProps) =
             
             <Pressable 
               style={styles.modalCancelButton} 
-              onPress={() => setShowImageModal(false)}
+              onPress={closeImageModal}
             >
               <Text style={styles.modalCancelText}>Cancel</Text>
             </Pressable>
@@ -136,15 +144,15 @@ const ProductImagePicker = ({images, onImagesChange}: ProductImagePickerProps) =
       <Modal
         visible={showCamera}
         animationType="slide"
-        onRequestClose={() => setShowCamera(false)}
+        onRequestClose={closeCamera}
       >
         <CameraView
           onPhotoTaken={handlePhotoTaken}
-          onClose={() => setShowCamera(false)}
+          onClose={closeCamera}
         />
       </Modal>
     </View>
   );
 };
 
-export default ProductImagePicker;
+export default React.memo(ProductImagePicker);

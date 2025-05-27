@@ -17,9 +17,8 @@ const fetchProduct = async (id: string) => {
 const useProduct = (id: string) => {
 
     return useQuery({
-        queryKey: ['product'],
+        queryKey: ['product', id],
         queryFn: () => fetchProduct(id),
-        // staleTime: 1000 * 10 * 5, // 5 minutes
     });
 }
 

@@ -2,6 +2,7 @@ import {Text, View} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {badgeStyles} from './badgeStyles';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import React, { useMemo } from 'react';
 
 interface BadgeProps {
   isVerified: boolean | undefined;
@@ -11,7 +12,7 @@ interface BadgeProps {
 
 const Badge = ({isVerified, text, icon}: BadgeProps) => {
   const {theme} = useTheme();
-  const styles = badgeStyles(theme);
+  const styles = useMemo(() => badgeStyles(theme), [theme]);
   return (
     <View
       style={[
@@ -31,4 +32,4 @@ const Badge = ({isVerified, text, icon}: BadgeProps) => {
   );
 };
 
-export default Badge;
+export default React.memo(Badge);

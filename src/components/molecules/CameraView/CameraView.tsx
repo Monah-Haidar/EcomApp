@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
@@ -18,19 +18,19 @@ interface CameraViewProps {
 
 const CameraView = ({onPhotoTaken, onClose}: CameraViewProps) => {
   const {theme} = useTheme();
-  const styles = cameraViewStyles(theme);
   const camera = useRef<Camera>(null);
   const device = useCameraDevice('back');
   const {hasPermission, requestPermission} = useCameraPermission();
   const [isLoading, setIsLoading] = useState(false);
+  const styles = useMemo(() => cameraViewStyles(theme), [theme]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!hasPermission) {
       requestPermission();
     }
   }, [hasPermission, requestPermission]);
 
-  const handleTakePhoto = async () => {
+  const handleTakePhoto = useCallback(async () => {
     if (!camera.current || !device) return;
 
     try {
@@ -50,7 +50,7 @@ const CameraView = ({onPhotoTaken, onClose}: CameraViewProps) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   if (!hasPermission) {
     return (
@@ -119,4 +119,4 @@ const CameraView = ({onPhotoTaken, onClose}: CameraViewProps) => {
   );
 };
 
-export default CameraView;
+export default React.memo(CameraView);

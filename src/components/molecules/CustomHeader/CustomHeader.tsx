@@ -2,6 +2,7 @@ import { Text, View } from 'react-native';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { BackButton } from '../../atoms/BackButton';
 import { customHeaderStyles } from './customHeaderStyles';
+import React, { useMemo } from 'react';
 
 interface CustomHeaderProps {
   text: string;
@@ -11,7 +12,7 @@ interface CustomHeaderProps {
 const CustomHeader = ({text}: CustomHeaderProps) => {
   const {theme} = useTheme();
   
-  const styles = customHeaderStyles(theme);
+  const styles =  useMemo(() => customHeaderStyles(theme), [theme]);
   return (
     <View style={styles.AuthenticatedHeader}>
       <BackButton />
@@ -21,4 +22,4 @@ const CustomHeader = ({text}: CustomHeaderProps) => {
   );
 };
 
-export default CustomHeader;
+export default React.memo(CustomHeader);

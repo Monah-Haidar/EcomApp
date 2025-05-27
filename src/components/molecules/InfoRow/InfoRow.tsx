@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { useAuthStore } from '../../../store/AuthStore';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
@@ -16,7 +16,7 @@ const InfoRow = ({label, icon}: InfoRowProps) => {
   const {theme} = useTheme();
 
 
-  const styles = infoRowStyles(theme);
+  const styles =  useMemo(() => infoRowStyles(theme), [theme]);
   
   const userEmail = user?.email || 'Not available';
   
@@ -38,4 +38,4 @@ const InfoRow = ({label, icon}: InfoRowProps) => {
   );
 };
 
-export default InfoRow;
+export default React.memo(InfoRow);

@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  Text,
-  View,
-  ViewStyle
-} from 'react-native';
-import MapViewLib, { Callout, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {ActivityIndicator, Text, View, ViewStyle} from 'react-native';
+import MapViewLib, {Callout, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Feather from 'react-native-vector-icons/Feather';
-import { useTheme } from '../../../store/ThemeStore/ThemeStore';
-import { mapViewStyles } from './mapViewStyles';
+import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import {mapViewStyles} from './mapViewStyles';
 
 interface MapViewProps {
   location: {
@@ -22,22 +17,25 @@ interface MapViewProps {
 
 const MapView = ({location, style, interactive = true}: MapViewProps) => {
   const {theme} = useTheme();
-  const styles = mapViewStyles(theme);
+
   const [isMapReady, setIsMapReady] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
 
-  
-  const initialRegion = {
-    latitude: location.latitude,
-    longitude: location.longitude,
-    latitudeDelta: 0.01, 
-    longitudeDelta: 0.01,
-  };
-  
+  const styles = useMemo(() => mapViewStyles(theme), [theme]);
+
+  const initialRegion = useMemo(
+    () => ({
+      latitude: location.latitude,
+      longitude: location.longitude,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    }),
+    [location.latitude, location.longitude],
+  );
+
   useEffect(() => {
     console.log('MapView: Received location:', location);
     try {
-      
       if (
         !location.latitude ||
         !location.longitude ||
@@ -51,7 +49,7 @@ const MapView = ({location, style, interactive = true}: MapViewProps) => {
         console.log('MapView: Invalid coordinates detected');
         throw new Error('Invalid location coordinates');
       }
-      
+
       console.log('MapView: Coordinates are valid, resetting error state');
       setMapError(null);
     } catch (error) {
@@ -60,16 +58,13 @@ const MapView = ({location, style, interactive = true}: MapViewProps) => {
     }
   }, [location]);
 
-  console.log(
-    'MapView: Rendering with mapError:',
-    mapError,
-    'isMapReady:',
-    isMapReady,
-  );
+  const setMapReady = useCallback(() => {
+    setIsMapReady(true);
+  }, []);
+
   return (
     <View style={[styles.container, style]}>
       {mapError ? (
-        
         <View style={styles.mapPlaceholder}>
           <Feather name="map" size={40} color={theme.subheadingText} />
           <Text style={styles.mapText}>
@@ -95,10 +90,7 @@ const MapView = ({location, style, interactive = true}: MapViewProps) => {
             provider={PROVIDER_GOOGLE}
             style={[styles.map, {height: 200, width: '100%'}]}
             initialRegion={initialRegion}
-            onMapReady={() => {
-              console.log('Map is ready');
-              setIsMapReady(true);
-            }}
+            onMapReady={setMapReady}
             zoomEnabled={interactive}
             scrollEnabled={interactive}
             rotateEnabled={interactive}
@@ -134,4 +126,4 @@ const MapView = ({location, style, interactive = true}: MapViewProps) => {
   );
 };
 
-export default MapView;
+export default React.memo(MapView);

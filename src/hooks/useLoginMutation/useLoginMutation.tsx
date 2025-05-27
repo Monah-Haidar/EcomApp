@@ -1,7 +1,5 @@
-import {useNavigation} from '@react-navigation/native';
 import {useMutation} from '@tanstack/react-query';
-import axios, {AxiosError} from 'axios';
-import React from 'react';
+import {AxiosError} from 'axios';
 import axiosInstance from '../../api/config';
 import {useAuthStore} from '../../store/AuthStore';
 
@@ -38,18 +36,14 @@ const loginUser = async ({
     token_expires_in,
   });
 
-  //   console.log('Login data: ', {email, password, token_expires_in});
-  //   console.log('Login Response: ', response.data);
   return response.data;
 };
 
 const useLoginMutation = () => {
-//   const navigation = useNavigation();
   const setTokens = useAuthStore(state => state.setTokens);
   return useMutation<LoginResponse, Error, LoginUserProps>({
     mutationFn: loginUser,
     onSuccess: data => {
-    //   console.log('Login Success: ', data.data);
       setTokens(data.data.accessToken, data.data.refreshToken);
     },
     onError: error => {

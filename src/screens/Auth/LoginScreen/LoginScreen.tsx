@@ -56,8 +56,7 @@ const LoginScreen = () => {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {mutate, isPending, error} = useLoginMutation();
   const {theme} = useTheme();
-  const insets = useSafeAreaInsets();
-  // const [error, setError] = useState<string | null>(null);
+  const insets = useSafeAreaInsets(); 
   const {
     control,
     handleSubmit,
@@ -75,24 +74,11 @@ const LoginScreen = () => {
   const styles = global(theme);
 
   const onSubmit = (data: FormData) => {
-    // console.log('Form Data:', data);
 
     const {email, password, token_expires_in} = data;
 
-
     mutate({ email, password, token_expires_in });
 
-
-    // console.log('Login data: ', {email, password, token_expires_in});
-
-    // if (!(data.email === 'eurisko' && data.password === 'academy2025')) {
-    //   console.log('invalid credentials');
-    //   return setError('Invalid credentials');
-    // }
-
-    // setError(null);
-    // auth?.login();
-    // console.log('Login successful!');
   };
 
   return (
@@ -103,7 +89,6 @@ const LoginScreen = () => {
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          // justifyContent: 'center',
           paddingTop: insets.top,
           paddingBottom: insets.bottom,
           paddingLeft: insets.left,

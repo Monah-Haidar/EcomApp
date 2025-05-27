@@ -1,7 +1,8 @@
 import {ActivityIndicator, Pressable, Text, View} from 'react-native';
 import {submitButtonStyles} from './submitButtonStyles';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {ReactNode} from 'react';
+import {ReactNode, useMemo} from 'react';
+import React from 'react';
 
 interface SubmitButtonProps {
   text: string;
@@ -23,7 +24,7 @@ const SubmitButton = ({
   textColor,
 }: SubmitButtonProps) => {
   const {theme} = useTheme();
-  const styles = submitButtonStyles(theme);
+  const styles =  useMemo(() => submitButtonStyles(theme), [theme]);
 
   
   const getBgColor = () => {
@@ -67,4 +68,4 @@ const SubmitButton = ({
   );
 };
 
-export default SubmitButton;
+export default React.memo(SubmitButton);
