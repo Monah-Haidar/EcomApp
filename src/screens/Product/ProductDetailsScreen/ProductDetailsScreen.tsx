@@ -30,6 +30,7 @@ import {useProduct} from '../../../hooks/useProduct';
 import {useUserProfile} from '../../../hooks/useUserProfile';
 import {useAuthStore} from '../../../store/AuthStore';
 import {productDetailsScreenStyles} from './productDetailsScreenStyles';
+import {ProductStackParamList} from '../../../navigation/types';
 
 type ProductDetails = {
   location?: {
@@ -48,20 +49,13 @@ type ProductDetails = {
   user: {
     _id: string;
     email: string;
-  };
-  createdAt?: string;
-};
-
-type RootStackParamList = {
-  ProductDetails: {productId: string};
-  EditProduct: {productId: string};
-  AddProduct: undefined;
+  };  createdAt?: string;
 };
 
 const ProductDetailsScreen = () => {
   const route = useRoute();
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    useNavigation<NativeStackNavigationProp<ProductStackParamList>>();
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
   const user = useAuthStore(state => state.user);
@@ -259,6 +253,9 @@ const ProductDetailsScreen = () => {
     [navigation, productId],
   );
 
+
+  const shareProduct = () => null;
+
   const viewStyles = useMemo(() => {
     return [
       styles.container,
@@ -392,7 +389,7 @@ const ProductDetailsScreen = () => {
                 {opacity: pressed ? 0.8 : 1, backgroundColor: theme.secondary},
               ]}>
               <Feather name="share" size={20} color={theme.buttonText} />
-              <Text style={styles.emailButtonText}>Share</Text>
+              <Text style={styles.emailButtonText} onPress={shareProduct}>Share</Text>
             </Pressable>
             <Pressable
               style={({pressed}) => [

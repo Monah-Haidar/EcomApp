@@ -23,7 +23,8 @@ import useProducts from '../../../hooks/useProducts/useProducts';
 import {useSearchProduct} from '../../../hooks/useSearchProduct';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {productListScreenStyles} from './productListScreenStyles';
-import {set} from 'react-hook-form';
+import {ProductStackParamList} from '../../../navigation/types';
+
 
 type ProductType = {
   _id: string;
@@ -32,22 +33,14 @@ type ProductType = {
   price: number;
   images: Array<{
     url: string;
-    _id: string;
-  }>;
-};
-
-type RootStackParamList = {
-  ProductDetails: {
-    productId: string;
-  };
-  AddProduct: undefined;
+    _id: string;  }>;
 };
 
 const ProductListScreen = () => {
   const {width, height} = useWindowDimensions();
   const {theme} = useTheme();
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    useNavigation<NativeStackNavigationProp<ProductStackParamList>>();
 
   const [sortBy, setSortBy] = useState<'none' | 'price_asc' | 'price_desc'>(
     'none',

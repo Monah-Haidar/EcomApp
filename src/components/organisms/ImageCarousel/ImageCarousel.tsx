@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {imageCarouselStyles} from './imageCarouselStyles';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 interface ImageCarouselProps {
   images: Array<{
@@ -51,7 +52,8 @@ const ImageCarousel = ({images, onLongPress}: ImageCarouselProps) => {
       <TouchableWithoutFeedback
         key={image._id || index}
         onLongPress={() => onLongPress?.(image.url)}>
-        <Image
+        <Animated.Image entering={FadeIn.duration(300)}
+          sharedTransitionTag="sharedTag"
           source={{uri: `https://backend-practice.eurisko.me${image.url}`}}
           style={styles.image}
           resizeMode="cover"

@@ -1,12 +1,13 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {ProfileStack} from '../../stacks/ProfileStack';
 import {ProductStack} from '../../stacks/ProductStack';
+import {MainTabParamList} from '../../types';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useCallback} from 'react';
 import { CartScreen } from '../../../screens/Product/CartScreen';
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const MainTabNavigator = () => {
   const renderTabIcon = useCallback(

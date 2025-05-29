@@ -4,6 +4,7 @@ import {ProductListScreen} from '../../../screens/Product/ProductListScreen';
 import {ProductDetailsScreen} from '../../../screens/Product/ProductDetailsScreen';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {FONT_FAMILY, FONT_SIZE} from '../../../constants/font';
+import {ProductStackParamList} from '../../types';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -13,7 +14,7 @@ import { AddProductScreen } from '../../../screens/Product/AddProductScreen';
 import { EditProductScreen } from '../../../screens/Product/EditProductScreen';
 import { useCallback } from 'react';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<ProductStackParamList>();
 
 const ProductStack = () => {
   // const isAuthenticated = useAuthStore(state => state.isAuthenticated);
