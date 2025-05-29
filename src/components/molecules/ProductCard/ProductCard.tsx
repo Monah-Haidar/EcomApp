@@ -1,16 +1,9 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {
-  Animated,
-  Image,
-  ImageSourcePropType,
-  PanResponder,
-  Pressable,
-  Text,
-  View,
-} from 'react-native';
+import React, { useCallback, useMemo } from 'react';
+import { Image, ImageSourcePropType, Pressable, Text, View } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {productCardStyles} from './productCardStyles';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { productCardStyles } from './productCardStyles';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 
 interface ProductItem {
   _id: string;
@@ -21,7 +14,7 @@ interface ProductItem {
     url: string;
     _id: string;
   }>;
-  // Add location if available in your data structure
+
   location?: {
     name: string;
   };
@@ -46,13 +39,7 @@ const ProductCard = ({
 }: ProductCardProps) => {
   const {theme} = useTheme();
 
-  const [isSwipingLeft, setIsSwipingLeft] = useState(false);
-
   const styles = useMemo(() => productCardStyles(theme), [theme]);
-
-  const translateX = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(0.95)).current;
 
   const formatPrice = useCallback((price: number) => {
     return `$${price.toLocaleString('en-US', {
@@ -63,7 +50,7 @@ const ProductCard = ({
 
   const renderImage = useMemo(() => {
     if (item.images && item.images.length > 0) {
-      return <Image source={source} style={styles.image} resizeMode="cover" />;
+      return <Animated.Image sharedTransitionTag="sharedTag" source={source} style={styles.image} resizeMode="cover" />;
     }
 
     return (
@@ -96,73 +83,14 @@ const ProductCard = ({
     );
   }, [item.location, styles, theme.subheadingText]);
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        return Math.abs(gestureState.dx) > 10;
-      },
-      onPanResponderGrant: () => {
-        setIsSwipingLeft(false);
-      },
-      onPanResponderMove: (_, gestureState) => {
-        if (gestureState.dx < -10) {
-          setIsSwipingLeft(true);
-          // Limit swipe to -80px
-          translateX.setValue(Math.max(gestureState.dx, -80));
-        }
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        if (isSwipingLeft && gestureState.dx < -40) {
-          // Complete swipe action
-          Animated.spring(translateX, {
-            toValue: -80,
-            useNativeDriver: true,
-          }).start();
-
-          // Call swipe action handler
-          onSwipeAction && onSwipeAction();
-        } else {
-          // Return to initial position
-          Animated.spring(translateX, {
-            toValue: 0,
-            useNativeDriver: true,
-          }).start();
-        }
-      },
-    }),
-  ).current;
-
-  // Entrance animation
-  React.useEffect(() => {
-    Animated.sequence([
-      Animated.delay(animationDelay),
-      Animated.parallel([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.spring(scale, {
-          toValue: 1,
-          tension: 50,
-          friction: 7,
-          useNativeDriver: true,
-        }),
-      ]),
-    ]).start();
-  }, []);
-
   return (
-    <Animated.View
+    <View
       style={[
         styles.container,
         {
           width: itemWidth,
-          opacity,
-          transform: [{translateX}, {scale}],
         },
-      ]}
-      {...panResponder.panHandlers}>
+      ]}>
       <Pressable
         style={({pressed}) => [styles.card, {opacity: pressed ? 0.9 : 1}]}
         onPress={onPress}>
@@ -179,24 +107,7 @@ const ProductCard = ({
           {renderLocation}
         </View>
       </Pressable>
-
-      {/* Swipe Action Indicator */}
-      {/* <Animated.View
-        style={[
-          styles.swipeAction,
-          {
-            transform: [{
-              translateX: translateX.interpolate({
-                inputRange: [-80, 0],
-                outputRange: [0, 80],
-              }),
-            }],
-          }
-        ]}
-      >
-        <Feather name="bookmark" size={24} color="white" />
-      </Animated.View> */}
-    </Animated.View>
+    </View>
   );
 };
 

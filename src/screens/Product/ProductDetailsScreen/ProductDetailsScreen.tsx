@@ -1,7 +1,7 @@
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {
   Alert,
   Dimensions,
@@ -73,6 +73,7 @@ const ProductDetailsScreen = () => {
 
   const {productId} = route.params as {productId: string};
 
+  console.log('Product ID:', productId);
   const {data: ProductData, isPending, error} = useProduct(productId);
   const {
     mutate: deleteProduct,
@@ -83,8 +84,11 @@ const ProductDetailsScreen = () => {
   const product = ProductData?.data as ProductDetails;
 
   const {width} = Dimensions.get('window');
-  const styles = productDetailsScreenStyles(theme, width);
-  const globalStyles = global(theme);
+  const styles = useMemo(
+    () => productDetailsScreenStyles(theme, width),
+    [theme, width],
+  );
+  const globalStyles = useMemo(() => global(theme), [theme]);
 
   const formatPrice = (price: number) => {
     return `$${price.toLocaleString('en-US', {
@@ -127,7 +131,7 @@ const ProductDetailsScreen = () => {
       })
       .catch(error => console.error('Failed to open email:', error));
   };
-  const requestStoragePermission = async () => {
+  const requestStoragePermission = useCallback(async () => {
     if (Platform.OS === 'android') {
       try {
         if (Platform.Version >= 33) {
@@ -162,7 +166,7 @@ const ProductDetailsScreen = () => {
     } else {
       return true;
     }
-  };
+  }, []);
   const downloadAndSaveImage = async (imageUrl: string) => {
     try {
       setShowSaveModal(false);
@@ -242,11 +246,30 @@ const ProductDetailsScreen = () => {
   const userId = user?.id || userProfileData?.data?.user?.id;
   const canEditDelete = product?.user?._id === userId;
 
-
   const handleProductDelete = () => {
     deleteProduct(product?._id);
     setDeleteModal(false);
   };
+
+  const closeDeleteModal = useCallback(() => setDeleteModal(false), []);
+  const openDeleteModal = useCallback(() => setDeleteModal(true), []);
+  const closeSaveModal = useCallback(() => setShowSaveModal(false), []);
+  const navigateToProductEdit = useCallback(
+    () => navigation.navigate('EditProduct', {productId: product._id}),
+    [navigation, productId],
+  );
+
+  const viewStyles = useMemo(() => {
+    return [
+      styles.container,
+      {
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      },
+    ];
+  }, [insets]);
 
   if (isPending) {
     return (
@@ -284,16 +307,7 @@ const ProductDetailsScreen = () => {
   }
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          paddingTop: insets.top,
-          paddingBottom: insets.bottom,
-          paddingLeft: insets.left,
-          paddingRight: insets.right,
-        },
-      ]}>
+    <View style={viewStyles}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <CustomHeader text="Product Details" />
 
@@ -401,9 +415,7 @@ const ProductDetailsScreen = () => {
                 icon={
                   <Feather name="edit" size={20} color={theme.buttonText} />
                 }
-                onPress={() =>
-                  navigation.navigate('EditProduct', {productId: product._id})
-                }
+                onPress={navigateToProductEdit}
               />
               <SubmitButton
                 text="Delete Product"
@@ -412,7 +424,7 @@ const ProductDetailsScreen = () => {
                   <Feather name="trash" size={20} color={theme.errorText} />
                 }
                 isLoading={isDeleting}
-                onPress={() => setDeleteModal(true)}
+                onPress={openDeleteModal}
               />
             </View>
           )}
@@ -423,7 +435,7 @@ const ProductDetailsScreen = () => {
         visible={showDeleteModal}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => setDeleteModal(false)}>
+        onRequestClose={closeDeleteModal}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Delete Product</Text>
@@ -433,7 +445,7 @@ const ProductDetailsScreen = () => {
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.modalCancelButton}
-                onPress={() => setDeleteModal(false)}>
+                onPress={closeDeleteModal}>
                 <Text style={styles.modalCancelButtonText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -450,7 +462,7 @@ const ProductDetailsScreen = () => {
         visible={showSaveModal}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => setShowSaveModal(false)}>
+        onRequestClose={closeSaveModal}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Save Image</Text>
@@ -460,7 +472,7 @@ const ProductDetailsScreen = () => {
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.modalCancelButton}
-                onPress={() => setShowSaveModal(false)}>
+                onPress={closeSaveModal}>
                 <Text style={styles.modalCancelButtonText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity

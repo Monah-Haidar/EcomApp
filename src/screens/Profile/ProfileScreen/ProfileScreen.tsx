@@ -9,6 +9,7 @@ import {useAuthStore} from '../../../store/AuthStore';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {global} from '../../../styles/global';
 import {useCallback, useMemo} from 'react';
+import React from 'react';
 
 const ProfileScreen = () => {
   const {theme} = useTheme();
@@ -19,6 +20,11 @@ const ProfileScreen = () => {
 
   const globalStyles = useMemo(() => global(theme), [theme]);
 
+   const handleNavigate = useCallback(
+    () => navigation.navigate('EditProfile'),
+    [navigation]
+  );
+  
   if (isPending) {
     return (
       <View
@@ -28,10 +34,7 @@ const ProfileScreen = () => {
     );
   }
 
-  const handleNavigate = useCallback(
-    () => navigation.navigate('EditProfile'),
-    [navigation]
-  );
+ 
 
   return (
     <ScrollView
@@ -72,4 +75,4 @@ const ProfileScreen = () => {
   );
 };
 
-export default ProfileScreen;
+export default React.memo(ProfileScreen);

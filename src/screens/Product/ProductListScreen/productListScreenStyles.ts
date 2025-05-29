@@ -43,6 +43,7 @@ export const productListScreenStyles = (
       justifyContent: 'center',
       alignItems: 'center',
       height: '100%',
+
     },
     errorContainer: {
       flex: 1,

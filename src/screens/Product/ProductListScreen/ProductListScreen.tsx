@@ -1,26 +1,29 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {
+  ActivityIndicator,
   FlatList,
+  ListRenderItem,
+  Modal,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TextInput,
   useWindowDimensions,
   View,
-  ActivityIndicator,
-  Text,
-  RefreshControl,
-  Pressable,
-  Modal,
-  ListRenderItem,
-  TextInput,
 } from 'react-native';
 
+import {useCallback, useMemo, useState} from 'react';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {ProductCard} from '../../../components/molecules/ProductCard';
+import {spacing} from '../../../constants/spacing';
+import useProducts from '../../../hooks/useProducts/useProducts';
+import {useSearchProduct} from '../../../hooks/useSearchProduct';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
 import {productListScreenStyles} from './productListScreenStyles';
-import useProducts from '../../../hooks/useProducts/useProducts';
-import AnimatedRefreshControl from '../../../utils/AnimatedRefreshControl';
-import {useMemo, useState} from 'react';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import {useSearchProduct} from '../../../hooks/useSearchProduct';
+import {set} from 'react-hook-form';
 
 type ProductType = {
   _id: string;
@@ -35,7 +38,7 @@ type ProductType = {
 
 type RootStackParamList = {
   ProductDetails: {
-    productId: ProductType;
+    productId: string;
   };
   AddProduct: undefined;
 };
@@ -63,26 +66,24 @@ const ProductListScreen = () => {
 
   const {data: searchData, isPending, error} = useSearchProduct(searchQuery);
 
-  
+  const {numColumns, itemWidth} = useMemo(() => {
+    const isLandscape = width > height;
+    const numColumns = isLandscape ? 2 : 1;
+    const itemWidth = width / numColumns - 20;
+    return {numColumns, itemWidth};
+  }, [width, height]);
 
-  const isLandscape = width > height;
-  const numColumns = isLandscape ? 2 : 1;
-  const itemWidth = width / numColumns - 20;
+  const styles = useMemo(() => productListScreenStyles(theme), [theme]);
 
-  const styles = productListScreenStyles(theme);
   const displayProducts = useMemo(() => {
-    // If user has entered a search query
     if (searchQuery.trim()) {
-      // If search is in progress, return empty array to show loading state
       if (isPending) {
         return [];
       }
 
-      // Return search results if available
       if (searchData?.data) {
         const searchResults = searchData.data;
 
-        // Apply the same sorting logic to search results
         if (sortBy === 'price_asc') {
           return [...searchResults].sort((a, b) => a.price - b.price);
         } else if (sortBy === 'price_desc') {
@@ -92,11 +93,9 @@ const ProductListScreen = () => {
         return searchResults;
       }
 
-      // If search data is undefined or null, return empty array to show empty state
       return [];
     }
 
-    // Otherwise use the paginated product data
     const products = data?.pages.flatMap(page => page.data) || [];
 
     if (sortBy === 'price_asc') {
@@ -113,6 +112,7 @@ const ProductListScreen = () => {
       fetchNextPage();
     }
   };
+
   const renderFooter = () => {
     if (!isFetchingNextPage) return null;
     return (
@@ -121,10 +121,9 @@ const ProductListScreen = () => {
       </View>
     );
   };
+
   const renderEmptyState = () => {
-    
     if (searchQuery.trim()) {
-      
       if (isPending) {
         return (
           <View style={styles.emptyStateContainer}>
@@ -135,7 +134,7 @@ const ProductListScreen = () => {
           </View>
         );
       }
-      
+
       if (!searchData?.data || searchData.data.length === 0) {
         return (
           <View style={styles.emptyStateContainer}>
@@ -176,12 +175,173 @@ const ProductListScreen = () => {
     return null;
   };
 
+  const renderSkeleton = useMemo(
+    () => (
+      <ScrollView
+        style={{
+          flex: 1,
+          marginHorizontal: 10,
+          marginTop: 12,
+          height: '100%',
+        }}>
+        <SkeletonPlaceholder
+          borderRadius={4}
+          backgroundColor={theme.cardBackground}
+          shimmerWidth={width}>
+          {[...Array(3)].map((_, index) => (
+            <SkeletonPlaceholder.Item
+              key={index}
+              flexDirection="column"
+              marginTop={20}>
+              <SkeletonPlaceholder.Item
+                height={165}
+                borderRadius={spacing.radius_md}
+              />
+              <SkeletonPlaceholder.Item
+                marginTop={10}
+                height={20}
+                borderRadius={spacing.radius_md}
+              />
+              <SkeletonPlaceholder.Item
+                width={itemWidth * 0.3}
+                height={20}
+                marginTop={10}
+                borderRadius={spacing.radius_md}
+              />
+            </SkeletonPlaceholder.Item>
+          ))}
+        </SkeletonPlaceholder>
+      </ScrollView>
+    ),
+    [theme.cardBackground, width, itemWidth],
+  );
+
+  const handleRefresh = () => refetch();
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+  };
+
+  const renderItem: ListRenderItem<ProductType> = useCallback(
+    ({item, index}) => (
+      <ProductCard
+        item={item}
+        itemWidth={itemWidth}
+        source={{
+          uri: `https://backend-practice.eurisko.me${item.images[0]?.url}`,
+        }}
+        onPress={() =>
+          navigation.navigate('ProductDetails', {productId: item._id})
+        }
+        onSwipeAction={() => console.log('Bookmarked:', item._id)}
+        animationDelay={index * 50}
+      />
+    ),
+    [itemWidth, navigation],
+  );
+
+  const renderSortButton = useCallback(
+    () => (
+      <Pressable
+        style={({pressed}) => [styles.sortButton, {opacity: pressed ? 0.8 : 1}]}
+        onPress={() => setShowSortModal(true)}>
+        <Icon name="sort" size={24} color={theme.text} />
+        <Text style={styles.sortButtonText}>Sort</Text>
+      </Pressable>
+    ),
+    [theme.text, styles.sortButtonText, styles.sortButton],
+  );
+
+  const renderSortModal = useCallback(
+    () => (
+      <Modal
+        visible={showSortModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowSortModal(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Sort by Price</Text>
+
+            <Pressable
+              style={({pressed}) => [
+                styles.sortOption,
+                sortBy === 'none' && styles.selectedOption,
+                {opacity: pressed ? 0.8 : 1},
+              ]}
+              onPress={() => {
+                setSortBy('none');
+                setShowSortModal(false);
+              }}>
+              <Text
+                style={[
+                  styles.sortOptionText,
+                  sortBy === 'none' && styles.selectedOptionText,
+                ]}>
+                Default
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={({pressed}) => [
+                styles.sortOption,
+                sortBy === 'price_asc' && styles.selectedOption,
+                {opacity: pressed ? 0.8 : 1},
+              ]}
+              onPress={() => {
+                setSortBy('price_asc');
+                setShowSortModal(false);
+              }}>
+              <Text
+                style={[
+                  styles.sortOptionText,
+                  sortBy === 'price_asc' && styles.selectedOptionText,
+                ]}>
+                Price: Low to High
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={({pressed}) => [
+                styles.sortOption,
+                sortBy === 'price_desc' && styles.selectedOption,
+                {opacity: pressed ? 0.8 : 1},
+              ]}
+              onPress={() => {
+                setSortBy('price_desc');
+                setShowSortModal(false);
+              }}>
+              <Text
+                style={[
+                  styles.sortOptionText,
+                  sortBy === 'price_desc' && styles.selectedOptionText,
+                ]}>
+                Price: High to Low
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={({pressed}) => [
+                styles.cancelButton,
+                {opacity: pressed ? 0.8 : 1},
+              ]}
+              onPress={() => setShowSortModal(false)}>
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+    ),
+    [showSortModal, styles, sortBy],
+  );
+
+  const navigateAddProduct = useCallback(
+    () => navigation.navigate('AddProduct'),
+    [navigation],
+  );
+
   if (status === 'pending') {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.primary} />
-      </View>
-    );
+    return renderSkeleton;
   }
 
   if (status === 'error') {
@@ -200,116 +360,6 @@ const ProductListScreen = () => {
     );
   }
 
-  const handleRefresh = () => refetch();
-
-  const handleClearSearch = () => {
-    setSearchQuery('');
-  };
-
-  const renderItem: ListRenderItem<ProductType> = ({item, index}) => (
-    <ProductCard
-      item={item}
-      itemWidth={itemWidth}
-      source={{
-        uri: `https://backend-practice.eurisko.me${item.images[0]?.url}`,
-      }}
-      onPress={() =>
-        navigation.navigate('ProductDetails', {productId: item._id})
-      }
-      onSwipeAction={() => console.log('Bookmarked:', item._id)}
-      animationDelay={index * 50}
-    />
-  );
-
-  const renderSortButton = () => (
-    <Pressable
-      style={({pressed}) => [styles.sortButton, {opacity: pressed ? 0.8 : 1}]}
-      onPress={() => setShowSortModal(true)}>
-      <Icon name="sort" size={24} color={theme.text} />
-      <Text style={styles.sortButtonText}>Sort</Text>
-    </Pressable>
-  );
-
-  const renderSortModal = () => (
-    <Modal
-      visible={showSortModal}
-      transparent
-      animationType="slide"
-      onRequestClose={() => setShowSortModal(false)}>
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Sort by Price</Text>
-
-          <Pressable
-            style={({pressed}) => [
-              styles.sortOption,
-              sortBy === 'none' && styles.selectedOption,
-              {opacity: pressed ? 0.8 : 1},
-            ]}
-            onPress={() => {
-              setSortBy('none');
-              setShowSortModal(false);
-            }}>
-            <Text
-              style={[
-                styles.sortOptionText,
-                sortBy === 'none' && styles.selectedOptionText,
-              ]}>
-              Default
-            </Text>
-          </Pressable>
-
-          <Pressable
-            style={({pressed}) => [
-              styles.sortOption,
-              sortBy === 'price_asc' && styles.selectedOption,
-              {opacity: pressed ? 0.8 : 1},
-            ]}
-            onPress={() => {
-              setSortBy('price_asc');
-              setShowSortModal(false);
-            }}>
-            <Text
-              style={[
-                styles.sortOptionText,
-                sortBy === 'price_asc' && styles.selectedOptionText,
-              ]}>
-              Price: Low to High
-            </Text>
-          </Pressable>
-
-          <Pressable
-            style={({pressed}) => [
-              styles.sortOption,
-              sortBy === 'price_desc' && styles.selectedOption,
-              {opacity: pressed ? 0.8 : 1},
-            ]}
-            onPress={() => {
-              setSortBy('price_desc');
-              setShowSortModal(false);
-            }}>
-            <Text
-              style={[
-                styles.sortOptionText,
-                sortBy === 'price_desc' && styles.selectedOptionText,
-              ]}>
-              Price: High to Low
-            </Text>
-          </Pressable>
-
-          <Pressable
-            style={({pressed}) => [
-              styles.cancelButton,
-              {opacity: pressed ? 0.8 : 1},
-            ]}
-            onPress={() => setShowSortModal(false)}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </Pressable>
-        </View>
-      </View>
-    </Modal>
-  );
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -324,10 +374,10 @@ const ProductListScreen = () => {
             placeholderTextColor={theme.text + '80'}
             autoCapitalize="none"
           />
-          
+
           {searchQuery.length > 0 && (
             <Pressable
-              onPress={() => setSearchQuery('')}
+              onPress={handleClearSearch}
               style={({pressed}) => [{opacity: pressed ? 0.7 : 1}]}>
               <Icon name="close" size={24} color={theme.text} />
             </Pressable>
@@ -335,11 +385,10 @@ const ProductListScreen = () => {
         </View>
         <View>{renderSortButton()}</View>
       </View>
-      
+
       <FlatList
         contentContainerStyle={[
           styles.container,
-          
           (!displayProducts || displayProducts.length === 0) && {flex: 1},
         ]}
         data={displayProducts}
@@ -364,7 +413,7 @@ const ProductListScreen = () => {
           />
         }
       />
-      
+
       {renderSortModal()}
 
       <Pressable
@@ -372,7 +421,7 @@ const ProductListScreen = () => {
           styles.floatingActionButton,
           {opacity: pressed ? 0.8 : 1},
         ]}
-        onPress={() => navigation.navigate('AddProduct')}>
+        onPress={navigateAddProduct}>
         <Icon name="add" size={24} color="#fff" />
       </Pressable>
     </View>

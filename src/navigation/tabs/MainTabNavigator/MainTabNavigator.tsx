@@ -4,6 +4,7 @@ import {ProductStack} from '../../stacks/ProductStack';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useCallback} from 'react';
+import { CartScreen } from '../../../screens/Product/CartScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -42,6 +43,7 @@ const MainTabNavigator = () => {
       })}>
       <Tab.Screen name="Home" component={ProductStack} />
       <Tab.Screen name="Profile" component={ProfileStack} />
+      <Tab.Screen name="Cart" component={CartScreen} />
     </Tab.Navigator>
   );
 };

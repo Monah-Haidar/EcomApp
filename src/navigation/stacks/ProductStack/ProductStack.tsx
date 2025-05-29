@@ -55,6 +55,7 @@ const ProductStack = () => {
             fontSize: FONT_SIZE.XL,
           },
           headerRight: renderHeaderRight,
+          animation: 'ios_from_right',
         }}
       />
       <Stack.Screen
