@@ -31,9 +31,10 @@ import {useUserProfile} from '../../../hooks/useUserProfile';
 import {useAuthStore} from '../../../store/AuthStore';
 import {productDetailsScreenStyles} from './productDetailsScreenStyles';
 import {ProductStackParamList} from '../../../navigation/types';
+import {useCartStore} from '../../../store/CartStore';
 
 type ProductDetails = {
-  location?: {
+  location: {
     name: string;
     latitude?: number;
     longitude?: number;
@@ -49,7 +50,8 @@ type ProductDetails = {
   user: {
     _id: string;
     email: string;
-  };  createdAt?: string;
+  };
+  createdAt?: string;
 };
 
 const ProductDetailsScreen = () => {
@@ -59,6 +61,7 @@ const ProductDetailsScreen = () => {
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
   const user = useAuthStore(state => state.user);
+  const addToCart = useCartStore(state => state.addToCart);
   const {data: userProfileData} = useUserProfile();
 
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -76,7 +79,7 @@ const ProductDetailsScreen = () => {
   } = useDeleteProduct();
 
   const product = ProductData?.data as ProductDetails;
-
+  // console.log('Product Details:', product);
   const {width} = Dimensions.get('window');
   const styles = useMemo(
     () => productDetailsScreenStyles(theme, width),
@@ -253,8 +256,35 @@ const ProductDetailsScreen = () => {
     [navigation, productId],
   );
 
-
   const shareProduct = () => null;
+
+  const addProductToCart = () => {
+    if (!product) return;
+
+    const cartProduct = {
+      _id: product._id,
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      images: Array.isArray(product.images)
+        ? product.images.map(img => ({
+            url: img.url,
+            _id: img._id,
+          }))
+        : [],
+      user: product.user && {
+        _id: product.user._id || '',
+        email: product.user.email || '',
+      },
+      location: {
+        name: product.location.name || 'Unknown Location',
+        latitude: product.location.latitude || 0,
+        longitude: product.location.longitude || 0,
+      },
+    };
+    // console.log('Adding product to cart:', cartProduct);
+    addToCart(cartProduct);
+  };
 
   const viewStyles = useMemo(() => {
     return [
@@ -387,15 +417,17 @@ const ProductDetailsScreen = () => {
               style={({pressed}) => [
                 styles.emailButton,
                 {opacity: pressed ? 0.8 : 1, backgroundColor: theme.secondary},
-              ]}>
+              ]}
+              onPress={shareProduct}>
               <Feather name="share" size={20} color={theme.buttonText} />
-              <Text style={styles.emailButtonText} onPress={shareProduct}>Share</Text>
+              <Text style={styles.emailButtonText}>Share</Text>
             </Pressable>
             <Pressable
               style={({pressed}) => [
                 styles.emailButton,
                 {opacity: pressed ? 0.8 : 1},
-              ]}>
+              ]}
+              onPress={addProductToCart}>
               <Feather
                 name="shopping-cart"
                 size={20}

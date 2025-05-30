@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import {create} from 'zustand';
+import {createJSONStorage, persist} from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Product = {
@@ -9,9 +9,14 @@ type Product = {
   price: number;
   images: {url: string; _id: string}[];
   user: {_id: string; email: string};
+  location: {
+    name: string;
+    latitude: number;
+    longitude: number;
+  };
 };
 
-type CartItem = Product & {
+export type CartItem = Product & {
   quantity: number;
 };
 
@@ -22,9 +27,8 @@ type CartStoreState = {
   addToCart: (item: Product) => void;
   removeFromCart: (itemId: string) => void;
   clearCart: () => void;
+  updateQuantity: (itemId: string, type: number) => void;
 };
-
-
 
 const asyncStorage = {
   setItem: async (name: string, value: string) => {
@@ -106,6 +110,43 @@ const useCartStore = create<CartStoreState>()(
           totalPrice: 0,
           totalQuantity: 0,
         })),
+
+      updateQuantity: (itemId, type) =>
+        set(state => {
+          const item = state.cartItems.find(ci => ci._id === itemId);
+          if (!item) return state;
+
+          switch (type) {
+            case 1: // Increase quantity
+              return {
+                cartItems: state.cartItems.map(ci =>
+                  ci._id === itemId ? {...ci, quantity: ci.quantity + 1} : ci,
+                ),
+                totalPrice: state.totalPrice + item.price,
+                totalQuantity: state.totalQuantity + 1,
+              };
+            case -1: // Decrease quantity
+              if (item.quantity <= 1) {
+                return {
+                  cartItems: state.cartItems.filter(ci => ci._id !== itemId),
+                  totalPrice: state.totalPrice - item.price * item.quantity,
+                  totalQuantity: state.totalQuantity - item.quantity,
+                };
+              }
+              return {
+                cartItems: state.cartItems.map(ci =>
+                  ci._id === itemId ? {...ci, quantity: ci.quantity - 1} : ci,
+                ),
+                totalPrice: state.totalPrice - item.price,
+                totalQuantity: state.totalQuantity - 1,
+              };
+            default:
+              
+              return state;
+          }
+
+         
+        }),
     }),
     {
       name: 'cart-storage',

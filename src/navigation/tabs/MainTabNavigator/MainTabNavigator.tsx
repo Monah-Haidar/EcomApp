@@ -28,6 +28,8 @@ const MainTabNavigator = () => {
         iconName = focused ? 'home' : 'home-outline';
       } else if (route.name === 'Profile') {
         iconName = focused ? 'person-circle-sharp' : 'person-circle-outline';
+      } else if (route.name === 'Cart') {
+        iconName = focused ? 'cart' : 'cart-outline';
       }
 
       return <Ionicons name={iconName} size={size} color={color} />;
