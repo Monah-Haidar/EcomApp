@@ -67,7 +67,7 @@ const ProductDetailsScreen = () => {
 
   const {productId} = route.params as {productId: string};
 
-  console.log('Product ID:', productId);
+  // console.log('Product ID:', productId);
   const {data: ProductData, isPending, error} = useProduct(productId);
   const {
     mutate: deleteProduct,

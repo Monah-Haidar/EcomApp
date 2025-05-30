@@ -34,7 +34,7 @@ const MapView = ({location, style, interactive = true}: MapViewProps) => {
   );
 
   useEffect(() => {
-    console.log('MapView: Received location:', location);
+    // console.log('MapView: Received location:', location);
     try {
       if (
         !location.latitude ||
@@ -46,11 +46,11 @@ const MapView = ({location, style, interactive = true}: MapViewProps) => {
         location.longitude < -180 ||
         location.longitude > 180
       ) {
-        console.log('MapView: Invalid coordinates detected');
+        // console.log('MapView: Invalid coordinates detected');
         throw new Error('Invalid location coordinates');
       }
 
-      console.log('MapView: Coordinates are valid, resetting error state');
+      // console.log('MapView: Coordinates are valid, resetting error state');
       setMapError(null);
     } catch (error) {
       console.error('Map initialization error:', error);
