@@ -29,6 +29,8 @@
 		38A2C42B67914417B3B8F986 /* Poppins-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D19D5ABD9BEC499B8C95B2A5 /* Poppins-SemiBoldItalic.ttf */; };
 		71DCC01BBB9448F2ADD47739 /* Poppins-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0AA9BE0453524934B82373DF /* Poppins-Thin.ttf */; };
 		D772EAB2AF0C4C338FE19330 /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 940E0159B5854C8FA0852BD2 /* Poppins-ThinItalic.ttf */; };
+		1DF2703017DF49F6B81F2701 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5862409720A048E5BE273DCA /* BootSplash.storyboard */; };
+		EAFD053705CD45E19244AFE7 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 186D9A57F61B44AD930CAA10 /* Colors.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +73,8 @@
 		D19D5ABD9BEC499B8C95B2A5 /* Poppins-SemiBoldItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-SemiBoldItalic.ttf"; path = "../src/assets/fonts/Poppins-SemiBoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		0AA9BE0453524934B82373DF /* Poppins-Thin.ttf */ = {isa = PBXFileReference; name = "Poppins-Thin.ttf"; path = "../src/assets/fonts/Poppins-Thin.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		940E0159B5854C8FA0852BD2 /* Poppins-ThinItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-ThinItalic.ttf"; path = "../src/assets/fonts/Poppins-ThinItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5862409720A048E5BE273DCA /* BootSplash.storyboard */ = {isa = PBXFileReference; name = "BootSplash.storyboard"; path = "EcomApp/BootSplash.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		186D9A57F61B44AD930CAA10 /* Colors.xcassets */ = {isa = PBXFileReference; name = "Colors.xcassets"; path = "EcomApp/Colors.xcassets"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = folder.assetcatalog; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +105,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				5862409720A048E5BE273DCA /* BootSplash.storyboard */,
+				186D9A57F61B44AD930CAA10 /* Colors.xcassets */,
 			);
 			name = EcomApp;
 			sourceTree = "<group>";
@@ -266,6 +272,8 @@
 				38A2C42B67914417B3B8F986 /* Poppins-SemiBoldItalic.ttf in Resources */,
 				71DCC01BBB9448F2ADD47739 /* Poppins-Thin.ttf in Resources */,
 				D772EAB2AF0C4C338FE19330 /* Poppins-ThinItalic.ttf in Resources */,
+				1DF2703017DF49F6B81F2701 /* BootSplash.storyboard in Resources */,
+				EAFD053705CD45E19244AFE7 /* Colors.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

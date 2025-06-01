@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {AppNavigator} from './src/navigation/navigator';
 // import {AuthStore} from './src/store/AuthStore';
 import {ThemeProvider} from './src/store/ThemeStore/ThemeStore';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import BootSplash from "react-native-bootsplash";
 
 const queryClient = new QueryClient();
 
 function App(): React.JSX.Element {
+useEffect(() => {
+    const init = async () => {
+      // …do multiple sync or async tasks
+    };
+
+    init().finally(async () => {
+      await BootSplash.hide({ fade: true });
+      console.log("BootSplash has been hidden successfully");
+    });
+  }, []);
+  
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <QueryClientProvider client={queryClient}>
