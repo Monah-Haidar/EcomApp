@@ -63,7 +63,7 @@ type AuthState = {
   accessToken: string | null;
   refreshToken: string | null;
   user: User | null;
-  isAuthenticated: boolean;
+  // isAuthenticated: boolean;
   hydrated: boolean;
 
   setHydrated?: () => void;
@@ -80,14 +80,15 @@ const useAuthStore = create<AuthState>()(
       refreshToken: null,
       user: null,
 
-      isAuthenticated: false,
+      // isAuthenticated: false,
 
       hydrated: false,
 
       setHydrated: () => set({hydrated: true}),
 
       setTokens: (accessToken, refreshToken) =>
-        set({accessToken, refreshToken, isAuthenticated: true}),
+        set({accessToken, refreshToken}),
+        // set({accessToken, refreshToken, isAuthenticated: true}),
 
       setUser: user => set({user}),
       
@@ -97,7 +98,7 @@ const useAuthStore = create<AuthState>()(
           accessToken: null,
           refreshToken: null,
           user: null,
-          isAuthenticated: false,
+          // isAuthenticated: false,
         }),
     }),
     {

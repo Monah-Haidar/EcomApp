@@ -3,6 +3,14 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
+
+project.ext.envConfigFiles = [
+    development: ".env.development",
+    staging: ".env.staging",
+    production: ".env.production"
+]
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -77,8 +85,11 @@ android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
-
+    
     namespace "com.ecomapp"
+
+    flavorDimensions "environment"
+
     defaultConfig {
         applicationId "com.ecomapp"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -86,6 +97,34 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    productFlavors {
+        development {
+            dimension "environment"
+            applicationIdSuffix ".dev"
+            resValue "string", "app_name", "EcomApp Dev"
+            buildConfigField "String", "ENVIRONMENT", '"development"'
+        }
+
+        staging {
+            dimension "environment"
+            applicationIdSuffix ".staging"
+            versionNameSuffix "-staging"
+            resValue "string", "app_name", "EcomApp Staging"
+            buildConfigField "String", "ENVIRONMENT", '"staging"'
+        }
+
+        production {
+            dimension "environment"
+            resValue "string", "app_name", "EcomApp"
+            buildConfigField "String", "ENVIRONMENT", '"production"'
+        }
+    }
+
+
+
+
+    
 
     configurations.all {
         resolutionStrategy {
