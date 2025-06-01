@@ -48,27 +48,25 @@ const CartScreen = () => {
           <Text style={styles.emptyText}>Your cart is empty</Text>
         </View>
       ) : (
-        <View style={{paddingHorizontal: spacing.md_plus}}>
-          <View>
+        <View style={{paddingHorizontal: spacing.md_plus}}>          <View>
             {cartItems.map((item: CartItem) => (
-              <View key={item._id} style={styles.itemContainer}>
-                <CartItemCard
-                  id={item._id}
-                  title={item.title}
-                  description={item.description}
-                  price={item.price}
-                  images={item.images}
-                  quantity={item.quantity}
-                  location={item.location}
-                  removeFromCart={() => removeFromCart(item._id)}
-                  decreaseQuantity={() =>
-                    updateQuantity(item._id, -1)
-                  }
-                  increaseQuantity={() =>
-                    updateQuantity(item._id, +1)
-                  }
-                />
-              </View>
+              <CartItemCard
+                key={item._id}
+                id={item._id}
+                title={item.title}
+                description={item.description}
+                price={item.price}
+                images={item.images}
+                quantity={item.quantity}
+                location={item.location}
+                removeFromCart={() => removeFromCart(item._id)}
+                decreaseQuantity={() =>
+                  updateQuantity(item._id, -1)
+                }
+                increaseQuantity={() =>
+                  updateQuantity(item._id, +1)
+                }
+              />
             ))}
           </View>
 

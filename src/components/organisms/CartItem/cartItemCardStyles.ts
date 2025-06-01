@@ -8,6 +8,45 @@ export const cartItemCardStyles = (
   theme: typeof themes.lightTheme | typeof themes.darkTheme,
 ) =>
   StyleSheet.create({
+    container: {
+      position: 'relative',
+      overflow: 'hidden',
+      marginBottom: spacing.sm,
+    },
+    deleteBackground: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      backgroundColor: '#ff4444',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+    deleteButton: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: spacing.lg,
+    },
+    deleteText: {
+      color: '#fff',
+      fontSize: normalizeFont(FONT_SIZE.XS),
+      fontFamily: FONT_FAMILY.POPPINS_SEMI_BOLD,
+      marginTop: spacing.xs,
+    },
+    cardContainer: {
+      flexDirection: 'row',
+      backgroundColor: theme.cardBackground,
+      borderRadius: spacing.radius_md,
+      padding: spacing.sm,
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 1},
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+      elevation: 2,
+    },
     itemContainer: {
       backgroundColor: theme.cardBackground,
       borderRadius: spacing.radius_md,
