@@ -1,32 +1,36 @@
 import axios from 'axios';
-import { useAuthStore } from '../store/AuthStore';
+import {useAuthStore} from '../store/AuthStore';
+import Config from 'react-native-config';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://backend-practice.eurisko.me/api/',
+  baseURL: Config.BASE_URL || 'https://backend-practice.eurisko.me/api/',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-
-
-axiosInstance.interceptors.request.use(config => {
-  const token = useAuthStore.getState().accessToken;
-
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-
-  return config;
-  
-}, error => {
-  return Promise.reject(error);
-});
-
+axiosInstance.interceptors.request.use(
+  config => {
+    const token = useAuthStore.getState().accessToken;
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    console.log('#########################');
+    console.log('CONFIG OBJECT:', Config);
+    console.log('CONFIG BASE_URL:', Config.BASE_URL);
+    console.log('#########################');
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  },
+);
 
 axiosInstance.interceptors.response.use(
   response => response,
   async error => {
     const originalRequest = error.config;
-    console.log("hello from axios interceptor");
+
+    // console.log("hello from axios interceptor");
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -39,11 +43,13 @@ axiosInstance.interceptors.response.use(
         }
 
         const response = await axios.post(
-          'https://backend-practice.eurisko.me/api/auth/refresh-token', {refreshToken});
-
+          'https://backend-practice.eurisko.me/api/auth/refresh-token',
+          {refreshToken},
+        );
 
         if (response.data.success) {
-          const {accessToken, refreshToken: newRefreshToken} = response.data.data;
+          const {accessToken, refreshToken: newRefreshToken} =
+            response.data.data;
           useAuthStore.getState().setTokens(accessToken, newRefreshToken);
 
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
@@ -55,12 +61,8 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-
     return Promise.reject(error);
-  }
+  },
 );
 
-
-
 export default axiosInstance;
-
