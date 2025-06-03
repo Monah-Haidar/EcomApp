@@ -1,15 +1,14 @@
-import {useNavigation} from '@react-navigation/native';
-import {ScrollView, Text, View} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useMemo } from 'react';
+import { ScrollView, Text, View } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import {SubmitButton} from '../../../components/atoms/SubmitButton';
-import {InfoRow} from '../../../components/molecules/InfoRow';
-import {ProfileHeader} from '../../../components/organisms/ProfileHeader';
-import {useUserProfile} from '../../../hooks/useUserProfile';
-import {useAuthStore} from '../../../store/AuthStore';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {global} from '../../../styles/global';
-import {useCallback, useMemo} from 'react';
-import React from 'react';
+import { SubmitButton } from '../../../components/atoms/SubmitButton';
+import { InfoRow } from '../../../components/molecules/InfoRow';
+import { ProfileHeader } from '../../../components/organisms/ProfileHeader';
+import { useUserProfile } from '../../../hooks/useUserProfile';
+import { useAuthStore } from '../../../store/AuthStore';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { global } from '../../../styles/global';
 
 const ProfileScreen = () => {
   const {theme} = useTheme();
@@ -20,11 +19,13 @@ const ProfileScreen = () => {
 
   const globalStyles = useMemo(() => global(theme), [theme]);
 
-   const handleNavigate = useCallback(
+  const handleNavigate = useCallback(
     () => navigation.navigate('EditProfile'),
-    [navigation]
+    [navigation],
   );
+
   
+
   if (isPending) {
     return (
       <View
@@ -34,14 +35,12 @@ const ProfileScreen = () => {
     );
   }
 
- 
-
   return (
     <ScrollView
       style={[globalStyles.container, {backgroundColor: theme.background}]}
       contentContainerStyle={globalStyles.contentContainer}>
       <ProfileHeader />
-
+      
       <View>
         <View style={globalStyles.infoCard}>
           <InfoRow

@@ -1,5 +1,5 @@
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   ActivityIndicator,
   FlatList,
@@ -14,16 +14,16 @@ import {
   View,
 } from 'react-native';
 
-import {useCallback, useMemo, useState} from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {ProductCard} from '../../../components/molecules/ProductCard';
-import {spacing} from '../../../constants/spacing';
+import { ProductCard } from '../../../components/molecules/ProductCard';
+import { spacing } from '../../../constants/spacing';
 import useProducts from '../../../hooks/useProducts/useProducts';
-import {useSearchProduct} from '../../../hooks/useSearchProduct';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {productListScreenStyles} from './productListScreenStyles';
-import {ProductStackParamList} from '../../../navigation/types';
+import { useSearchProduct } from '../../../hooks/useSearchProduct';
+import { ProductStackParamList } from '../../../navigation/types';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { productListScreenStyles } from './productListScreenStyles';
 
 
 type ProductType = {
@@ -356,6 +356,7 @@ const ProductListScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        
         <View style={styles.searchBarContainer}>
           <Icon name="search" size={24} color={theme.text + '80'} />
           <TextInput
