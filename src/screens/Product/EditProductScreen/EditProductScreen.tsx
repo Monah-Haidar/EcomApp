@@ -25,6 +25,7 @@ import {ProductFormData, ProductSchema} from '../../../schemas/ProductSchema';
 import {global} from '../../../styles/global';
 import {editProductScreenStyles} from './editProductScreenStyles';
 import React from 'react';
+import Config from 'react-native-config';
 
 interface ProductImage {
   uri: string;
@@ -80,7 +81,7 @@ const EditProductScreen = ({route}: {route: any}) => {
 
       if (product.images && product.images.length > 0) {
         const formattedImages = product.images.map(img => ({
-          uri: `https://backend-practice.eurisko.me${img.url}`,
+          uri: `${Config.BASE_URL}${img.url}`,
           type: 'image/jpeg',
           name: `image-${img._id}.jpg`,
           _id: img._id,

@@ -24,6 +24,7 @@ import { useSearchProduct } from '../../../hooks/useSearchProduct';
 import { ProductStackParamList } from '../../../navigation/types';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { productListScreenStyles } from './productListScreenStyles';
+import Config from 'react-native-config';
 
 
 type ProductType = {
@@ -221,7 +222,7 @@ const ProductListScreen = () => {
         item={item}
         itemWidth={itemWidth}
         source={{
-          uri: `https://backend-practice.eurisko.me${item.images[0]?.url}`,
+          uri: `${Config.BASE_URL}${item.images[0]?.url}`,
         }}
         onPress={() =>
           navigation.navigate('ProductDetails', {productId: item._id})

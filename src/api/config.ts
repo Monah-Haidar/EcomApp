@@ -2,8 +2,18 @@ import axios from 'axios';
 import {useAuthStore} from '../store/AuthStore';
 import Config from 'react-native-config';
 
+// Log config values immediately for debugging
+console.log('=== REACT NATIVE CONFIG DEBUG ===');
+console.log('Config object:', Config);
+console.log('Config.BASE_URL:', Config.BASE_URL);
+console.log('Config.API_URL:', Config.API_URL);
+console.log('Config.ENV:', Config.ENV);
+console.log('Config keys:', Object.keys(Config));
+console.log('==================================');
+console.log(Config.API_URL + 'auth/refresh-token');
+
 const axiosInstance = axios.create({
-  baseURL: Config.BASE_URL || 'https://backend-practice.eurisko.me/api/',
+  baseURL: Config.API_URL || 'https://backend-practice.eurisko.me/api/',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -13,10 +23,12 @@ axiosInstance.interceptors.request.use(
   config => {
     const token = useAuthStore.getState().accessToken;
     if (token) config.headers.Authorization = `Bearer ${token}`;
+
     console.log('#########################');
     console.log('CONFIG OBJECT:', Config);
-    console.log('CONFIG BASE_URL:', Config.BASE_URL);
+    console.log('CONFIG API_URL:', Config.API_URL);
     console.log('#########################');
+
     return config;
   },
   error => {
@@ -43,7 +55,7 @@ axiosInstance.interceptors.response.use(
         }
 
         const response = await axios.post(
-          'https://backend-practice.eurisko.me/api/auth/refresh-token',
+          Config.API_URL + 'auth/refresh-token',
           {refreshToken},
         );
 

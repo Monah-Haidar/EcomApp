@@ -4,8 +4,8 @@
   "private": true,  
   "scripts": {
     "android": "react-native run-android --mode=productionDebug",
-    "android:dev": "react-native run-android --mode=developmentDebug",
-    "android:staging": "react-native run-android --mode=stagingDebug",
+    "android:dev": "react-native run-android --mode=developmentDebug --appId com.ecomapp.dev",
+    "android:staging": "react-native run-android --mode=stagingDebug --appId com.ecomapp.staging",
     "start": "react-native start",
 
     "ios": "react-native run-ios",

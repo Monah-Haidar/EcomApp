@@ -32,6 +32,7 @@ import {useAuthStore} from '../../../store/AuthStore';
 import {productDetailsScreenStyles} from './productDetailsScreenStyles';
 import {ProductStackParamList} from '../../../navigation/types';
 import {useCartStore} from '../../../store/CartStore';
+import Config from 'react-native-config';
 
 type ProductDetails = {
   location: {
@@ -169,7 +170,7 @@ const ProductDetailsScreen = () => {
       setShowSaveModal(false);
       Alert.alert('Downloading', 'Downloading image...');
 
-      const fullImageUrl = `https://backend-practice.eurisko.me${imageUrl}`;
+      const fullImageUrl = `${Config.BASE_URL}${imageUrl}`;
 
       const fileName = `product_${Date.now()}.jpg`;
 
@@ -252,7 +253,7 @@ const ProductDetailsScreen = () => {
   const openDeleteModal = useCallback(() => setDeleteModal(true), []);
   const closeSaveModal = useCallback(() => setShowSaveModal(false), []);
   const navigateToProductEdit = useCallback(
-    () => navigation.navigate('EditProduct', {productId: product._id}),
+    () => navigation.navigate('EditProduct', {productId: product?._id}),
     [navigation, productId],
   );
 

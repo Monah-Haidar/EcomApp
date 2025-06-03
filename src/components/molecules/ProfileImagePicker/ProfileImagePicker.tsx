@@ -3,6 +3,7 @@ import { Image, Text, View } from 'react-native';
 import useAuthStore from '../../../store/AuthStore/AuthStore';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { profileImagePickerStyles } from './profileImagePickerStyles';
+import Config from 'react-native-config';
 
 interface ProfileImagePickerProps {
   localImage?: {uri: string} | null;
@@ -26,7 +27,7 @@ const ProfileImagePicker = ({localImage}: ProfileImagePickerProps) => {
           
           <Image
             source={{
-              uri: 'https://backend-practice.eurisko.me' + user.profileImage.url,
+              uri: Config.BASE_URL + user.profileImage.url,
             }}
             style={styles.profileImage}
           />

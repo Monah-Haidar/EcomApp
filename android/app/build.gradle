@@ -69,9 +69,10 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         
+        resConfigs "en"
+        
     }    
-    
-    productFlavors {
+      productFlavors {
         production {
             dimension "environment"
             resValue "string", "app_name", "EcomApp"
@@ -80,6 +81,7 @@ android {
 
         development {
             dimension "environment"
+            versionNameSuffix "-dev"
             applicationIdSuffix ".dev"
             resValue "string", "app_name", "EcomApp DEV"
             buildConfigField "String", "ENVIRONMENT", '"development"'

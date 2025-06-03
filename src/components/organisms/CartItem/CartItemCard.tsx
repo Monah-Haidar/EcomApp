@@ -11,6 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import {cartItemCardStyles} from './cartItemCardStyles';
 import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import Config from 'react-native-config';
 
 const {width: screenWidth} = Dimensions.get('window');
 const SWIPE_THRESHOLD = screenWidth * 0.3;
@@ -108,7 +109,7 @@ const CartItemCard = ({
               source={{
                 uri: images?.[0]?.url?.startsWith('http')
                   ? images[0].url
-                  : `https://backend-practice.eurisko.me${images?.[0]?.url || ''}`,
+                  : `${Config.BASE_URL}${images?.[0]?.url || ''}`,
               }}
               style={styles.productImage}
             />
