@@ -1,13 +1,18 @@
 {
   "name": "EcomApp",
   "version": "0.0.1",
-  "private": true,  
+  "private": true,    
   "scripts": {
     "android": "react-native run-android --mode=productionDebug",
     "android:dev": "react-native run-android --mode=developmentDebug --appId com.ecomapp.dev",
     "android:staging": "react-native run-android --mode=stagingDebug --appId com.ecomapp.staging",
+    "android:release": "react-native run-android --mode=productionRelease",
+    "android:dev:release": "react-native run-android --mode=developmentRelease --appId com.ecomapp.dev",
+    "android:staging:release": "react-native run-android --mode=stagingRelease --appId com.ecomapp.staging",
+    "build:android": "cd android && ./gradlew assembleProductionRelease",
+    "build:android:dev": "cd android && ./gradlew assembleDevelopmentRelease", 
+    "build:android:staging": "cd android && ./gradlew assembleStagingRelease",
     "start": "react-native start",
-
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "test": "jest"
