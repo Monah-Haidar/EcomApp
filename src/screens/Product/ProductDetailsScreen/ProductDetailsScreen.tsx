@@ -1,9 +1,10 @@
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {CommonActions, useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback, useMemo, useState} from 'react';
 import {
   Alert,
+  Button,
   Dimensions,
   Linking,
   Modal,
@@ -33,6 +34,8 @@ import {productDetailsScreenStyles} from './productDetailsScreenStyles';
 import {ProductStackParamList} from '../../../navigation/types';
 import {useCartStore} from '../../../store/CartStore';
 import Config from 'react-native-config';
+import {customHeaderStyles} from '../../../components/molecules/CustomHeader/customHeaderStyles';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 type ProductDetails = {
   location: {
@@ -87,6 +90,7 @@ const ProductDetailsScreen = () => {
     [theme, width],
   );
   const globalStyles = useMemo(() => global(theme), [theme]);
+  const backButtonStyles = useMemo(() => customHeaderStyles(theme), [theme]);
 
   const formatPrice = (price: number) => {
     return `$${price.toLocaleString('en-US', {
@@ -248,6 +252,23 @@ const ProductDetailsScreen = () => {
     deleteProduct(product?._id);
     setDeleteModal(false);
   };
+  const goBack = useCallback(() => {
+    if (navigation.canGoBack()) {
+    navigation.goBack();
+  } else {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {name: 'ProductList'},
+        ],
+      }),
+    );
+  }
+}, [navigation]);
+
+
+
 
   const closeDeleteModal = useCallback(() => setDeleteModal(false), []);
   const openDeleteModal = useCallback(() => setDeleteModal(true), []);
@@ -337,9 +358,19 @@ const ProductDetailsScreen = () => {
   return (
     <View style={viewStyles}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <CustomHeader text="Product Details" />
+        {/* <CustomHeader text="Product Details" />
+        <Button title="Go Back" onPress={() => navigation.popTo('ProductList')} />
+        {deleteError && <FormErrorDisplay error={deleteError?.message} />} */}
 
-        {deleteError && <FormErrorDisplay error={deleteError?.message} />}
+        <View style={backButtonStyles.AuthenticatedHeader}>
+          <Pressable onPress={goBack}>
+            <Entypo name="chevron-with-circle-left" size={32} color="#4F8EF7" />
+          </Pressable>
+          <Text style={backButtonStyles.AuthenticatedHeaderTitle}>
+            Product Details
+          </Text>
+          <View style={{width: 40}} />
+        </View>
 
         <View style={styles.carouselContainer}>
           <ImageCarousel

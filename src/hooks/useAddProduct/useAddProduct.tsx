@@ -72,14 +72,6 @@ const addProduct = async (product: Product) => {
     // });
   }
 
-  // // Log the FormData for debugging
-  // console.log('Sending product data to API:', {
-  //   title: product.title,
-  //   description: product.description,
-  //   price: product.price,
-  //   location: product.location,
-  //   imagesCount: product.images?.length || 0
-  // });
 
   const response = await axiosInstance.post('products', formData, {
     headers: {
