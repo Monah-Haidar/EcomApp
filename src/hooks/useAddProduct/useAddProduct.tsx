@@ -2,6 +2,7 @@ import {useMutation, useQueryClient} from '@tanstack/react-query';
 import axiosInstance from '../../api/config';
 import {useNavigation} from '@react-navigation/native';
 import {AxiosError} from 'axios';
+import {notificationService} from '../../utils/notificationService';
 
 interface ErrorResponse {
   success: boolean;
@@ -28,32 +29,27 @@ interface Product {
 }
 
 const addProduct = async (product: Product) => {
-  
   const formData = new FormData();
-  
+
   formData.append('title', product.title);
   formData.append('description', product.description);
-  
+
   formData.append('price', parseFloat(product.price).toString());
 
-  
   if (product.images && product.images.length > 0) {
     product.images.forEach(image => {
-      
       formData.append('images', {
         uri: image.uri,
         type: image.type || 'image/jpeg',
         name: image.name || `image-${Date.now()}.jpg`,
       } as any); // Cast to any is needed for React Native FormData
     });
-  } 
+  }
   if (product.location) {
-    
     formData.append('latitude', product.location.latitude.toString());
     formData.append('longitude', product.location.longitude.toString());
     formData.append('locationName', product.location.name);
 
-    
     formData.append(
       'location',
       JSON.stringify({
@@ -100,7 +96,10 @@ const useAddProduct = () => {
   return useMutation({
     mutationFn: addProduct,
     onSuccess: data => {
-      console.log('Product added successfully:', data);
+      // console.log('Product added successfully:', data);
+      const product = data?.data;
+
+      notificationService(product);
 
       queryClient.invalidateQueries({queryKey: ['products']});
       navigation.goBack();

@@ -11,10 +11,11 @@ import {
   Text,
   TextInput,
   useWindowDimensions,
-  View,
+  View
 } from 'react-native';
 
 import { useCallback, useMemo, useState } from 'react';
+import Config from 'react-native-config';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { ProductCard } from '../../../components/molecules/ProductCard';
@@ -24,7 +25,6 @@ import { useSearchProduct } from '../../../hooks/useSearchProduct';
 import { ProductStackParamList } from '../../../navigation/types';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { productListScreenStyles } from './productListScreenStyles';
-import Config from 'react-native-config';
 
 
 type ProductType = {
@@ -100,6 +100,9 @@ const ProductListScreen = () => {
 
     return products;
   }, [data, searchData, searchQuery, sortBy, isPending]);
+
+
+
 
   const handleEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -334,6 +337,7 @@ const ProductListScreen = () => {
     [navigation],
   );
 
+
   if (status === 'pending') {
     return renderSkeleton;
   }
@@ -356,8 +360,7 @@ const ProductListScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        
+      <View style={styles.header}>        
         <View style={styles.searchBarContainer}>
           <Icon name="search" size={24} color={theme.text + '80'} />
           <TextInput

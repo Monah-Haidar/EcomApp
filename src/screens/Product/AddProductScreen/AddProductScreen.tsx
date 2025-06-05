@@ -83,7 +83,7 @@ const AddProductScreen = () => {
           !location.longitude ||
           !location.name
         ) {
-          console.log('Location validation failed:', location);
+          // console.log('Location validation failed:', location);
 
           return;
         }

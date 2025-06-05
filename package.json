@@ -1,7 +1,7 @@
 {
   "name": "EcomApp",
   "version": "0.0.1",
-  "private": true,    
+  "private": true,
   "scripts": {
     "android": "react-native run-android --mode=productionDebug",
     "android:dev": "react-native run-android --mode=developmentDebug --appId com.ecomapp.dev",
@@ -10,7 +10,7 @@
     "android:dev:release": "react-native run-android --mode=developmentRelease --appId com.ecomapp.dev",
     "android:staging:release": "react-native run-android --mode=stagingRelease --appId com.ecomapp.staging",
     "build:android": "cd android && ./gradlew assembleProductionRelease",
-    "build:android:dev": "cd android && ./gradlew assembleDevelopmentRelease", 
+    "build:android:dev": "cd android && ./gradlew assembleDevelopmentRelease",
     "build:android:staging": "cd android && ./gradlew assembleStagingRelease",
     "start": "react-native start",
     "ios": "react-native run-ios",
@@ -44,6 +44,7 @@
     "react-native-image-picker": "^8.2.1",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-maps": "^1.23.8",
+    "react-native-onesignal": "^5.2.12",
     "react-native-reanimated": "^3.17.5",
     "react-native-safe-area-context": "^5.4.0",
     "react-native-screens": "^4.10.0",
