@@ -1,5 +1,5 @@
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
-import {CommonActions, useNavigation, useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback, useMemo, useState} from 'react';
 import {
@@ -251,21 +251,16 @@ const ProductDetailsScreen = () => {
   const handleProductDelete = () => {
     deleteProduct(product?._id);
     setDeleteModal(false);
-  };
+  };  
+  
+  
   const goBack = useCallback(() => {
     if (navigation.canGoBack()) {
-    navigation.goBack();
-  } else {
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [
-          {name: 'ProductList'},
-        ],
-      }),
-    );
-  }
-}, [navigation]);
+      navigation.goBack();
+    } else {
+      navigation.navigate('ProductList');
+    }
+  }, [navigation]);
 
 
 

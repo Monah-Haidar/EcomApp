@@ -4,16 +4,20 @@ import {
   LinkingOptions,
   NavigationContainer,
 } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-import { ActivityIndicator, View } from 'react-native';
-import { useAuthStore } from '../../store/AuthStore';
-import { useTheme } from '../../store/ThemeStore/ThemeStore';
-import { AuthStack } from '../stacks/AuthStack';
-import { MainTabNavigator } from '../tabs/MainTabNavigator';
-import { RootStackParamList } from '../types';
+import {ActivityIndicator, Linking, View} from 'react-native';
+import {useAuthStore} from '../../store/AuthStore';
+import {useTheme} from '../../store/ThemeStore/ThemeStore';
+import {AuthStack} from '../stacks/AuthStack';
+import {MainTabNavigator} from '../tabs/MainTabNavigator';
+import {RootStackParamList} from '../types';
+import {useEffect, useRef} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
+
+const PENDING_DEEP_LINK_KEY = 'pendingDeepLink';
 
 const linking: LinkingOptions<RootStackParamList> = {
   prefixes: ['ecomapp://', 'https://ecomapp.com'],
@@ -42,6 +46,120 @@ const AppNavigator = () => {
   const isHydrated = useAuthStore(state => state.hydrated);
   const accessToken = useAuthStore(state => state.accessToken);
   const isAuthenticated = !!accessToken;
+  const navigationRef = useRef<any>(null);
+
+  // Store deep link in AsyncStorage
+  const storePendingLink = async (url: string) => {
+    try {
+      await AsyncStorage.setItem(PENDING_DEEP_LINK_KEY, url);
+      console.log('📱 Stored pending deep link:', url);
+    } catch (error) {
+      console.error('❌ Failed to store pending deep link:', error);
+    }
+  };
+
+  // Retrieve deep link from AsyncStorage
+  const getPendingLink = async (): Promise<string | null> => {
+    try {
+      const link = await AsyncStorage.getItem(PENDING_DEEP_LINK_KEY);
+      return link;
+    } catch (error) {
+      console.error('❌ Failed to retrieve pending deep link:', error);
+      return null;
+    }
+  };
+
+  // Clear stored deep link
+  const clearPendingLink = async () => {
+    try {
+      await AsyncStorage.removeItem(PENDING_DEEP_LINK_KEY);
+      console.log('🗑️ Cleared pending deep link');
+    } catch (error) {
+      console.error('❌ Failed to clear pending deep link:', error);
+    }
+  };
+
+  // Handle initial deep link when app is opened
+  useEffect(() => {
+    const getInitialURL = async () => {
+      try {
+        const url = await Linking.getInitialURL();
+        if (url && !isAuthenticated) {
+          console.log('📩 Storing initial deep link for after login:', url);
+          await storePendingLink(url);
+        }
+      } catch (error) {
+        console.error('❌ Error getting initial URL:', error);
+      }
+    };
+
+    if (isHydrated) {
+      getInitialURL();
+    }
+  }, [isAuthenticated, isHydrated]);
+
+  // Listen for deep links while app is running
+  useEffect(() => {
+    const handleDeepLink = (event: {url: string}) => {
+      console.log('📩 Received deep link:', event.url);
+
+      if (!isAuthenticated) {
+        console.log('🔒 User not authenticated, storing link for later:', event.url);
+        storePendingLink(event.url);
+      }
+      // If authenticated, let the normal linking handle it
+    };
+
+    const subscription = Linking.addEventListener('url', handleDeepLink);
+    return () => subscription.remove();
+  }, [isAuthenticated]);
+  // Navigate to pending link after authentication
+  useEffect(() => {
+    const handlePendingLink = async () => {
+      if (isAuthenticated && navigationRef.current) {
+        const pendingLink = await getPendingLink();
+        
+        if (pendingLink) {
+          console.log('✅ User authenticated, navigating to pending link:', pendingLink);
+          
+          // Add a small delay to ensure navigation is ready
+          setTimeout(async () => {
+            // Extract the path from the deep link
+            const path = pendingLink.replace(/^(ecomapp:\/\/|https:\/\/ecomapp\.com\/)/, '');
+            
+            // Navigate to the deep link destination
+            if (path.startsWith('products/')) {
+              const productId = path.replace('products/', '');
+              if (productId && productId !== 'products') {
+                // Navigate to specific product
+                navigationRef.current?.navigate('Main', {
+                  screen: 'Home',
+                  params: {
+                    screen: 'ProductDetails',
+                    params: {productId},
+                  },
+                });
+              } else {
+                // Navigate to product list
+                navigationRef.current?.navigate('Main', {
+                  screen: 'Home',
+                  params: {
+                    screen: 'ProductList',
+                  },
+                });
+              }
+            }
+            
+            // Clear the pending link after successful navigation
+            await clearPendingLink();
+          }, 100);
+        }
+      }
+    };
+
+    if (isHydrated && isAuthenticated) {
+      handlePendingLink();
+    }  }, [isAuthenticated, isHydrated]);
 
   if (!isHydrated) {
     return (
@@ -50,9 +168,9 @@ const AppNavigator = () => {
       </View>
     );
   }
-
   return (
     <NavigationContainer
+      ref={navigationRef}
       linking={linking}
       theme={themeName === 'darkTheme' ? DarkTheme : DefaultTheme}>
       <RootStack.Navigator screenOptions={{headerShown: false}}>
@@ -67,116 +185,3 @@ const AppNavigator = () => {
 };
 
 export default AppNavigator;
-
-// const [pendingLink, setPendingLink] = useState<string | null>(null);
-//   const navigationRef = useRef<any>(null);
-
-//   // Store initial deep link if unauthenticated
-//   useEffect(() => {
-//     const getInitialURL = async () => {
-//       const url = await Linking.getInitialURL();
-//       if (url && !isAuthenticated) {
-//         setPendingLink(url);
-//       }
-//     };
-//     getInitialURL();
-//   }, [isAuthenticated]);
-
-//   // Listen for deep links while app is running
-//   useEffect(() => {
-//     const handleDeepLink = (event: { url: string }) => {
-//       if (isAuthenticated && navigationRef.current) {
-//         // If authenticated, navigate and allow back navigation
-//         const path = event.url.replace(/.*?:\/\//g, '');
-//         navigationRef.current.navigate(path);
-//       } else {
-//         // If not authenticated, store for after login
-//         setPendingLink(event.url);
-//       }
-//     };
-//     const subscription = Linking.addEventListener('url', handleDeepLink);
-//     return () => subscription.remove();
-//   }, [isAuthenticated]);
-
-//   // After login, navigate to pending link
-//   useEffect(() => {
-//     if (isAuthenticated && pendingLink && navigationRef.current) {
-//       const path = pendingLink.replace(/.*?:\/\//g, '');
-//       navigationRef.current.navigate(path);
-//       setPendingLink(null);
-//     }
-//   }, [isAuthenticated, pendingLink]);
-
-// useEffect(() => {
-//   const handleDeepLink = (event: {url: string}) => {
-//     console.log('📩 Received deep link:', event.url);
-//     // Add more debugging
-//     console.log('Deep link event:', JSON.stringify(event, null, 2));
-//   };
-
-//   const subscription = Linking.addEventListener('url', handleDeepLink);
-
-//   Linking.getInitialURL()
-//     .then(url => {
-//       console.log('🔗 Initial URL:', url);
-//       if (url) {
-//         console.log('✅ Found initial URL, processing:', url);
-//         setInitialLink(url);
-//       } else {
-//         console.log('ℹ️ No initial URL found (app opened normally)');
-//       }
-//     })
-//     .catch(error => {
-//       console.error('❌ Error getting initial URL:', error);
-//     });
-
-//   return () => {
-//     subscription?.remove();
-//   };
-// }, []);
-
-// useEffect(() => {
-//   if (isAuthenticated && initialLink) {
-//     // manually navigate after login
-//     const path = initialLink.replace('myapp://', '');
-//     navigation.navigate(path); // or use deep linking parser
-//   }
-// }, [isAuthenticated, initialLink]);
-
-
-
-
-
-
-
-// const linking: LinkingOptions<RootStackParamList> = {
-//   prefixes: ['ecomapp://', 'https://ecomapp.com'],
-//   config: {
-//     screens: {
-//       // Main Tab Navigator
-//       MainTab: {
-//         path: '',
-//         screens: {
-//           Home: 'home',
-//           Products: 'products',
-//           Profile: 'profile',
-//         },
-//       },
-//       // Auth Stack
-//       Auth: {
-//         path: 'auth',
-//         screens: {
-//           Login: 'login',
-//           SignUp: 'signup',
-//           Verification: 'verification',
-//         },
-//       },
-//       // Product Screens
-//       ProductDetails: 'product/:productId',
-//       AddProduct: 'add-product',
-//       EditProduct: 'edit-product/:productId',
-//       // Profile Screens
-//       EditProfile: 'edit-profile',
-//     },
-//   },
-// };
