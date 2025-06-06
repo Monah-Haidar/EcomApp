@@ -2,9 +2,8 @@ import React, { useCallback, useMemo } from 'react';
 import { Image, ImageSourcePropType, Pressable, Text, View } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
-import { productCardStyles } from './productCardStyles';
-import Animated, { FadeInUp } from 'react-native-reanimated';
 import { shareProduct } from '../../../utils/shareProduct';
+import { productCardStyles } from './productCardStyles';
 
 interface ProductItem {
   _id: string;
@@ -35,8 +34,6 @@ const ProductCard = ({
   item,
   itemWidth,
   onPress,
-  onSwipeAction,
-  animationDelay = 0,
 }: ProductCardProps) => {
   const {theme} = useTheme();
 
@@ -64,7 +61,7 @@ const ProductCard = ({
 
   const renderImage = useMemo(() => {
     if (item.images && item.images.length > 0) {
-      return <Animated.Image sharedTransitionTag="sharedTag" source={source} style={styles.image} resizeMode="cover" />;
+      return <Image source={source} style={styles.image} resizeMode="cover" />;
     }
 
     return (
