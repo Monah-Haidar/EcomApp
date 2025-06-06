@@ -4,6 +4,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { useTheme } from '../../../store/ThemeStore/ThemeStore';
 import { productCardStyles } from './productCardStyles';
 import Animated, { FadeInUp } from 'react-native-reanimated';
+import { shareProduct } from '../../../utils/shareProduct';
 
 interface ProductItem {
   _id: string;
@@ -47,6 +48,19 @@ const ProductCard = ({
       maximumFractionDigits: 2,
     })}`;
   }, []);
+  const handleShare = useCallback(async (e: any) => {
+    e.stopPropagation(); // Prevent card press when share button is pressed
+    try {
+      // Convert ProductItem to ProductShareData format
+      const shareData = {
+        ...item,
+        description: item.description || '', // Provide default empty string if undefined
+      };
+      await shareProduct(shareData);
+    } catch (error) {
+      console.error('Error sharing product:', error);
+    }
+  }, [item]);
 
   const renderImage = useMemo(() => {
     if (item.images && item.images.length > 0) {
@@ -82,7 +96,6 @@ const ProductCard = ({
       </View>
     );
   }, [item.location, styles, theme.subheadingText]);
-
   return (
     <View
       style={[
@@ -105,6 +118,18 @@ const ProductCard = ({
           </View>
 
           {renderLocation}
+          
+          <View style={styles.actionContainer}>
+            <Pressable
+              style={({pressed}) => [
+                styles.shareButton,
+                {opacity: pressed ? 0.7 : 1}
+              ]}
+              onPress={handleShare}>
+              <Feather name="share-2" size={16} color={theme.primary} />
+              <Text style={styles.shareButtonText}>Share</Text>
+            </Pressable>
+          </View>
         </View>
       </Pressable>
     </View>
