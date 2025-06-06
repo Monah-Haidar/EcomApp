@@ -251,9 +251,8 @@ const ProductDetailsScreen = () => {
   const handleProductDelete = () => {
     deleteProduct(product?._id);
     setDeleteModal(false);
-  };  
-  
-  
+  };
+
   const goBack = useCallback(() => {
     if (navigation.canGoBack()) {
       navigation.goBack();
@@ -261,9 +260,6 @@ const ProductDetailsScreen = () => {
       navigation.navigate('ProductList');
     }
   }, [navigation]);
-
-
-
 
   const closeDeleteModal = useCallback(() => setDeleteModal(false), []);
   const openDeleteModal = useCallback(() => setDeleteModal(true), []);

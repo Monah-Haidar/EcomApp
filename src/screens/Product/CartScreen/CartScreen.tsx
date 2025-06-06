@@ -9,7 +9,7 @@ import {global} from '../../../styles/global';
 import useCartStore, {CartItem} from '../../../store/CartStore/CartStore';
 import {spacing} from '../../../constants/spacing';
 import {CartItemCard} from '../../../components/organisms/CartItem';
-import { SubmitButton } from '../../../components/atoms/SubmitButton';
+import {SubmitButton} from '../../../components/atoms/SubmitButton';
 
 const CartScreen = () => {
   const {theme} = useTheme();
@@ -34,13 +34,14 @@ const CartScreen = () => {
         marginLeft: insets.left,
         marginRight: insets.right,
         backgroundColor: theme.background,
-  
       },
     ];
   }, [insets]);
 
   return (
-    <ScrollView style={viewStyles} contentContainerStyle={{paddingBottom: spacing.xl_plus}}>
+    <ScrollView
+      style={viewStyles}
+      contentContainerStyle={{paddingBottom: spacing.xl_plus}}>
       <CustomHeader text="Cart" />
 
       {cartItems.length === 0 ? (
@@ -48,7 +49,8 @@ const CartScreen = () => {
           <Text style={styles.emptyText}>Your cart is empty</Text>
         </View>
       ) : (
-        <View style={{paddingHorizontal: spacing.md_plus}}>          <View>
+        <View style={{paddingHorizontal: spacing.md_plus}}>
+          <View>
             {cartItems.map((item: CartItem) => (
               <CartItemCard
                 key={item._id}
@@ -60,16 +62,11 @@ const CartScreen = () => {
                 quantity={item.quantity}
                 location={item.location}
                 removeFromCart={() => removeFromCart(item._id)}
-                decreaseQuantity={() =>
-                  updateQuantity(item._id, -1)
-                }
-                increaseQuantity={() =>
-                  updateQuantity(item._id, +1)
-                }
+                decreaseQuantity={() => updateQuantity(item._id, -1)}
+                increaseQuantity={() => updateQuantity(item._id, +1)}
               />
             ))}
           </View>
-
           <View style={styles.summaryContainer}>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Items ({totalQuantity})</Text>
@@ -92,12 +89,13 @@ const CartScreen = () => {
               </Text>
             </View>
           </View>
-
-          <SubmitButton text='Clear Cart' variant="danger" onPress={clearCart} />
+          <SubmitButton
+            text="Clear Cart"
+            variant="danger"
+            onPress={clearCart}
+          />
         </View>
       )}
-
-      
     </ScrollView>
   );
 };

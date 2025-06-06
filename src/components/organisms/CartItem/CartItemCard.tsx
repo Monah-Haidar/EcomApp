@@ -36,20 +36,20 @@ const CartItemCard = ({
 
   const panGesture = Gesture.Pan()
     .onStart(() => {})
-    .onUpdate((event) => {
+    .onUpdate(event => {
       translateX.value = event.translationX;
     })
-    .onEnd((event) => {
+    .onEnd(event => {
       const shouldDelete = Math.abs(event.translationX) > SWIPE_THRESHOLD;
-      
+
       if (shouldDelete) {
         // Animate out and delete
         translateX.value = withTiming(
           event.translationX > 0 ? screenWidth : -screenWidth,
-          { duration: 200 }
+          {duration: 200},
         );
-        rowHeight.value = withTiming(0, { duration: 200 });
-        rowOpacity.value = withTiming(0, { duration: 200 }, () => {
+        rowHeight.value = withTiming(0, {duration: 200});
+        rowOpacity.value = withTiming(0, {duration: 200}, () => {
           runOnJS(removeFromCart)();
         });
       } else {
@@ -60,7 +60,7 @@ const CartItemCard = ({
 
   const cardAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ translateX: translateX.value }],
+      transform: [{translateX: translateX.value}],
     };
   });
 
@@ -74,36 +74,23 @@ const CartItemCard = ({
   const deleteBackgroundStyle = useAnimatedStyle(() => {
     const opacity = Math.abs(translateX.value) > SWIPE_THRESHOLD * 0.5 ? 1 : 0;
     const scale = Math.abs(translateX.value) > SWIPE_THRESHOLD * 0.5 ? 1 : 0.8;
-    
+
     return {
-      opacity: withTiming(opacity, { duration: 150 }),
-      transform: [{ scale: withTiming(scale, { duration: 150 }) }],
+      opacity: withTiming(opacity, {duration: 150}),
+      transform: [{scale: withTiming(scale, {duration: 150})}],
     };
   });
   return (
-    <Animated.View 
-      style={[
-        styles.container,
-        containerAnimatedStyle, {borderRadius: 16}
-      ]}
-    >
+    <Animated.View
+      style={[styles.container, containerAnimatedStyle, {borderRadius: 16}]}>
       <View style={styles.deleteBackground}>
-        <Animated.View
-          style={[
-            styles.deleteButton,
-            deleteBackgroundStyle,
-          ]}
-        >
+        <Animated.View style={[styles.deleteButton, deleteBackgroundStyle]}>
           <Feather name="trash-2" size={24} color="#fff" />
           <Text style={styles.deleteText}>Delete</Text>
         </Animated.View>
-      </View>      <GestureDetector gesture={panGesture}>
-        <Animated.View
-          style={[
-            styles.cardContainer,
-            cardAnimatedStyle,
-          ]}
-        >
+      </View>
+      <GestureDetector gesture={panGesture}>
+        <Animated.View style={[styles.cardContainer, cardAnimatedStyle]}>
           <View style={styles.imageContainer}>
             <Image
               source={{
