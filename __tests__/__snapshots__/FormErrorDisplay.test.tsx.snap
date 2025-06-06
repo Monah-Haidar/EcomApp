@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FormErrorDisplay Rendering should match snapshot 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "borderRadius": 8,
+        "flexDirection": "row",
+        "marginBottom": 16,
+        "padding": 12,
+      },
+      {
+        "backgroundColor": "#ffebee",
+      },
+    ]
+  }
+>
+  <MockedFeatherIcon
+    color="#d32f2f"
+    name="alert-circle"
+    size={18}
+  />
+  <Text
+    style={
+      {
+        "color": "#d32f2f",
+        "fontFamily": "Poppins-Regular",
+        "fontSize": 53,
+        "marginLeft": 8,
+      }
+    }
+  >
+    Test error message
+  </Text>
+</View>
+`;
