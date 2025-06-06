@@ -119,4 +119,4 @@ const CameraView = ({onPhotoTaken, onClose}: CameraViewProps) => {
   );
 };
 
-export default React.memo(CameraView);
+export default CameraView;

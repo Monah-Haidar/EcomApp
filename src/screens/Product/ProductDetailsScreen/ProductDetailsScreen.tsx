@@ -4,7 +4,6 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback, useMemo, useState} from 'react';
 import {
   Alert,
-  Button,
   Dimensions,
   Linking,
   Modal,
@@ -16,26 +15,24 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Config from 'react-native-config';
 import RNFS from 'react-native-fs';
-import Feather from 'react-native-vector-icons/Feather';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {global} from '../../../styles/global';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {FormErrorDisplay} from '../../../components/atoms/FormErrorDisplay';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Feather from 'react-native-vector-icons/Feather';
 import {SubmitButton} from '../../../components/atoms/SubmitButton';
-import {CustomHeader} from '../../../components/molecules/CustomHeader';
+import {customHeaderStyles} from '../../../components/molecules/CustomHeader/customHeaderStyles';
 import {ImageCarousel} from '../../../components/organisms/ImageCarousel';
 import {MapView} from '../../../components/organisms/MapView';
 import {useDeleteProduct} from '../../../hooks/useDeleteProduct';
 import {useProduct} from '../../../hooks/useProduct';
 import {useUserProfile} from '../../../hooks/useUserProfile';
-import {useAuthStore} from '../../../store/AuthStore';
-import {productDetailsScreenStyles} from './productDetailsScreenStyles';
 import {ProductStackParamList} from '../../../navigation/types';
+import {useAuthStore} from '../../../store/AuthStore';
 import {useCartStore} from '../../../store/CartStore';
-import Config from 'react-native-config';
-import {customHeaderStyles} from '../../../components/molecules/CustomHeader/customHeaderStyles';
-import Entypo from 'react-native-vector-icons/Entypo';
+import {useTheme} from '../../../store/ThemeStore/ThemeStore';
+import {global} from '../../../styles/global';
+import {productDetailsScreenStyles} from './productDetailsScreenStyles';
 
 type ProductDetails = {
   location: {
@@ -74,7 +71,6 @@ const ProductDetailsScreen = () => {
 
   const {productId} = route.params as {productId: string};
 
-  // console.log('Product ID:', productId);
   const {data: ProductData, isPending, error} = useProduct(productId);
   const {
     mutate: deleteProduct,
@@ -83,23 +79,25 @@ const ProductDetailsScreen = () => {
   } = useDeleteProduct();
 
   const product = ProductData?.data as ProductDetails;
-  // console.log('Product Details:', product);
+
   const {width} = Dimensions.get('window');
+
   const styles = useMemo(
     () => productDetailsScreenStyles(theme, width),
     [theme, width],
   );
+
   const globalStyles = useMemo(() => global(theme), [theme]);
   const backButtonStyles = useMemo(() => customHeaderStyles(theme), [theme]);
 
-  const formatPrice = (price: number) => {
+  const formatPrice = useCallback((price: number) => {
     return `$${price.toLocaleString('en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     })}`;
-  };
+  }, []);
 
-  const formatDate = (dateString?: string) => {
+  const formatDate = useCallback((dateString?: string) => {
     if (!dateString) return 'Unknown date';
 
     const options: Intl.DateTimeFormatOptions = {
@@ -109,14 +107,14 @@ const ProductDetailsScreen = () => {
     };
 
     return new Date(dateString).toLocaleDateString(undefined, options);
-  };
+  }, []);
 
-  const handleLongPressImage = (imageUrl: string) => {
+  const handleLongPressImage = useCallback((imageUrl: string) => {
     setSelectedImageUrl(imageUrl);
     setShowSaveModal(true);
-  };
+  }, []);
 
-  const handleEmailPress = () => {
+  const handleEmailPress = useCallback(() => {
     if (!product?.user?.email) return;
 
     const subject = `Regarding your listing: ${product.title}`;
@@ -132,7 +130,67 @@ const ProductDetailsScreen = () => {
         Alert.alert('Error', 'Email app is not available on this device');
       })
       .catch(error => console.error('Failed to open email:', error));
-  };
+  }, [product?.user?.email, product?.title]);
+
+  const formattedPrice = useMemo(() => {
+    return product?.price ? formatPrice(product.price) : '';
+  }, [product?.price, formatPrice]);
+
+  const formattedDate = useMemo(() => {
+    return product?.createdAt ? formatDate(product.createdAt) : '';
+  }, [product?.createdAt, formatDate]);
+
+  const productImages = useMemo(() => {
+    return product?.images || [];
+  }, [product?.images]);
+
+  const locationData = useMemo(() => {
+    return product?.location &&
+      product.location.latitude &&
+      product.location.longitude
+      ? {
+          latitude: product.location.latitude,
+          longitude: product.location.longitude,
+          name: product.location.name,
+        }
+      : null;
+  }, [product?.location]);
+
+  const editIcon = useMemo(
+    () => <Feather name="edit" size={20} color={theme.buttonText} />,
+    [theme.buttonText],
+  );
+
+  const deleteIcon = useMemo(
+    () => <Feather name="trash" size={20} color={theme.errorText} />,
+    [theme.errorText],
+  );
+
+  const emailIcon = useMemo(
+    () => <Feather name="mail" size={20} color={theme.buttonText} />,
+    [theme.buttonText],
+  );
+
+  const shareIcon = useMemo(
+    () => <Feather name="share" size={20} color={theme.buttonText} />,
+    [theme.buttonText],
+  );
+
+  const cartIcon = useMemo(
+    () => <Feather name="shopping-cart" size={20} color={theme.buttonText} />,
+    [theme.buttonText],
+  );
+
+  const shareButtonStyle = useMemo(
+    () => [styles.emailButton, {backgroundColor: theme.secondary}],
+    [styles.emailButton, theme.secondary],
+  );
+
+  const cartButtonStyle = useMemo(
+    () => [styles.emailButton],
+    [styles.emailButton],
+  );
+
   const requestStoragePermission = useCallback(async () => {
     if (Platform.OS === 'android') {
       try {
@@ -169,54 +227,59 @@ const ProductDetailsScreen = () => {
       return true;
     }
   }, []);
-  const downloadAndSaveImage = async (imageUrl: string) => {
-    try {
-      setShowSaveModal(false);
-      Alert.alert('Downloading', 'Downloading image...');
 
-      const fullImageUrl = `${Config.BASE_URL}${imageUrl}`;
+  const downloadAndSaveImage = useCallback(
+    async (imageUrl: string) => {
+      try {
+        setShowSaveModal(false);
+        Alert.alert('Downloading', 'Downloading image...');
 
-      const fileName = `product_${Date.now()}.jpg`;
+        const fullImageUrl = `${Config.BASE_URL}${imageUrl}`;
 
-      const localFilePath = `${RNFS.CachesDirectoryPath}/${fileName}`;
+        const fileName = `product_${Date.now()}.jpg`;
 
-      const dirExists = await RNFS.exists(RNFS.CachesDirectoryPath);
-      if (!dirExists) {
-        await RNFS.mkdir(RNFS.CachesDirectoryPath);
-      }
+        const localFilePath = `${RNFS.CachesDirectoryPath}/${fileName}`;
 
-      const response = await RNFS.downloadFile({
-        fromUrl: fullImageUrl,
-        toFile: localFilePath,
-        background: false,
-      }).promise;
-
-      if (response.statusCode === 200) {
-        const fileExists = await RNFS.exists(localFilePath);
-        if (fileExists) {
-          await CameraRoll.save(`file://${localFilePath}`, {type: 'photo'});
-          Alert.alert('Success', 'Image saved to your gallery');
-        } else {
-          throw new Error('Downloaded file not found');
+        const dirExists = await RNFS.exists(RNFS.CachesDirectoryPath);
+        if (!dirExists) {
+          await RNFS.mkdir(RNFS.CachesDirectoryPath);
         }
-      } else {
+
+        const response = await RNFS.downloadFile({
+          fromUrl: fullImageUrl,
+          toFile: localFilePath,
+          background: false,
+        }).promise;
+
+        if (response.statusCode === 200) {
+          const fileExists = await RNFS.exists(localFilePath);
+          if (fileExists) {
+            await CameraRoll.save(`file://${localFilePath}`, {type: 'photo'});
+            Alert.alert('Success', 'Image saved to your gallery');
+          } else {
+            throw new Error('Downloaded file not found');
+          }
+        } else {
+          Alert.alert(
+            'Error',
+            `Failed to download image: ${response.statusCode}`,
+          );
+        }
+      } catch (error) {
+        console.error('Image download error:', error);
         Alert.alert(
           'Error',
-          `Failed to download image: ${response.statusCode}`,
+          'Failed to save image: ' +
+            (typeof error === 'object' && error !== null && 'message' in error
+              ? String(error.message)
+              : 'Unknown error'),
         );
       }
-    } catch (error) {
-      console.error('Image download error:', error);
-      Alert.alert(
-        'Error',
-        'Failed to save image: ' +
-          (typeof error === 'object' && error !== null && 'message' in error
-            ? String(error.message)
-            : 'Unknown error'),
-      );
-    }
-  };
-  const handleSaveImage = async () => {
+    },
+    [setShowSaveModal],
+  );
+
+  const handleSaveImage = useCallback(async () => {
     setShowSaveModal(false);
 
     if (!selectedImageUrl) {
@@ -243,15 +306,21 @@ const ProductDetailsScreen = () => {
           : 'An unexpected error occurred while saving the image',
       );
     }
-  };
+  }, [selectedImageUrl, requestStoragePermission, downloadAndSaveImage]);
 
-  const userId = user?.id || userProfileData?.data?.user?.id;
-  const canEditDelete = product?.user?._id === userId;
+  const userId = useMemo(
+    () => user?.id || userProfileData?.data?.user?.id,
+    [user?.id, userProfileData?.data?.user?.id],
+  );
+  const canEditDelete = useMemo(
+    () => product?.user?._id === userId,
+    [product?.user?._id, userId],
+  );
 
-  const handleProductDelete = () => {
+  const handleProductDelete = useCallback(() => {
     deleteProduct(product?._id);
     setDeleteModal(false);
-  };
+  }, [deleteProduct, product?._id]);
 
   const goBack = useCallback(() => {
     if (navigation.canGoBack()) {
@@ -269,9 +338,9 @@ const ProductDetailsScreen = () => {
     [navigation, productId],
   );
 
-  const shareProduct = () => null;
+  const shareProduct = useCallback(() => null, []);
 
-  const addProductToCart = () => {
+  const addProductToCart = useCallback(() => {
     if (!product) return;
 
     const cartProduct = {
@@ -295,9 +364,9 @@ const ProductDetailsScreen = () => {
         longitude: product.location.longitude || 0,
       },
     };
-    // console.log('Adding product to cart:', cartProduct);
+
     addToCart(cartProduct);
-  };
+  }, [product, addToCart]);
 
   const viewStyles = useMemo(() => {
     return [
@@ -311,8 +380,8 @@ const ProductDetailsScreen = () => {
     ];
   }, [insets]);
 
-  if (isPending) {
-    return (
+  const loadingComponent = useMemo(
+    () => (
       <View style={[globalStyles.container, styles.loadingContainer]}>
         <View style={styles.skeletonHeader} />
         <View style={styles.skeletonImage} />
@@ -324,11 +393,23 @@ const ProductDetailsScreen = () => {
         <View style={styles.skeletonText} />
         <View style={styles.skeletonMap} />
       </View>
-    );
-  }
+    ),
+    [
+      globalStyles.container,
+      styles.loadingContainer,
+      styles.skeletonHeader,
+      styles.skeletonImage,
+      styles.skeletonTitleRow,
+      styles.skeletonTitle,
+      styles.skeletonPrice,
+      styles.skeletonDescription,
+      styles.skeletonText,
+      styles.skeletonMap,
+    ],
+  );
 
-  if (error) {
-    return (
+  const errorComponent = useMemo(
+    () => (
       <View style={styles.emptyStateContainer}>
         <Text style={styles.emptyStateText}>
           An error occurred while fetching product details
@@ -339,11 +420,26 @@ const ProductDetailsScreen = () => {
             styles.clearSearchButton,
             {opacity: pressed ? 0.8 : 1},
           ]}
-          onPress={() => navigation.goBack()}>
+          onPress={goBack}>
           <Text style={styles.clearSearchButtonText}>Go back</Text>
         </Pressable>
       </View>
-    );
+    ),
+    [
+      styles.emptyStateContainer,
+      styles.emptyStateText,
+      styles.clearSearchButton,
+      styles.clearSearchButtonText,
+      goBack,
+    ],
+  );
+
+  if (isPending) {
+    return loadingComponent;
+  }
+
+  if (error) {
+    return errorComponent;
   }
 
   return (
@@ -352,7 +448,6 @@ const ProductDetailsScreen = () => {
         {/* <CustomHeader text="Product Details" />
         <Button title="Go Back" onPress={() => navigation.popTo('ProductList')} />
         {deleteError && <FormErrorDisplay error={deleteError?.message} />} */}
-
         <View style={backButtonStyles.AuthenticatedHeader}>
           <Pressable onPress={goBack}>
             <Entypo name="chevron-with-circle-left" size={32} color="#4F8EF7" />
@@ -362,23 +457,19 @@ const ProductDetailsScreen = () => {
           </Text>
           <View style={{width: 40}} />
         </View>
-
         <View style={styles.carouselContainer}>
           <ImageCarousel
-            images={product?.images || []}
-            onLongPress={imageUrl => handleLongPressImage(imageUrl)}
+            images={productImages}
+            onLongPress={handleLongPressImage}
           />
         </View>
-
         <View style={styles.detailsContainer}>
           <View style={styles.titlePriceContainer}>
             <Text style={styles.title}>{product.title}</Text>
-            <Text style={styles.price}>{formatPrice(product.price)}</Text>
+            <Text style={styles.price}>{formattedPrice}</Text>
           </View>
-
           <Text style={styles.description}>{product.description}</Text>
-
-          {product.createdAt && (
+          {formattedDate && (
             <View style={styles.infoRow}>
               <Feather
                 name="calendar"
@@ -386,12 +477,9 @@ const ProductDetailsScreen = () => {
                 color={theme.subheadingText}
                 style={styles.infoIcon}
               />
-              <Text style={styles.infoText}>
-                Listed on {formatDate(product.createdAt)}
-              </Text>
+              <Text style={styles.infoText}>Listed on {formattedDate}</Text>
             </View>
           )}
-
           {product.location && (
             <View style={styles.infoRow}>
               <Feather
@@ -404,33 +492,21 @@ const ProductDetailsScreen = () => {
             </View>
           )}
 
-          {product.location &&
-            product.location.latitude &&
-            product.location.longitude && (
-              <View style={styles.mapSection}>
-                <Text style={styles.sectionTitle}>Location</Text>
-                <MapView
-                  location={{
-                    latitude: product.location.latitude,
-                    longitude: product.location.longitude,
-                    name: product.location.name,
-                  }}
-                  style={styles.map}
-                />
-              </View>
-            )}
+          {locationData && (
+            <View style={styles.mapSection}>
+              <Text style={styles.sectionTitle}>Location</Text>
+              <MapView location={locationData} style={styles.map} />
+            </View>
+          )}
 
           {product?.user?.email && (
             <View style={styles.contactSection}>
               <Text style={styles.sectionTitle}>Contact the seller</Text>
               <Text style={styles.emailText}>{product?.user?.email}</Text>
-
               <SubmitButton
                 text="Send Email"
                 onPress={handleEmailPress}
-                icon={
-                  <Feather name="mail" size={20} color={theme.buttonText} />
-                }
+                icon={emailIcon}
               />
             </View>
           )}
@@ -438,43 +514,35 @@ const ProductDetailsScreen = () => {
           <View style={styles.buttonRow}>
             <Pressable
               style={({pressed}) => [
-                styles.emailButton,
-                {opacity: pressed ? 0.8 : 1, backgroundColor: theme.secondary},
+                ...shareButtonStyle,
+                {opacity: pressed ? 0.8 : 1},
               ]}
               onPress={shareProduct}>
-              <Feather name="share" size={20} color={theme.buttonText} />
+              {shareIcon}
               <Text style={styles.emailButtonText}>Share</Text>
             </Pressable>
             <Pressable
               style={({pressed}) => [
-                styles.emailButton,
+                ...cartButtonStyle,
                 {opacity: pressed ? 0.8 : 1},
               ]}
               onPress={addProductToCart}>
-              <Feather
-                name="shopping-cart"
-                size={20}
-                color={theme.buttonText}
-              />
+              {cartIcon}
               <Text style={styles.emailButtonText}>Add To Cart</Text>
             </Pressable>
           </View>
-
+          
           {canEditDelete && (
             <View>
               <SubmitButton
                 text="Edit Product"
-                icon={
-                  <Feather name="edit" size={20} color={theme.buttonText} />
-                }
+                icon={editIcon}
                 onPress={navigateToProductEdit}
               />
               <SubmitButton
                 text="Delete Product"
                 variant="danger"
-                icon={
-                  <Feather name="trash" size={20} color={theme.errorText} />
-                }
+                icon={deleteIcon}
                 isLoading={isDeleting}
                 onPress={openDeleteModal}
               />
@@ -540,4 +608,4 @@ const ProductDetailsScreen = () => {
   );
 };
 
-export default ProductDetailsScreen;
+export default React.memo(ProductDetailsScreen);

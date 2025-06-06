@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {TouchableOpacity, Text, StyleSheet, Alert} from 'react-native';
 import {
   getCrashlytics,
@@ -13,13 +13,13 @@ interface CrashTestButtonProps {
 }
 
 const CrashTestButton: React.FC<CrashTestButtonProps> = ({onPress}) => {
+  
+  const styles = useMemo(() => crashTestButtonStyles, []);
 
+  
+  const crashlyticsInstance = useMemo(() => getCrashlytics(), []);
 
-  const styles = crashTestButtonStyles;
-
-
-
-  const handleCrash = () => {
+  const handleCrash = useCallback(() => {
     Alert.alert(
       'Test Crash',
       'This will force a crash for testing Firebase Crashlytics. Continue?',
@@ -31,8 +31,6 @@ const CrashTestButton: React.FC<CrashTestButtonProps> = ({onPress}) => {
           text: 'Native Crash',
           style: 'destructive',
           onPress: () => {
-            const crashlyticsInstance = getCrashlytics();
-
             // Check if Crashlytics is enabled
             const isEnabled = crashlyticsInstance.isCrashlyticsCollectionEnabled;
             console.log('Crashlytics enabled:', isEnabled);
@@ -48,8 +46,6 @@ const CrashTestButton: React.FC<CrashTestButtonProps> = ({onPress}) => {
           text: 'JS Crash',
           style: 'destructive',
           onPress: () => {
-            const crashlyticsInstance = getCrashlytics();
-
             // Log the crash before it happens
             log(crashlyticsInstance, 'User triggered JavaScript test crash');
 
@@ -63,10 +59,10 @@ const CrashTestButton: React.FC<CrashTestButtonProps> = ({onPress}) => {
         },
       ],
     );
-  };
-  const handleNonFatalError = () => {
-    const crashlyticsInstance = getCrashlytics();
-
+  }, [crashlyticsInstance]);  
+  
+  
+  const handleNonFatalError = useCallback(() => {
     // Check if Crashlytics is enabled
     const isEnabled = crashlyticsInstance.isCrashlyticsCollectionEnabled;
     console.log('Crashlytics enabled for non-fatal:', isEnabled);
@@ -80,16 +76,19 @@ const CrashTestButton: React.FC<CrashTestButtonProps> = ({onPress}) => {
       'Non-Fatal Error Logged',
       'Check Firebase Console for the error report',
     );
-  };
-  const handleTestCrashlyticsStatus = () => {
-    const crashlyticsInstance = getCrashlytics();
+  }, [crashlyticsInstance]);
+
+  const handleTestCrashlyticsStatus = useCallback(() => {
     const isEnabled = crashlyticsInstance.isCrashlyticsCollectionEnabled;
 
     Alert.alert(
       'Crashlytics Status',
       `Crashlytics Collection Enabled: ${isEnabled}\n\nNote: Native crashes may not work in debug builds or when debugger is attached.`,
     );
-  };
+  }, [crashlyticsInstance]);
+
+
+
   return (
     <>
       <TouchableOpacity style={styles.crashButton} onPress={handleCrash}>
@@ -111,4 +110,4 @@ const CrashTestButton: React.FC<CrashTestButtonProps> = ({onPress}) => {
   );
 };
 
-export default CrashTestButton;
+export default React.memo(CrashTestButton);

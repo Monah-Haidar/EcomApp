@@ -140,4 +140,4 @@ const LocationPicker = ({
   );
 };
 
-export default React.memo(LocationPicker);
+export default LocationPicker;

@@ -1,15 +1,13 @@
-import {ScrollView, Text, View, Image, Pressable} from 'react-native';
-import Feather from 'react-native-vector-icons/Feather';
-import {CustomHeader} from '../../../components/molecules/CustomHeader';
-import {cartScreenStyles} from './cartScreenStyles';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {useMemo} from 'react';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {global} from '../../../styles/global';
-import useCartStore, {CartItem} from '../../../store/CartStore/CartStore';
-import {spacing} from '../../../constants/spacing';
-import {CartItemCard} from '../../../components/organisms/CartItem';
-import {SubmitButton} from '../../../components/atoms/SubmitButton';
+import { useMemo } from 'react';
+import { ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SubmitButton } from '../../../components/atoms/SubmitButton';
+import { CustomHeader } from '../../../components/molecules/CustomHeader';
+import { CartItemCard } from '../../../components/organisms/CartItem';
+import { spacing } from '../../../constants/spacing';
+import useCartStore, { CartItem } from '../../../store/CartStore/CartStore';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { cartScreenStyles } from './cartScreenStyles';
 
 const CartScreen = () => {
   const {theme} = useTheme();
@@ -21,11 +19,8 @@ const CartScreen = () => {
   const updateQuantity = useCartStore(state => state.updateQuantity);
   const clearCart = useCartStore(state => state.clearCart);
 
-  const styles = cartScreenStyles(theme);
-  const globalStyles = useMemo(() => global(theme), [theme]);
+  const styles = useMemo(() => cartScreenStyles(theme), [theme]);
 
-  // console.log('Cart Items:', totalQuantity);
-  console.log('Cart Items:', cartItems);
 
   const viewStyles = useMemo(() => {
     return [

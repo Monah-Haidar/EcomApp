@@ -225,4 +225,4 @@ const AddProductScreen = () => {
   );
 };
 
-export default React.memo(AddProductScreen);
+export default AddProductScreen;

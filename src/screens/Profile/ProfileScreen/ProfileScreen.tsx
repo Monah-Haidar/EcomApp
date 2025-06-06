@@ -3,7 +3,7 @@ import React, {useCallback, useMemo} from 'react';
 import {ScrollView, Text, View} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import {SubmitButton} from '../../../components/atoms/SubmitButton';
-import {CrashTestButton} from '../../../components/atoms/CrashTestButton/CrashTestButton';
+import {CrashTestButton} from '../../../components/atoms/CrashTestButton';
 import {InfoRow} from '../../../components/molecules/InfoRow';
 import {ProfileHeader} from '../../../components/organisms/ProfileHeader';
 import {useUserProfile} from '../../../hooks/useUserProfile';

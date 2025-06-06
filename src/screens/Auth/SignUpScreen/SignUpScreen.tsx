@@ -224,6 +224,6 @@ const SignUpScreen = () => {
   );
 };
 
-export default React.memo(SignUpScreen);
+export default SignUpScreen;
 
 

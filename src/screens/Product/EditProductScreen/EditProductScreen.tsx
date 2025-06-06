@@ -270,4 +270,4 @@ const EditProductScreen = ({route}: {route: any}) => {
   );
 };
 
-export default React.memo(EditProductScreen);
+export default EditProductScreen;

@@ -1,5 +1,5 @@
 import {View, Text, Pressable, Image, Dimensions} from 'react-native';
-import React from 'react';
+import React, {useMemo, useCallback} from 'react';
 import Feather from 'react-native-vector-icons/Feather';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
@@ -28,11 +28,27 @@ const CartItemCard = ({
   decreaseQuantity,
 }: any) => {
   const {theme} = useTheme();
-  const styles = cartItemCardStyles(theme);
+
+  const styles = useMemo(() => cartItemCardStyles(theme), [theme]);
+
+  const imageUri = useMemo(() => {
+    const imageUrl = images?.[0]?.url;
+    return imageUrl?.startsWith('http')
+      ? imageUrl
+      : `${Config.BASE_URL}${imageUrl || ''}`;
+  }, [images]);
+
+  const totalPrice = useMemo(() => {
+    return (price * quantity).toFixed(2);
+  }, [price, quantity]);
 
   const translateX = useSharedValue(0);
   const rowHeight = useSharedValue(1);
   const rowOpacity = useSharedValue(1);
+
+  const handleRemoveFromCart = useCallback(() => {
+    removeFromCart();
+  }, [removeFromCart]);
 
   const panGesture = Gesture.Pan()
     .onStart(() => {})
@@ -43,21 +59,18 @@ const CartItemCard = ({
       const shouldDelete = Math.abs(event.translationX) > SWIPE_THRESHOLD;
 
       if (shouldDelete) {
-        // Animate out and delete
         translateX.value = withTiming(
           event.translationX > 0 ? screenWidth : -screenWidth,
           {duration: 200},
         );
         rowHeight.value = withTiming(0, {duration: 200});
         rowOpacity.value = withTiming(0, {duration: 200}, () => {
-          runOnJS(removeFromCart)();
+          runOnJS(handleRemoveFromCart)();
         });
       } else {
-        // Snap back to original position
         translateX.value = withSpring(0);
       }
     });
-
   const cardAnimatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{translateX: translateX.value}],
@@ -80,6 +93,15 @@ const CartItemCard = ({
       transform: [{scale: withTiming(scale, {duration: 150})}],
     };
   });
+
+  const handleDecreaseQuantity = useCallback(() => {
+    decreaseQuantity();
+  }, [decreaseQuantity]);
+
+  const handleIncreaseQuantity = useCallback(() => {
+    increaseQuantity();
+  }, [increaseQuantity]);
+
   return (
     <Animated.View
       style={[styles.container, containerAnimatedStyle, {borderRadius: 16}]}>
@@ -92,20 +114,13 @@ const CartItemCard = ({
       <GestureDetector gesture={panGesture}>
         <Animated.View style={[styles.cardContainer, cardAnimatedStyle]}>
           <View style={styles.imageContainer}>
-            <Image
-              source={{
-                uri: images?.[0]?.url?.startsWith('http')
-                  ? images[0].url
-                  : `${Config.BASE_URL}${images?.[0]?.url || ''}`,
-              }}
-              style={styles.productImage}
-            />
+            <Image source={{uri: imageUri}} style={styles.productImage} />
           </View>
 
           <View style={styles.detailsContainer}>
             <View style={styles.headerContainer}>
               <Text style={styles.nameText}>{title}</Text>
-              <Pressable onPress={removeFromCart}>
+              <Pressable onPress={handleRemoveFromCart}>
                 <Feather name="trash" size={20} color={theme.errorText} />
               </Pressable>
             </View>
@@ -119,20 +134,22 @@ const CartItemCard = ({
 
             <View style={styles.footerContainer}>
               <View style={styles.quantityContainer}>
-                <Pressable onPress={decreaseQuantity} style={styles.qtyButton}>
+                <Pressable
+                  onPress={handleDecreaseQuantity}
+                  style={styles.qtyButton}>
                   <Feather name="minus" size={16} color={theme.text} />
                 </Pressable>
 
                 <Text style={styles.qtyText}>{quantity}</Text>
 
-                <Pressable onPress={increaseQuantity} style={styles.qtyButton}>
+                <Pressable
+                  onPress={handleIncreaseQuantity}
+                  style={styles.qtyButton}>
                   <Feather name="plus" size={16} color={theme.text} />
                 </Pressable>
               </View>
 
-              <Text style={styles.totalText}>
-                ${(price * quantity).toFixed(2)}
-              </Text>
+              <Text style={styles.totalText}>${totalPrice}</Text>
             </View>
           </View>
         </Animated.View>
@@ -141,4 +158,4 @@ const CartItemCard = ({
   );
 };
 
-export default CartItemCard;
+export default React.memo(CartItemCard);

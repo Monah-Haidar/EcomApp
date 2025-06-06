@@ -115,4 +115,4 @@ const VerificationScreen = ({route}) => {
   );
 };
 
-export default React.memo(VerificationScreen);
+export default VerificationScreen;
