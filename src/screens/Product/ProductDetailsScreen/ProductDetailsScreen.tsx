@@ -1,7 +1,7 @@
-import {CameraRoll} from '@react-native-camera-roll/camera-roll';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {useCallback, useMemo, useState} from 'react';
+import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   Alert,
   Dimensions,
@@ -13,26 +13,27 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import Config from 'react-native-config';
 import RNFS from 'react-native-fs';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
-import {SubmitButton} from '../../../components/atoms/SubmitButton';
-import {customHeaderStyles} from '../../../components/molecules/CustomHeader/customHeaderStyles';
-import {ImageCarousel} from '../../../components/organisms/ImageCarousel';
-import {MapView} from '../../../components/organisms/MapView';
-import {useDeleteProduct} from '../../../hooks/useDeleteProduct';
-import {useProduct} from '../../../hooks/useProduct';
-import {useUserProfile} from '../../../hooks/useUserProfile';
-import {ProductStackParamList} from '../../../navigation/types';
-import {useAuthStore} from '../../../store/AuthStore';
-import {useCartStore} from '../../../store/CartStore';
-import {useTheme} from '../../../store/ThemeStore/ThemeStore';
-import {global} from '../../../styles/global';
-import {productDetailsScreenStyles} from './productDetailsScreenStyles';
+import { SubmitButton } from '../../../components/atoms/SubmitButton';
+import { customHeaderStyles } from '../../../components/molecules/CustomHeader/customHeaderStyles';
+import { ImageCarousel } from '../../../components/organisms/ImageCarousel';
+import { MapView } from '../../../components/organisms/MapView';
+import { useDeleteProduct } from '../../../hooks/useDeleteProduct';
+import { useProduct } from '../../../hooks/useProduct';
+import { useUserProfile } from '../../../hooks/useUserProfile';
+import { ProductStackParamList } from '../../../navigation/types';
+import { useAuthStore } from '../../../store/AuthStore';
+import { useCartStore } from '../../../store/CartStore';
+import { useTheme } from '../../../store/ThemeStore/ThemeStore';
+import { global } from '../../../styles/global';
+import { shareProduct as shareProductUtil } from '../../../utils/shareProduct';
+import { productDetailsScreenStyles } from './productDetailsScreenStyles';
 
 type ProductDetails = {
   location: {
@@ -337,8 +338,11 @@ const ProductDetailsScreen = () => {
     () => navigation.navigate('EditProduct', {productId: product?._id}),
     [navigation, productId],
   );
-
-  const shareProduct = useCallback(() => null, []);
+  const shareProduct = useCallback(async () => {
+    
+    if (product) await shareProductUtil(product);
+    
+  }, [product]);
 
   const addProductToCart = useCallback(() => {
     if (!product) return;
