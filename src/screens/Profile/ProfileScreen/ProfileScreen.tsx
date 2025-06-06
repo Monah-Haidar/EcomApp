@@ -67,24 +67,26 @@ const ProfileScreen = () => {
           icon={<Feather name="log-out" size={16} color="#d32f2f" />}
         />
         {/* Firebase Crashlytics Test Buttons - Remove in production */}
-        <View
-          style={{
-            marginTop: 20,
-            padding: 16,
-            backgroundColor: theme.cardBackground,
-            borderRadius: 8,
-          }}>
-          <Text
+        {__DEV__ && (
+          <View
             style={{
-              color: theme.text,
-              fontWeight: 'bold',
-              marginBottom: 12,
-              textAlign: 'center',
+              marginTop: 20,
+              padding: 16,
+              backgroundColor: theme.cardBackground,
+              borderRadius: 8,
             }}>
-            🧪 Firebase Crashlytics Testing
-          </Text>
-          <CrashTestButton />
-        </View>
+            <Text
+              style={{
+                color: theme.text,
+                fontWeight: 'bold',
+                marginBottom: 12,
+                textAlign: 'center',
+              }}>
+              🧪 Firebase Crashlytics Testing
+            </Text>
+            <CrashTestButton />
+          </View>
+        )}
       </View>
     </ScrollView>
   );

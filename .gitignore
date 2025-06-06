@@ -76,5 +76,5 @@ yarn-error.log
 
 
 .env
-.env.develepment
+.env.development
 .env.staging
